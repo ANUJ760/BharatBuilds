@@ -74,6 +74,9 @@ class TimelineStep(BaseModel):
     # Metadata
     metadata: dict = Field(default_factory=dict, description="Additional metadata")
 
+    # Transient field for tree building (not persisted)
+    children: list = Field(default_factory=list, description="Transient child steps for tree view")
+
     class Config:
         """Pydantic config."""
 
