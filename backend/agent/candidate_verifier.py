@@ -11,6 +11,7 @@ import logging
 import types
 from typing import Any
 
+from backend.agent.safety_guards import check_code_safety
 from backend.models.app import CandidateVerificationResult
 
 logger = logging.getLogger(__name__)
@@ -23,10 +24,11 @@ def verify_candidate_code(
 ) -> CandidateVerificationResult:
     """Validate candidate Python source code prior to deployment.
 
-    Runs 3 validation checks:
+    Runs 4 validation checks:
     1. `syntax_compilation` — Checks valid Python syntax via AST compilation.
-    2. `entry_point_detection` — Ensures a callable `handler(event, context)` or `render()` exists.
-    3. `runtime_execution` — Safely executes the handler in an isolated sandbox namespace with sample input.
+    2. `security_safety_guard` — Inspects code for forbidden modules, secrets, or dangerous calls.
+    3. `entry_point_detection` — Ensures a callable `handler(event, context)` or `render()` exists.
+    4. `runtime_execution` — Safely executes the handler in an isolated sandbox namespace with sample input.
 
     Parameters
     ----------
@@ -40,7 +42,12 @@ def verify_candidate_code(
     CandidateVerificationResult
         Structured report indicating whether the candidate code passed all checks.
     """
-    checks_performed: list[str] = ["syntax_compilation", "entry_point_detection", "runtime_execution"]
+    checks_performed: list[str] = [
+        "syntax_compilation",
+        "security_safety_guard",
+        "entry_point_detection",
+        "runtime_execution",
+    ]
     checks_passed: list[str] = []
     checks_failed: list[str] = []
 
@@ -70,7 +77,22 @@ def verify_candidate_code(
             error_message=err,
         )
 
-    # ── Check 2: Entry Point Detection ─────────────────────────────────────
+    # ── Check 2: Security & Safety Guard ───────────────────────────────────
+    is_safe, safety_violation = check_code_safety(code)
+    if not is_safe:
+        err = f"Security guard rejected candidate code: {safety_violation}"
+        logger.warning("Candidate verification failed: %s", err)
+        checks_failed.append("security_safety_guard")
+        return CandidateVerificationResult(
+            passed=False,
+            checks_performed=checks_performed,
+            checks_passed=checks_passed,
+            checks_failed=checks_failed,
+            error_message=err,
+        )
+    checks_passed.append("security_safety_guard")
+
+    # ── Check 3: Entry Point Detection ─────────────────────────────────────
     module = types.ModuleType("candidate_app_code")
     try:
         exec(compiled_code, module.__dict__)

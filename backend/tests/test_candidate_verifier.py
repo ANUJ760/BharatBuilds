@@ -70,7 +70,12 @@ class TestCandidateVerifier:
         result = verify_candidate_code(VALID_RENDER_CODE)
         assert result.passed is True
         assert result.entry_point == "render"
-        assert result.checks_passed == ["syntax_compilation", "entry_point_detection", "runtime_execution"]
+        assert result.checks_passed == [
+            "syntax_compilation",
+            "security_safety_guard",
+            "entry_point_detection",
+            "runtime_execution",
+        ]
         assert result.checks_failed == []
         assert result.error_message is None
         assert "My Verified App" in result.response_sample
@@ -79,9 +84,15 @@ class TestCandidateVerifier:
         result = verify_candidate_code(VALID_HANDLER_CODE)
         assert result.passed is True
         assert result.entry_point == "handler"
-        assert result.checks_passed == ["syntax_compilation", "entry_point_detection", "runtime_execution"]
+        assert result.checks_passed == [
+            "syntax_compilation",
+            "security_safety_guard",
+            "entry_point_detection",
+            "runtime_execution",
+        ]
         assert result.checks_failed == []
         assert result.error_message is None
+
 
     def test_syntax_error_fails(self):
         result = verify_candidate_code(SYNTAX_ERROR_CODE)

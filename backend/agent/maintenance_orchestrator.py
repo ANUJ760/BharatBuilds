@@ -16,6 +16,7 @@ from backend.agent.repair import (
     BedrockCodeRepairProvider,
     CodeRepairProvider,
 )
+from backend.agent.safety_guards import AppConcurrencyLock, sanitize_issue
 from backend.agent.trace_logger import get_timeline, log_step
 from backend.models.app import (
     CandidateVerificationResult,
@@ -83,6 +84,50 @@ class MaintenanceOrchestrator:
             Structured report with diagnostic analysis, candidate code, verification results,
             and final job status.
         """
+        # 1. Sanitize untrusted input fields
+        sanitized_issue = sanitize_issue(issue)
+
+        # 2. Acquire concurrency lock
+        acquired = await AppConcurrencyLock.acquire(app_id)
+        if not acquired:
+            conflict_msg = f"Concurrent maintenance job already in progress for app {app_id}"
+            logger.warning("Maintenance rejected: %s", conflict_msg)
+            job = MaintenanceJob(app_id=app_id, issue=sanitized_issue, status=MaintenanceStatus.REJECTED)
+            job.summary = conflict_msg
+            reject_step = TimelineStep(
+                app_id=app_id,
+                step_type=StepType.MAINTENANCE_REJECT,
+                status=StepStatus.ERROR,
+                reasoning=conflict_msg,
+                error_message=conflict_msg,
+            )
+            if persist_timeline:
+                await log_step(reject_step, table_name=self.table_name, region=self.region)
+            return MaintenanceResult(
+                job=job,
+                status=MaintenanceStatus.REJECTED,
+                summary=conflict_msg,
+                timeline_steps=[reject_step],
+            )
+
+        try:
+            return await self._execute_maintenance_workflow(
+                app_id,
+                sanitized_issue,
+                existing_code=existing_code,
+                persist_timeline=persist_timeline,
+            )
+        finally:
+            await AppConcurrencyLock.release(app_id)
+
+    async def _execute_maintenance_workflow(
+        self,
+        app_id: str,
+        issue: MaintenanceIssue,
+        *,
+        existing_code: str | None = None,
+        persist_timeline: bool = True,
+    ) -> MaintenanceResult:
         job = MaintenanceJob(app_id=app_id, issue=issue, status=MaintenanceStatus.PENDING)
         timeline_steps: list[TimelineStep] = []
         parent_step_id: str | None = None

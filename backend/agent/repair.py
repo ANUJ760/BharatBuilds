@@ -14,6 +14,7 @@ from typing import Any
 
 from backend.agent.bedrock_client import invoke_model_json
 from backend.agent.codegen import _strip_code_fences
+from backend.agent.safety_guards import sanitize_issue
 from backend.models.app import MaintenanceIssue, RepairResult
 
 logger = logging.getLogger(__name__)
@@ -134,11 +135,12 @@ class BedrockCodeRepairProvider(CodeRepairProvider):
                 error_message="Existing code cannot be empty for repair",
             )
 
-        prompt = _format_issue_prompt(existing_code, issue)
+        sanitized_issue = sanitize_issue(issue)
+        prompt = _format_issue_prompt(existing_code, sanitized_issue)
         logger.info(
             "Invoking Bedrock for maintenance repair: issue_type=%s, severity=%s, code_len=%d",
-            issue.issue_type,
-            issue.severity,
+            sanitized_issue.issue_type,
+            sanitized_issue.severity,
             len(existing_code),
         )
 
