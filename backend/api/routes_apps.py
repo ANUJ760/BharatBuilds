@@ -48,20 +48,37 @@ async def clarify(body: ClarifyRequest):
 
 @router.post("/")
 async def create_app(body: CreateAppRequest):
-    """Create a new app from a prompt (triggers the agent pipeline)."""
-    # TODO: wire to planner.py in Commit 11
-    return {"status": "pending", "message": "App creation will be wired in Commit 11"}
+    """Initiate a new app entry."""
+    import uuid
+    app_id = str(uuid.uuid4())
+    return {
+        "app_id": app_id,
+        "owner_id": body.owner_id,
+        "title": body.title or f"App {app_id[:8]}",
+        "prompt": body.prompt,
+        "status": "pending",
+    }
 
 
 @router.get("/")
 async def list_apps():
-    """List the current user's deployed apps."""
-    # TODO: query DynamoDB
+    """List apps placeholder."""
     return {"apps": []}
 
 
 @router.get("/{app_id}")
 async def get_app(app_id: str):
-    """Get a single app's details."""
-    # TODO: fetch from DynamoDB
-    return {"app_id": app_id, "status": "not_implemented"}
+    """Get a single app's details from DynamoDB."""
+    from fastapi import HTTPException
+    from backend.storage.dynamodb_client import get_item
+
+    settings = get_settings()
+    item = get_item(
+        settings.dynamodb_table_name,
+        app_id,
+        "__metadata__",
+        region=settings.aws_region,
+    )
+    if item is None:
+        raise HTTPException(status_code=404, detail="App not found")
+    return item

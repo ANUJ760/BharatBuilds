@@ -25,6 +25,8 @@ from backend.api.routes_timeline import router as timeline_router
 from backend.config import Settings, get_settings
 from backend.logger import configure_logging, get_logger
 
+from fastapi.middleware.cors import CORSMiddleware
+
 # Initialize structured logging
 configure_logging()
 logger = get_logger("bharatbuilds.api")
@@ -35,8 +37,18 @@ app = FastAPI(
     description="A cloud for small software — prompt to live app in under a minute.",
 )
 
+# ── CORS Middleware ───────────────────────────────────────────────────────
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["X-Request-ID"],
+)
 
-# ── Middleware ────────────────────────────────────────────────────────────
+
+# ── Request ID Middleware ─────────────────────────────────────────────────
 
 
 @app.middleware("http")
