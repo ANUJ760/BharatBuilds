@@ -196,4 +196,18 @@ class HealthCheckResult(BaseModel):
     checked_at: datetime = Field(default_factory=_utcnow)
 
 
+class CandidateVerificationResult(BaseModel):
+    """Structured outcome of local candidate code verification."""
+
+    passed: bool
+    checks_performed: list[str] = Field(default_factory=list)
+    checks_passed: list[str] = Field(default_factory=list)
+    checks_failed: list[str] = Field(default_factory=list)
+    entry_point: Optional[str] = None
+    response_sample: Optional[str] = None
+    error_message: Optional[str] = None
+    verified_at: datetime = Field(default_factory=_utcnow)
+
+
+
 

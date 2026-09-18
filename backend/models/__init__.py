@@ -3,6 +3,7 @@
 from backend.models.app import (
     App,
     AppStatus,
+    CandidateVerificationResult,
     ClarifyQuestion,
     ClarifyResponse,
     HealthCheckResult,
@@ -20,6 +21,7 @@ from backend.models.app import (
 __all__ = [
     "App",
     "AppStatus",
+    "CandidateVerificationResult",
     "ClarifyQuestion",
     "ClarifyResponse",
     "HealthCheckResult",
@@ -33,6 +35,7 @@ __all__ = [
     "StepType",
     "TimelineStep",
 ]
+
 
 
 
