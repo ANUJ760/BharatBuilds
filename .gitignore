@@ -1,27 +1,40 @@
-# Dependencies
-node_modules/
-__pycache__/
-*.pyc
-.venv/
-venv/
-
 # Environment
 .env
 .env.local
+.env.*.local
 
-# Build outputs
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
 dist/
 build/
-*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+backend/scripts/demo_app/
+
+# Node / Frontend
+node_modules/
+
+# CDK
 cdk.out/
+cdk.context.json
 
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
 
 # OS
 .DS_Store
 Thumbs.db
 
-# CDK
-cdk.context.json
+# AWS
+.aws/

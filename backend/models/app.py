@@ -1,48 +1,126 @@
-"""App domain model."""
-from datetime import datetime
+"""Core Pydantic data models for the BharatBuilds platform.
+
+All models use strict validation. Timestamps default to UTC. IDs are
+generated lazily via ``uuid4`` so callers never need to supply them
+unless they already have one (e.g., during deserialization from DynamoDB).
+"""
+
+from __future__ import annotations
+
+import uuid
+from datetime import datetime, timezone
+from enum import StrEnum
 from typing import Optional
 
 from pydantic import BaseModel, Field
 
 
+# ── Enums ────────────────────────────────────────────────────────────────
+
+
+class AppStatus(StrEnum):
+    """Lifecycle status of a deployed app."""
+
+    PENDING = "pending"
+    BUILDING = "building"
+    DEPLOYED = "deployed"
+    FAILED = "failed"
+
+
+class StepType(StrEnum):
+    """Type of an agent pipeline step."""
+
+    CLARIFY = "clarify"
+    PLAN = "plan"
+    TOOL_CALL = "tool_call"
+    CODEGEN = "codegen"
+    RETRY = "retry"
+    DEPLOY = "deploy"
+    REVERT = "revert"
+
+
+class StepStatus(StrEnum):
+    """Outcome status of a timeline step."""
+
+    OK = "ok"
+    ERROR = "error"
+    REVERTED = "reverted"
+
+
+class Role(StrEnum):
+    """Access roles for shared apps."""
+
+    VIEWER = "viewer"
+    EDITOR = "editor"
+    OWNER = "owner"
+
+
+# ── Core Models ──────────────────────────────────────────────────────────
+
+
+def _utcnow() -> datetime:
+    return datetime.now(timezone.utc)
+
+
+def _new_id() -> str:
+    return str(uuid.uuid4())
+
+
 class App(BaseModel):
-    """Generated application entity."""
+    """A deployed user app."""
 
-    app_id: str = Field(..., description="Unique app identifier")
-    organization_id: str = Field(..., description="Organization owning this app")
-    created_by: str = Field(..., description="User who created the app")
-    name: str = Field(..., description="App name")
-    description: Optional[str] = Field(None, description="App description")
-    workflow_id: str = Field(..., description="Workflow that generated this app")
-    deployment_url: Optional[str] = Field(None, description="Live deployment URL")
-    current_snapshot_id: Optional[str] = Field(None, description="Current code snapshot reference")
-    is_active: bool = Field(default=True, description="Whether app is active")
-    created_at: datetime = Field(default_factory=datetime.utcnow, description="Creation timestamp")
-    updated_at: datetime = Field(default_factory=datetime.utcnow, description="Last update timestamp")
-    deployed_at: Optional[datetime] = Field(None, description="Last deployment timestamp")
-    metadata: dict = Field(default_factory=dict, description="App metadata")
-
-    class Config:
-        """Pydantic config."""
-
-        json_encoders = {datetime: lambda v: v.isoformat()}
+    app_id: str = Field(default_factory=_new_id)
+    owner_id: str
+    title: str = Field(min_length=1, max_length=200)
+    prompt: str = Field(min_length=1)
+    live_url: Optional[str] = None
+    status: AppStatus = AppStatus.PENDING
+    created_at: datetime = Field(default_factory=_utcnow)
+    updated_at: datetime = Field(default_factory=_utcnow)
 
 
-class AppCreate(BaseModel):
-    """App creation request."""
+class TimelineStep(BaseModel):
+    """A single node in the decision timeline."""
 
-    name: str
-    description: Optional[str] = None
-    workflow_id: str
+    app_id: str
+    step_id: str = Field(default_factory=_new_id)
+    parent_step_id: Optional[str] = None
+    step_type: StepType
+    input_text: Optional[str] = None
+    reasoning: Optional[str] = None
+    code_snapshot: Optional[str] = None
+    code_diff: Optional[str] = None
+    latency_ms: Optional[int] = Field(default=None, ge=0)
+    token_usage: Optional[int] = Field(default=None, ge=0)
+    status: StepStatus = StepStatus.OK
+    error_message: Optional[str] = None
+    created_at: datetime = Field(default_factory=_utcnow)
 
 
-class AppUpdate(BaseModel):
-    """App update request."""
+class Invite(BaseModel):
+    """An invitation to share an app with another user."""
 
-    name: Optional[str] = None
-    description: Optional[str] = None
-    deployment_url: Optional[str] = None
-    current_snapshot_id: Optional[str] = None
-    is_active: Optional[bool] = None
-    deployed_at: Optional[datetime] = None
-    metadata: Optional[dict] = None
+    app_id: str
+    email: str = Field(min_length=3, max_length=254)
+    role: Role = Role.VIEWER
+    invited_at: datetime = Field(default_factory=_utcnow)
+
+
+# ── Clarify Models ───────────────────────────────────────────────────────
+
+
+class ClarifyQuestion(BaseModel):
+    """A single clarifying question posed to the user."""
+
+    question: str
+    suggested_default: str
+    why_it_matters: str
+
+
+class ClarifyResponse(BaseModel):
+    """Result of the ambiguity-check pass (0–3 questions)."""
+
+    needs_clarification: bool
+    questions: list[ClarifyQuestion] = Field(
+        default_factory=list, max_length=3
+    )

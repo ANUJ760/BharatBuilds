@@ -1,160 +1,251 @@
-"""Amazon Cognito client for auth operations."""
-from typing import Any, Dict, Optional
+"""Amazon Cognito client for auth operations and JWT verification.
+
+Provides:
+1. Cognito Identity Provider administrative helpers (user creation, group assignment).
+2. JWT signature and claims verification for Cognito ID and access tokens.
+3. User identity extraction with role normalization (viewer, editor, owner).
+"""
+
+from __future__ import annotations
+
+import json
+import logging
+from functools import lru_cache
+from typing import Any
+from urllib.request import urlopen
 
 import boto3
-import structlog
+from jose import JWTError, jwt
 
-from backend.config.settings import get_settings
+from backend.config import get_settings
+from backend.models.app import Role
 
-logger = structlog.get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
-class CognitoClient:
-    """Client for Cognito User Pool operations."""
+def get_cognito_client(region: str = "ap-south-1"):
+    """Return a boto3 Cognito Identity Provider client."""
+    return boto3.client("cognito-idp", region_name=region)
 
-    def __init__(self):
-        self.settings = get_settings()
-        self.client = boto3.client(
-            "cognito-idp",
-            region_name=self.settings.aws_region,
+
+# ── Cognito IDP Admin Operations ──────────────────────────────────────────
+
+
+async def create_user(
+    email: str,
+    *,
+    user_pool_id: str = "",
+    temporary_password: str | None = None,
+    region: str = "",
+) -> dict[str, Any]:
+    """Create a user in the Cognito User Pool (for invites / OTP flow).
+
+    Uses ``AdminCreateUser``.
+    """
+    if not user_pool_id or not region:
+        settings = get_settings()
+        user_pool_id = user_pool_id or settings.cognito_user_pool_id
+        region = region or settings.aws_region
+
+    client = get_cognito_client(region=region)
+    kwargs: dict[str, Any] = {
+        "UserPoolId": user_pool_id,
+        "Username": email,
+        "UserAttributes": [
+            {"Name": "email", "Value": email},
+            {"Name": "email_verified", "Value": "true"},
+        ],
+        "DesiredDeliveryMediums": ["EMAIL"],
+    }
+    if temporary_password:
+        kwargs["TemporaryPassword"] = temporary_password
+    else:
+        # MessageAction="RESEND" or default invite email from Cognito
+        kwargs["MessageAction"] = "SUPPRESS"
+
+    try:
+        response = client.admin_create_user(**kwargs)
+        return response.get("User", {})
+    except client.exceptions.UsernameExistsException:
+        logger.info("Cognito user %s already exists", email)
+        return client.admin_get_user(UserPoolId=user_pool_id, Username=email)
+
+
+async def add_user_to_group(
+    username: str,
+    group_name: str,
+    *,
+    user_pool_id: str = "",
+    region: str = "",
+) -> None:
+    """Add a Cognito user to a user group (e.g. Viewer or Editor)."""
+    if not user_pool_id or not region:
+        settings = get_settings()
+        user_pool_id = user_pool_id or settings.cognito_user_pool_id
+        region = region or settings.aws_region
+
+    client = get_cognito_client(region=region)
+    client.admin_add_user_to_group(
+        UserPoolId=user_pool_id,
+        Username=username,
+        GroupName=group_name,
+    )
+
+
+# ── JWKS & JWT Verification ──────────────────────────────────────────────
+
+
+@lru_cache(maxsize=16)
+def _fetch_jwks(jwks_url: str) -> dict[str, Any]:
+    """Fetch and cache JSON Web Key Set (JWKS) from Cognito endpoint."""
+    with urlopen(jwks_url, timeout=5) as resp:
+        return json.loads(resp.read().decode("utf-8"))
+
+
+def _normalize_role(groups: list[str] | None, fallback: str = Role.VIEWER.value) -> str:
+    """Determine highest role from user's Cognito groups."""
+    if not groups:
+        return fallback
+
+    normalized = [g.strip().lower() for g in groups]
+    if "owner" in normalized:
+        return Role.OWNER.value
+    if "editor" in normalized:
+        return Role.EDITOR.value
+    if "viewer" in normalized:
+        return Role.VIEWER.value
+    return fallback
+
+
+def verify_cognito_token(
+    token: str,
+    *,
+    user_pool_id: str = "",
+    client_id: str = "",
+    region: str = "",
+    jwks: dict[str, Any] | None = None,
+    test_secret: str | None = None,
+    verify_signature: bool = True,
+) -> dict[str, Any]:
+    """Verify a Cognito JWT token and extract user identity and permissions.
+
+    Parameters
+    ----------
+    token:
+        JWT token string (ID token or access token).
+    user_pool_id:
+        Cognito User Pool ID. Defaults to settings value.
+    client_id:
+        Cognito App Client ID. Defaults to settings value.
+    region:
+        AWS Region. Defaults to settings value.
+    jwks:
+        Optional pre-fetched or mock JWKS dictionary.
+    test_secret:
+        Optional symmetric secret for HS256 signed tokens (used in testing).
+    verify_signature:
+        Whether to enforce cryptographic signature verification.
+
+    Returns
+    -------
+    dict[str, Any]:
+        Normalized user dictionary containing:
+        - ``user_id``: user's sub / ID
+        - ``email``: user's email address
+        - ``role``: normalized role ('viewer', 'editor', 'owner')
+        - ``groups``: list of raw Cognito groups
+        - ``claims``: full payload claims
+    """
+    try:
+        settings = get_settings()
+        user_pool_id = user_pool_id or settings.cognito_user_pool_id
+        client_id = client_id or settings.cognito_app_client_id
+        region = region or settings.aws_region
+    except Exception:
+        # Fallbacks when settings cannot be loaded (e.g. testing environments)
+        user_pool_id = user_pool_id or "ap-south-1_testpool"
+        client_id = client_id or "testclientid"
+        region = region or "ap-south-1"
+
+    expected_issuer = f"https://cognito-idp.{region}.amazonaws.com/{user_pool_id}"
+
+    # Test path: HS256 token signed with test_secret
+    if test_secret:
+        claims = jwt.decode(
+            token,
+            test_secret,
+            algorithms=["HS256"],
+            options={"verify_aud": False},
         )
-        self.user_pool_id = self.settings.cognito_user_pool_id
+        groups = claims.get("cognito:groups", [])
+        if isinstance(groups, str):
+            groups = [groups]
+        role = _normalize_role(groups, claims.get("role", Role.VIEWER.value))
+        return {
+            "user_id": claims.get("sub", claims.get("username", "anonymous")),
+            "email": claims.get("email", ""),
+            "role": role,
+            "groups": groups,
+            "claims": claims,
+        }
 
-    def create_user(
-        self,
-        email: str,
-        user_attributes: Optional[Dict[str, str]] = None,
-        temporary_password: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Create a Cognito user for app sharing (magic link / OTP)."""
-        logger.info("cognito_create_user", email=email)
+    # If signature verification is disabled (explicit testing / offline bypass)
+    if not verify_signature:
+        claims = jwt.get_unverified_claims(token)
+        groups = claims.get("cognito:groups", [])
+        if isinstance(groups, str):
+            groups = [groups]
+        role = _normalize_role(groups, claims.get("role", Role.VIEWER.value))
+        return {
+            "user_id": claims.get("sub", claims.get("username", "anonymous")),
+            "email": claims.get("email", ""),
+            "role": role,
+            "groups": groups,
+            "claims": claims,
+        }
 
-        attributes = [{"Name": "email", "Value": email}]
-        if user_attributes:
-            for key, value in user_attributes.items():
-                attributes.append({"Name": key, "Value": str(value)})
+    # Production / RS256 path with JWKS verification
+    headers = jwt.get_unverified_header(token)
+    kid = headers.get("kid")
+    if not kid:
+        raise JWTError("Token header missing key ID (kid)")
 
-        response = self.client.admin_create_user(
-            UserPoolId=self.user_pool_id,
-            Username=email,
-            UserAttributes=attributes,
-            TemporaryPassword=temporary_password or "Temp@1234!",
-            MessageAction="SUPPRESS",
-        )
+    if jwks is None:
+        jwks_url = f"{expected_issuer}/.well-known/jwks.json"
+        jwks = _fetch_jwks(jwks_url)
 
-        logger.info("cognito_create_user_success", user_id=response.get("User", {}).get("Username"))
-        return response
+    key = next((k for k in jwks.get("keys", []) if k.get("kid") == kid), None)
+    if not key:
+        raise JWTError(f"Key with ID {kid} not found in JWKS")
 
-    def initiate_auth(
-        self,
-        email: str,
-        password: str,
-    ) -> Dict[str, Any]:
-        """Initiate authentication flow (USER_PASSWORD_AUTH)."""
-        logger.info("cognito_initiate_auth", email=email)
+    claims = jwt.decode(
+        token,
+        key,
+        algorithms=["RS256"],
+        issuer=expected_issuer,
+        options={"verify_aud": False},  # Can be access or id token
+    )
 
-        response = self.client.initiate_auth(
-            ClientId=self.settings.cognito_client_id,
-            AuthFlow="USER_PASSWORD_AUTH",
-            AuthParameters={
-                "USERNAME": email,
-                "PASSWORD": password,
-            },
-        )
+    # Token use check
+    token_use = claims.get("token_use")
+    if token_use not in ("id", "access"):
+        raise JWTError(f"Invalid token_use claim: {token_use}")
 
-        logger.info("cognito_initiate_auth_success")
-        return response
+    # Audience check for ID token
+    if token_use == "id" and client_id:
+        aud = claims.get("aud")
+        if aud != client_id:
+            raise JWTError(f"Audience mismatch: expected {client_id}, got {aud}")
 
-    def initiate_signup(
-        self,
-        email: str,
-        password: str,
-        user_attributes: Optional[Dict[str, str]] = None,
-    ) -> Dict[str, Any]:
-        """Initiate sign up (sends confirmation code)."""
-        logger.info("cognito_initiate_signup", email=email)
+    groups = claims.get("cognito:groups", [])
+    if isinstance(groups, str):
+        groups = [groups]
+    role = _normalize_role(groups, claims.get("role", Role.VIEWER.value))
 
-        user_attributes = user_attributes or {}
-        attributes = [{"Name": "email", "Value": email}]
-        for key, value in user_attributes.items():
-            attributes.append({"Name": key, "Value": str(value)})
-
-        response = self.client.sign_up(
-            ClientId=self.settings.cognito_client_id,
-            Username=email,
-            Password=password,
-            UserAttributes=attributes,
-        )
-
-        logger.info("cognito_initiate_signup_success")
-        return response
-
-    def confirm_signup(
-        self,
-        email: str,
-        confirmation_code: str,
-    ) -> Dict[str, Any]:
-        """Confirm sign up with the verification code."""
-        logger.info("cognito_confirm_signup", email=email)
-
-        response = self.client.confirm_sign_up(
-            ClientId=self.settings.cognito_client_id,
-            Username=email,
-            ConfirmationCode=confirmation_code,
-        )
-
-        logger.info("cognito_confirm_signup_success")
-        return response
-
-    def admin_set_user_password(
-        self,
-        email: str,
-        new_password: str,
-        permanent: bool = True,
-    ) -> Dict[str, Any]:
-        """Set a user's password (admin operation)."""
-        logger.info("cognito_admin_set_password", email=email)
-
-        response = self.client.admin_set_user_password(
-            UserPoolId=self.user_pool_id,
-            Username=email,
-            Password=new_password,
-            Permanent=permanent,
-        )
-
-        logger.info("cognito_admin_set_password_success")
-        return response
-
-    def get_user(self, access_token: str) -> Dict[str, Any]:
-        """Get user info using an access token."""
-        logger.info("cognito_get_user")
-
-        response = self.client.get_user(AccessToken=access_token)
-        return response
-
-    def admin_get_user(self, email: str) -> Dict[str, Any]:
-        """Get user by email (admin operation)."""
-        logger.info("cognito_admin_get_user", email=email)
-
-        response = self.client.admin_get_user(
-            UserPoolId=self.user_pool_id,
-            Username=email,
-        )
-        return response
-
-    def list_users(self) -> Dict[str, Any]:
-        """List all users in the pool."""
-        logger.info("cognito_list_users")
-
-        response = self.client.list_users(UserPoolId=self.user_pool_id)
-        return response
-
-    def admin_delete_user(self, email: str) -> Dict[str, Any]:
-        """Delete a user (admin operation)."""
-        logger.info("cognito_admin_delete_user", email=email)
-
-        response = self.client.admin_delete_user(
-            UserPoolId=self.user_pool_id,
-            Username=email,
-        )
-        return response
+    return {
+        "user_id": claims.get("sub", claims.get("username", "")),
+        "email": claims.get("email", ""),
+        "role": role,
+        "groups": groups,
+        "claims": claims,
+    }
