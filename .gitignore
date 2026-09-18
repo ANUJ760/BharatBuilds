@@ -17,6 +17,7 @@ venv/
 .mypy_cache/
 htmlcov/
 .coverage
+backend/scripts/demo_app/
 
 # Node / Frontend
 node_modules/

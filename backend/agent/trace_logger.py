@@ -105,7 +105,21 @@ async def get_timeline(
         region = region or settings.aws_region
 
     items = query_by_app_id(table_name, app_id, region=region)
-    return [_item_to_step(item) for item in items]
+    steps: list[TimelineStep] = []
+    for item in items:
+        # Single-table design: filter out app metadata and invite records
+        step_id = item.get("step_id", "")
+        if step_id.startswith("__") or step_id.startswith("invite#"):
+            continue
+        if "step_type" not in item:
+            continue
+        try:
+            steps.append(_item_to_step(item))
+        except Exception as exc:
+            logger.warning("Skipping malformed timeline item %s: %s", step_id, exc)
+
+    steps.sort(key=lambda s: (s.created_at, s.step_id))
+    return steps
 
 
 async def get_step(
