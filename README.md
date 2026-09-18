@@ -136,7 +136,102 @@ This project is a thin, opinionated cloud layer built specifically for that gap 
 
 ---
 
-## 6. User Flow (End-to-End Demo)
+## 6. Folder Structure
+
+```
+project-root/
+├── README.md
+├── .env.example
+├── .gitignore
+│
+├── frontend/                          # React + Tailwind dashboard — carries the Best UI track
+│   ├── public/
+│   │   └── favicon.svg
+│   ├── src/
+│   │   ├── main.tsx
+│   │   ├── App.tsx
+│   │   ├── design/                    # design system, kept separate from components
+│   │   │   ├── tokens.css             # color, type, spacing tokens
+│   │   │   ├── typography.css
+│   │   │   └── motion.css             # the one deliberate motion moment, isolated
+│   │   ├── components/
+│   │   │   ├── ui/                    # low-level primitives: Button, Input, Modal, Chip
+│   │   │   ├── chat/                  # prompt box + clarifying-question chips
+│   │   │   ├── timeline/              # Decision Timeline tree (React Flow) + side panel
+│   │   │   ├── dashboard/             # app cards, deploy status, share modal
+│   │   │   └── layout/                # shell, nav, page containers
+│   │   ├── pages/
+│   │   │   ├── Home.tsx               # prompt intake + clarify flow
+│   │   │   ├── AppView.tsx            # single deployed app: status, share, live edit
+│   │   │   └── Timeline.tsx           # full-screen decision tree + revert
+│   │   ├── hooks/
+│   │   │   ├── useAgentStream.ts      # streams agent steps as they happen
+│   │   │   └── useDeployStatus.ts
+│   │   ├── api/                       # typed client for backend endpoints
+│   │   └── lib/
+│   ├── tailwind.config.ts
+│   ├── package.json
+│   └── index.html
+│
+├── backend/                            # FastAPI (or Lambda handlers)
+│   ├── main.py
+│   ├── api/
+│   │   ├── routes_apps.py             # create/list/get deployed apps
+│   │   ├── routes_timeline.py         # GET /apps/{id}/timeline, POST /revert/{step_id}
+│   │   ├── routes_share.py            # invites, roles
+│   │   └── routes_deploy.py
+│   ├── agent/
+│   │   ├── clarify.py                 # ambiguity-check pass (structured JSON output)
+│   │   ├── planner.py                 # ReAct loop — plan/tool-call/codegen steps
+│   │   ├── codegen.py
+│   │   ├── bedrock_client.py
+│   │   └── trace_logger.py            # writes every agent step to DynamoDB as a timeline node
+│   ├── deploy/
+│   │   ├── fargate_deployer.py
+│   │   ├── lambda_deployer.py         # fast-path deploy for lightweight apps
+│   │   └── router.py                  # ALB/API Gateway route registration
+│   ├── auth/
+│   │   ├── cognito_client.py
+│   │   └── roles.py                   # Viewer/Editor enforcement
+│   ├── storage/
+│   │   ├── dynamodb_client.py
+│   │   └── s3_client.py
+│   ├── models/                        # Pydantic schemas (App, TimelineStep, Invite, ...)
+│   ├── requirements.txt
+│   └── tests/
+│
+├── infra/                              # AWS CDK — deploys the platform itself
+│   ├── bin/
+│   │   └── app.ts
+│   ├── lib/
+│   │   ├── network-stack.ts           # VPC, ALB
+│   │   ├── compute-stack.ts           # Fargate cluster, Lambda functions
+│   │   ├── data-stack.ts              # DynamoDB tables, S3 buckets
+│   │   ├── auth-stack.ts              # Cognito user pool, app client
+│   │   └── frontend-stack.ts          # S3 + CloudFront
+│   ├── cdk.json
+│   └── package.json
+│
+├── generated-app-runtime/              # minimal sandbox template each generated app runs inside
+│   ├── Dockerfile
+│   └── entrypoint template files
+│
+└── docs/
+    ├── architecture.md                # diagram + service mapping
+    ├── demo-script.md                 # clarify → build → edit → backtrack flow
+    └── blog/                          # drafts for the AWS Builder Center "Best Blog" entry
+```
+
+### Notes for the Best UI track
+
+- **`design/tokens.css`** holds the palette/type/spacing decisions as their own file, not scattered Tailwind classes — keeps the visual identity intentional and easy to review as a whole.
+- **One deliberate motion moment**, isolated in `motion.css` — the strongest candidate is the timeline node animating in as the agent completes a step live.
+- **`timeline/` is its own component folder**, separate from `dashboard/` — it's the most distinctive UI surface and the strongest Best-UI evidence, so it gets room to be a considered piece rather than a bolt-on panel.
+- Keep `Home.tsx` minimal — a single input, not a dashboard shell — so it contrasts cleanly with the richer timeline view later in the demo.
+
+---
+
+## 7. User Flow (End-to-End Demo)
 
 1. **Clarify** — User types a request. Agent asks one quick clarifying question with a suggested default.
 2. **Build** — Agent plans, generates code, and deploys. Live URL appears in ~10–20 seconds.
@@ -146,7 +241,7 @@ This project is a thin, opinionated cloud layer built specifically for that gap 
 
 ---
 
-## 7. Judging Criteria Alignment
+## 8. Judging Criteria Alignment
 
 | Criteria | How this project addresses it |
 |---|---|
@@ -157,7 +252,7 @@ This project is a thin, opinionated cloud layer built specifically for that gap 
 
 ---
 
-## 8. Setup & Local Development
+## 9. Setup & Local Development
 
 ```bash
 # Clone the repo
@@ -193,7 +288,7 @@ SES_SENDER_EMAIL=
 
 ---
 
-## 9. Roadmap / Future Work
+## 10. Roadmap / Future Work
 
 - Branching timeline diffs (visual compare between any two nodes, not just linear revert)
 - Team-level shared workspaces (multiple apps under one organization)
@@ -203,12 +298,12 @@ SES_SENDER_EMAIL=
 
 ---
 
-## 10. Team
+## 11. Team
 
 - [Add team member names / roles]
 
 ---
 
-## 11. License
+## 12. License
 
 [Add license]
