@@ -5,6 +5,7 @@ from __future__ import annotations
 from fastapi import FastAPI
 
 from backend.api.routes_apps import router as apps_router
+from backend.api.routes_timeline import router as timeline_router
 from backend.config import Settings, get_settings
 
 app = FastAPI(
@@ -15,6 +16,7 @@ app = FastAPI(
 
 # ── Routers ──────────────────────────────────────────────────────────────
 app.include_router(apps_router)
+app.include_router(timeline_router)
 
 
 # ── Health ───────────────────────────────────────────────────────────────
