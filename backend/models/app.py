@@ -1,33 +1,126 @@
-"""App and TimelineStep Pydantic models."""
-from pydantic import BaseModel
+"""Core Pydantic data models for the BharatBuilds platform.
+
+All models use strict validation. Timestamps default to UTC. IDs are
+generated lazily via ``uuid4`` so callers never need to supply them
+unless they already have one (e.g., during deserialization from DynamoDB).
+"""
+
+from __future__ import annotations
+
+import uuid
+from datetime import datetime, timezone
+from enum import StrEnum
 from typing import Optional
-from datetime import datetime
+
+from pydantic import BaseModel, Field
+
+
+# ── Enums ────────────────────────────────────────────────────────────────
+
+
+class AppStatus(StrEnum):
+    """Lifecycle status of a deployed app."""
+
+    PENDING = "pending"
+    BUILDING = "building"
+    DEPLOYED = "deployed"
+    FAILED = "failed"
+
+
+class StepType(StrEnum):
+    """Type of an agent pipeline step."""
+
+    CLARIFY = "clarify"
+    PLAN = "plan"
+    TOOL_CALL = "tool_call"
+    CODEGEN = "codegen"
+    RETRY = "retry"
+    DEPLOY = "deploy"
+    REVERT = "revert"
+
+
+class StepStatus(StrEnum):
+    """Outcome status of a timeline step."""
+
+    OK = "ok"
+    ERROR = "error"
+    REVERTED = "reverted"
+
+
+class Role(StrEnum):
+    """Access roles for shared apps."""
+
+    VIEWER = "viewer"
+    EDITOR = "editor"
+    OWNER = "owner"
+
+
+# ── Core Models ──────────────────────────────────────────────────────────
+
+
+def _utcnow() -> datetime:
+    return datetime.now(timezone.utc)
+
+
+def _new_id() -> str:
+    return str(uuid.uuid4())
 
 
 class App(BaseModel):
-    app_id: str
+    """A deployed user app."""
+
+    app_id: str = Field(default_factory=_new_id)
     owner_id: str
-    title: str
-    prompt: str
+    title: str = Field(min_length=1, max_length=200)
+    prompt: str = Field(min_length=1)
     live_url: Optional[str] = None
-    status: str = "pending"
-    created_at: datetime = datetime.utcnow()
+    status: AppStatus = AppStatus.PENDING
+    created_at: datetime = Field(default_factory=_utcnow)
+    updated_at: datetime = Field(default_factory=_utcnow)
 
 
 class TimelineStep(BaseModel):
+    """A single node in the decision timeline."""
+
     app_id: str
-    step_id: str
-    step_type: str  # plan | tool_call | codegen | retry | deploy
+    step_id: str = Field(default_factory=_new_id)
+    parent_step_id: Optional[str] = None
+    step_type: StepType
     input_text: Optional[str] = None
     reasoning: Optional[str] = None
+    code_snapshot: Optional[str] = None
     code_diff: Optional[str] = None
-    latency_ms: Optional[int] = None
-    token_usage: Optional[int] = None
-    status: str = "ok"  # ok | error | reverted
-    created_at: datetime = datetime.utcnow()
+    latency_ms: Optional[int] = Field(default=None, ge=0)
+    token_usage: Optional[int] = Field(default=None, ge=0)
+    status: StepStatus = StepStatus.OK
+    error_message: Optional[str] = None
+    created_at: datetime = Field(default_factory=_utcnow)
 
 
 class Invite(BaseModel):
+    """An invitation to share an app with another user."""
+
     app_id: str
-    email: str
-    role: str = "viewer"  # viewer | editor
+    email: str = Field(min_length=3, max_length=254)
+    role: Role = Role.VIEWER
+    invited_at: datetime = Field(default_factory=_utcnow)
+
+
+# ── Clarify Models ───────────────────────────────────────────────────────
+
+
+class ClarifyQuestion(BaseModel):
+    """A single clarifying question posed to the user."""
+
+    question: str
+    suggested_default: str
+    why_it_matters: str
+
+
+class ClarifyResponse(BaseModel):
+    """Result of the ambiguity-check pass (0–3 questions)."""
+
+    needs_clarification: bool
+    questions: list[ClarifyQuestion] = Field(
+        default_factory=list, max_length=3
+    )
