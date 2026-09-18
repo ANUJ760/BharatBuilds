@@ -6,6 +6,9 @@ from backend.models.app import (
     ClarifyQuestion,
     ClarifyResponse,
     Invite,
+    MaintenanceIssue,
+    MaintenanceJob,
+    MaintenanceStatus,
     Role,
     StepStatus,
     StepType,
@@ -18,8 +21,12 @@ __all__ = [
     "ClarifyQuestion",
     "ClarifyResponse",
     "Invite",
+    "MaintenanceIssue",
+    "MaintenanceJob",
+    "MaintenanceStatus",
     "Role",
     "StepStatus",
     "StepType",
     "TimelineStep",
 ]
+

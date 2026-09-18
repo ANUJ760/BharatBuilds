@@ -37,6 +37,13 @@ class StepType(StrEnum):
     RETRY = "retry"
     DEPLOY = "deploy"
     REVERT = "revert"
+    # Auto-Maintenance lifecycle steps
+    MAINTENANCE_DETECT = "maintenance_detect"
+    MAINTENANCE_DIAGNOSE = "maintenance_diagnose"
+    MAINTENANCE_PATCH = "maintenance_patch"
+    MAINTENANCE_VERIFY = "maintenance_verify"
+    MAINTENANCE_PROMOTE = "maintenance_promote"
+    MAINTENANCE_REJECT = "maintenance_reject"
 
 
 class StepStatus(StrEnum):
@@ -45,6 +52,18 @@ class StepStatus(StrEnum):
     OK = "ok"
     ERROR = "error"
     REVERTED = "reverted"
+
+
+class MaintenanceStatus(StrEnum):
+    """Lifecycle status of an auto-maintenance job."""
+
+    PENDING = "pending"
+    DIAGNOSING = "diagnosing"
+    PATCHING = "patching"
+    VERIFYING = "verifying"
+    PROMOTED = "promoted"
+    REJECTED = "rejected"
+    FAILED = "failed"
 
 
 class Role(StrEnum):
@@ -124,3 +143,34 @@ class ClarifyResponse(BaseModel):
     questions: list[ClarifyQuestion] = Field(
         default_factory=list, max_length=3
     )
+
+
+# ── Maintenance Models ───────────────────────────────────────────────────
+
+
+class MaintenanceIssue(BaseModel):
+    """A detected runtime or functional defect triggering auto-maintenance."""
+
+    issue_id: str = Field(default_factory=_new_id)
+    issue_type: str = Field(min_length=1, description="Category (e.g. '5xx_error', 'syntax_error', 'runtime_exception')")
+    severity: str = Field(default="high", description="Severity level: low, medium, high, critical")
+    error_message: str = Field(min_length=1, description="Primary error or exception message")
+    stack_trace: Optional[str] = None
+    endpoint: Optional[str] = None
+    detection_source: str = Field(default="synthetic_probe", description="Source of detection")
+    detected_at: datetime = Field(default_factory=_utcnow)
+
+
+class MaintenanceJob(BaseModel):
+    """Tracking record for an autonomous maintenance lifecycle execution."""
+
+    job_id: str = Field(default_factory=_new_id)
+    app_id: str
+    status: MaintenanceStatus = MaintenanceStatus.PENDING
+    issue: MaintenanceIssue
+    candidate_step_id: Optional[str] = None
+    attempt_count: int = Field(default=1, ge=1)
+    summary: Optional[str] = None
+    created_at: datetime = Field(default_factory=_utcnow)
+    updated_at: datetime = Field(default_factory=_utcnow)
+
