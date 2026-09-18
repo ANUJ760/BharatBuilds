@@ -1,0 +1,2 @@
+# Base requirements for generated apps
+# Agent may append additional dependencies
