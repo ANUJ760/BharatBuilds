@@ -5,6 +5,7 @@ from backend.models.app import (
     AppStatus,
     ClarifyQuestion,
     ClarifyResponse,
+    HealthCheckResult,
     Invite,
     MaintenanceIssue,
     MaintenanceJob,
@@ -21,6 +22,7 @@ __all__ = [
     "AppStatus",
     "ClarifyQuestion",
     "ClarifyResponse",
+    "HealthCheckResult",
     "Invite",
     "MaintenanceIssue",
     "MaintenanceJob",
@@ -31,5 +33,6 @@ __all__ = [
     "StepType",
     "TimelineStep",
 ]
+
 
 

@@ -185,3 +185,15 @@ class RepairResult(BaseModel):
     error_message: Optional[str] = Field(default=None, description="Error message if repair failed")
 
 
+class HealthCheckResult(BaseModel):
+    """Result of an HTTP synthetic health probe on a deployed app."""
+
+    url: str
+    is_healthy: bool
+    status_code: Optional[int] = None
+    latency_ms: Optional[int] = Field(default=None, ge=0)
+    error_message: Optional[str] = None
+    checked_at: datetime = Field(default_factory=_utcnow)
+
+
+
