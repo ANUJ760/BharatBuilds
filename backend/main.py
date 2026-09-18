@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 
+from backend.api.routes_apps import router as apps_router
 from backend.config import Settings, get_settings
 
 app = FastAPI(
@@ -11,6 +12,12 @@ app = FastAPI(
     version="0.1.0",
     description="A cloud for small software — prompt to live app in under a minute.",
 )
+
+# ── Routers ──────────────────────────────────────────────────────────────
+app.include_router(apps_router)
+
+
+# ── Health ───────────────────────────────────────────────────────────────
 
 
 @app.get("/health")
@@ -36,6 +43,4 @@ async def health():
         }
         return {"status": "ok", "config": config_present}
     except Exception:
-        # Settings validation failed — still return a healthy status
-        # but signal that config is not loaded.
         return {"status": "ok", "config": "not_loaded"}
