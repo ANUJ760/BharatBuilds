@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container-lowest": "#0e0e0e", "text-secondary": "#A1A1AA", "tertiary": "#ffb873", "secondary-container": "#00a572", "surface-container-high": "#2a2a2a", "on-tertiary-fixed-variant": "#6a3b00", "secondary": "#4edea3", "background": "#131313", "surface-variant": "#353534", "on-primary-fixed": "#001f26", "on-primary-fixed-variant": "#004e5c", "on-surface-variant": "#bcc9cd", "outline-variant": "#3d494c", "on-secondary-fixed": "#002113", "inverse-surface": "#e5e2e1", "on-error-container": "#ffdad6", "secondary-fixed-dim": "#4edea3", "primary-fixed": "#acedff", "on-tertiary-fixed": "#2d1600", "text-primary": "#FFFFFF", "on-error": "#690005", "error-container": "#93000a", "on-tertiary": "#4b2800", "surface-bright": "#3a3939", "surface-container": "#201f1f", "tertiary-container": "#e89337", "text-tertiary": "#71717A", "inverse-on-surface": "#313030", "surface-container-low": "#1c1b1b", "inverse-primary": "#00687a", "border-strong": "#27272A", "on-surface": "#e5e2e1", "on-secondary-fixed-variant": "#005236", "surface-base": "#050505", "tertiary-fixed-dim": "#ffb873", "on-secondary-container": "#00311f", "on-background": "#e5e2e1", "on-tertiary-container": "#5b3200", "primary-fixed-dim": "#4cd7f6", "surface": "#131313", "outline": "#869397", "secondary-fixed": "#6ffbbe", "primary-container": "#06b6d4", "on-primary": "#003640", "surface-tint": "#4cd7f6", "tertiary-fixed": "#ffdcbf", "border-subtle": "rgba(255, 255, 255, 0.08)", "error": "#ffb4ab", "surface-dim": "#131313", "on-primary-container": "#00424f", "primary": "#4cd7f6", "surface-container-highest": "#353534", "surface-elevated": "#0D0D0F", "surface-overlay": "#18181B", "on-secondary": "#003824" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "margin-desktop": "3rem", "space-sm": "0.5rem", "space-xs": "0.25rem", "space-lg": "1.5rem", "gutter-tablet": "1.5rem", "margin-tablet": "2rem", "space-xl": "2.5rem", "gutter-desktop": "2rem", "space-md": "1rem", "space-2xl": "4rem", "margin": "1rem", "gutter": "1rem" }, "fontFamily": { "body-sm": ["Geist"], "headline-lg": ["Geist"], "headline-lg-mobile": ["Geist"], "display": ["Geist"], "label-sm": ["Geist"], "label-md": ["Geist"], "headline-md": ["Geist"], "body-md": ["Geist"], "headline-sm": ["Geist"], "body-lg": ["Geist"] }, "fontSize": { "body-sm": ["0.8125rem", { "lineHeight": "1.5", "letterSpacing": "0", "fontWeight": "400" }], "headline-lg": ["2.25rem", { "lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600" }], "headline-lg-mobile": ["1.75rem", { "lineHeight": "1.25", "letterSpacing": "-0.025em", "fontWeight": "600" }], "display": ["3.5rem", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "600" }], "label-sm": ["0.6875rem", { "lineHeight": "1.2", "letterSpacing": "0.04em", "fontWeight": "500" }], "label-md": ["0.8125rem", { "lineHeight": "1.2", "letterSpacing": "0.02em", "fontWeight": "500" }], "headline-md": ["1.5rem", { "lineHeight": "1.3", "letterSpacing": "-0.02em", "fontWeight": "500" }], "body-md": ["0.9375rem", { "lineHeight": "1.55", "letterSpacing": "-0.005em", "fontWeight": "400" }], "headline-sm": ["1.25rem", { "lineHeight": "1.4", "letterSpacing": "-0.015em", "fontWeight": "500" }], "body-lg": ["1.125rem", { "lineHeight": "1.6", "letterSpacing": "-0.01em", "fontWeight": "400" }] } } } };</script></head><body class="bg-surface-base font-body-md text-on-surface antialiased selection:bg-primary selection:text-on-primary min-h-screen flex flex-col justify-between"><header class="fixed top-0 left-0 right-0 z-50 bg-[#050505]/80 backdrop-blur-xl border-b border-border-subtle"><div class="h-16 w-full px-gutter-desktop max-w-[1440px] mx-auto flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md"><a class="flex items-center gap-space-sm group focus:outline-none" data-path="home" href="#"><img alt="Cloud for Small Software Logo" class="h-8 w-auto object-contain transition-transform group-hover:scale-105" src="https://lh3.googleusercontent.com/aida/AEtjO1WRSwkvKSeP1E2o4UlOr3EfsDgAA56OlIAQ-mHTSGY-rZn7O97adndYdisv88MRa3TA1CFhLvXVXcPaEbsPB2J23yvyJsLAXbtgHgfAMnb4bhs5fhHHZyfFc9n2EF_FvPQyvcwThfClwWoVceyk47wyDNTGd5sIkTFxQuUBLOkzEj8RrfcNA5Q_xggs0cwfgr28HieuOpckw0BXGhe6zw0C_T-ex80m-fmJPCnI6cwZnZhaApWwbQCOIg"/><span class="font-headline-sm text-headline-sm text-text-primary tracking-tight font-semibold">A Cloud for Small Software</span></a><span class="hidden lg:inline-flex items-center px-space-xs py-0.5 rounded text-label-sm font-label-sm tracking-wider uppercase bg-surface-container text-primary border border-border-subtle">BB-26 / Tour Edition</span></div><nav class="flex items-center gap-space-xs p-1 rounded-lg bg-surface-container-lowest border border-border-subtle" data-active-classes="bg-surface-elevated text-primary border-border-subtle shadow-[0_0_12px_-3px_rgba(6,182,212,0.25)]"><a aria-current="page" class="px-space-md py-1.5 rounded font-label-md transition-all bg-surface-elevated text-primary border-border-subtle shadow-[0_0_12px_-3px_rgba(6,182,212,0.25)]" data-path="home" href="#">Home</a><a class="px-space-md py-1.5 rounded text-label-md font-label-md text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-all" data-path="workspace" href="#">Workspace</a><a class="px-space-md py-1.5 rounded text-label-md font-label-md text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-all" data-path="timeline" href="#">Timeline</a></nav><div class="flex items-center gap-space-md"><div class="hidden xl:flex items-center gap-space-sm px-space-sm py-1 rounded bg-surface-container-lowest border border-border-subtle"><div class="flex items-center gap-1.5"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span></span><span class="text-label-sm font-label-sm uppercase tracking-wider text-secondary font-mono">deployed</span></div><div class="h-3 w-px bg-border-strong"></div><div class="text-label-sm font-label-sm text-text-tertiary font-mono">lat: 24ms</div><div class="h-3 w-px bg-border-strong"></div><div class="text-label-sm font-label-sm text-text-tertiary font-mono">mem: 14MB</div></div><button class="hidden sm:flex items-center gap-space-xs px-space-md py-1.5 rounded bg-surface-elevated hover:bg-surface-overlay text-text-primary border border-border-subtle text-label-md font-label-md transition-all" type="button"><span class="material-symbols-outlined text-[16px] text-primary">bolt</span><span>Deploy Run</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ring-1 ring-border-subtle"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-surface-base flex-1"><div class="flex flex-col w-full text-on-surface">
+<div class="relative w-full overflow-hidden">
+<div class="absolute inset-0 pointer-events-none opacity-20">
+<svg class="w-full h-full" height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<pattern height="24" id="dot-grid" patternunits="userSpaceOnUse" width="24">
+<circle class="text-text-secondary" cx="2" cy="2" fill="currentColor" r="0.75"></circle>
+</pattern>
+</defs>
+<rect fill="url(#dot-grid)" height="100%" width="100%"></rect>
+</svg>
+</div>
+<div class="max-w-[1440px] mx-auto px-margin-tablet lg:px-margin-desktop py-space-md w-full relative z-10 flex flex-col gap-space-lg">
+<!-- Orchestrator Control Deck & State Context Header -->
+<section class="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-space-md bg-surface-container-lowest p-space-md rounded-xl shadow-xl">
+<div class="flex flex-wrap items-center gap-space-md">
+<div class="flex items-center gap-space-xs bg-surface-elevated px-space-sm py-1 rounded">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-text-tertiary">Orchestration</span>
+<span class="text-text-tertiary font-mono text-label-sm">/</span>
+<span class="flex items-center gap-1.5 font-label-sm text-label-sm font-mono text-secondary" id="active-state-indicator">
+<span class="h-2 w-2 rounded-full bg-secondary animate-ping opacity-75"></span>
+<span class="h-2 w-2 rounded-full bg-secondary -ml-3.5"></span>
+<span class="uppercase" id="active-state-name">deployed</span>
+</span>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-low p-0.5 rounded">
+<button class="state-btn flex items-center gap-1.5 px-space-sm py-1 rounded text-label-sm font-label-sm font-mono text-text-secondary hover:text-text-primary transition-all" id="btn-state-clarifying" onclick="setGlobalState('clarifying')">
+<span class="h-1.5 w-1.5 rounded-full bg-tertiary"></span>
+<span>clarifying</span>
+</button>
+<button class="state-btn flex items-center gap-1.5 px-space-sm py-1 rounded text-label-sm font-label-sm font-mono text-text-secondary hover:text-text-primary transition-all" id="btn-state-building" onclick="setGlobalState('building')">
+<span class="h-1.5 w-1.5 rounded-full bg-primary"></span>
+<span>building</span>
+</button>
+<button class="state-btn active-state flex items-center gap-1.5 px-space-sm py-1 rounded text-label-sm font-label-sm font-mono bg-surface-elevated text-secondary shadow-sm transition-all" id="btn-state-deployed" onclick="setGlobalState('deployed')">
+<span class="h-1.5 w-1.5 rounded-full bg-secondary"></span>
+<span>deployed</span>
+</button>
+</div>
+<div class="hidden sm:flex items-center gap-space-xs text-label-sm font-label-sm text-text-tertiary font-mono">
+<span>Target:</span>
+<a class="text-primary hover:underline flex items-center gap-1" href="https://acfs-092-live.internal.network" id="state-endpoint" target="_blank">
+<span>https://acfs-092-live.internal.network</span>
+<span class="material-symbols-outlined text-[12px]">open_in_new</span>
+</a>
+</div>
+</div>
+<!-- Telemetry Pill Rack -->
+<div class="flex flex-wrap items-center gap-space-sm text-label-sm font-label-sm font-mono text-text-tertiary">
+<div class="flex items-center gap-1 bg-surface-container-low px-space-sm py-1 rounded">
+<span class="text-text-tertiary">Engine:</span>
+<span class="text-text-primary">micro-vm v0.4.12</span>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-low px-space-sm py-1 rounded">
+<span class="text-text-tertiary">Cluster:</span>
+<span class="text-text-secondary">blr-edge-01</span>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-low px-space-sm py-1 rounded">
+<span class="text-text-tertiary">Context:</span>
+<span class="text-primary font-mono">prompt-spec.json</span>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-low px-space-sm py-1 rounded">
+<span class="text-text-tertiary">Latency:</span>
+<span class="text-secondary font-mono" id="telemetry-latency">19ms</span>
+</div>
+</div>
+</section>
+<!-- Primary Page Router / View Selector Bar -->
+<section class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-space-md">
+<div class="flex items-center gap-2 bg-surface-container-lowest p-1 rounded-xl w-fit">
+<button class="route-tab px-space-md py-2 rounded-lg font-label-md text-label-md flex items-center gap-2 transition-all bg-surface-elevated text-primary shadow-sm" id="tab-nav-home" onclick="switchRoute('home')">
+<span class="material-symbols-outlined text-[16px]">terminal</span>
+<span>Intake &amp; Prompt</span>
+<kbd class="ml-1 px-1.5 py-0.5 rounded bg-surface-container-high text-label-sm font-mono text-text-tertiary">1</kbd>
+</button>
+<button class="route-tab px-space-md py-2 rounded-lg font-label-md text-label-md flex items-center gap-2 transition-all text-text-secondary hover:text-text-primary hover:bg-surface-elevated" id="tab-nav-workspace" onclick="switchRoute('workspace')">
+<span class="material-symbols-outlined text-[16px]">dashboard_customize</span>
+<span>Live Workspace</span>
+<kbd class="ml-1 px-1.5 py-0.5 rounded bg-surface-container-high text-label-sm font-mono text-text-tertiary">2</kbd>
+</button>
+<button class="route-tab px-space-md py-2 rounded-lg font-label-md text-label-md flex items-center gap-2 transition-all text-text-secondary hover:text-text-primary hover:bg-surface-elevated" id="tab-nav-timeline" onclick="switchRoute('timeline')">
+<span class="material-symbols-outlined text-[16px]">account_tree</span>
+<span>Decision Graph</span>
+<kbd class="ml-1 px-1.5 py-0.5 rounded bg-surface-container-high text-label-sm font-mono text-text-tertiary">3</kbd>
+</button>
+</div>
+<div class="flex items-center gap-space-sm text-text-secondary font-body-sm text-body-sm">
+<div class="flex items-center gap-1 bg-surface-container-lowest px-space-sm py-1.5 rounded-lg text-label-sm font-label-sm">
+<kbd class="px-1.5 py-0.5 rounded bg-surface-container-high text-text-secondary font-mono">⌘K</kbd>
+<span class="text-text-tertiary">Global Palette</span>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-lowest px-space-sm py-1.5 rounded-lg text-label-sm font-label-sm">
+<span class="h-2 w-2 rounded-full bg-secondary"></span>
+<span class="text-text-primary font-mono">Edge Cluster Connected</span>
+</div>
+</div>
+</section>
+<!-- Dynamic Route View Container -->
+<div class="w-full relative min-h-[640px]">
+<!-- VIEW 1: HOME (Landing / Prompt Intake Placeholder) -->
+<div class="route-view flex flex-col gap-space-lg w-full transition-opacity duration-200" id="view-home">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
+<!-- Left Intake Hero Card -->
+<div class="lg:col-span-8 flex flex-col justify-between bg-surface-container-lowest p-space-xl rounded-xl relative overflow-hidden">
+<div class="absolute -right-16 -top-16 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="px-space-xs py-0.5 rounded text-label-sm font-label-sm font-mono uppercase tracking-wider bg-surface-container text-primary">Tour Station</span>
+<span class="text-text-tertiary font-mono text-label-sm">ap-south-1 // Node 26</span>
+</div>
+<span class="font-mono text-label-sm text-text-tertiary">ID: PRM-0941</span>
+</div>
+<div class="flex flex-col gap-space-xs">
+<span class="text-label-sm font-label-sm uppercase tracking-widest text-text-tertiary font-mono">Architecture Manifesto</span>
+<h2 class="text-headline-lg font-headline-lg text-text-primary tracking-tight">Micro-applications engineered for hyperspeed generation.</h2>
+<p class="text-body-md font-body-md text-text-secondary max-w-2xl">
+                    Describe your toolchain, database models, and dynamic views. The compiler handles the sandbox runtime, persistent key-value states, and cold-start optimization in under 300ms.
+                  </p>
+</div>
+<!-- Interactive Prompt Editor Placeholder Box -->
+<div class="mt-space-md flex flex-col bg-surface-container-low rounded-lg p-space-md relative focus-within:ring-1 focus-within:ring-primary">
+<div class="flex items-center justify-between pb-space-sm mb-space-sm bg-transparent">
+<div class="flex items-center gap-2">
+<span class="h-2.5 w-2.5 rounded-full bg-border-strong"></span>
+<span class="h-2.5 w-2.5 rounded-full bg-border-strong"></span>
+<span class="h-2.5 w-2.5 rounded-full bg-border-strong"></span>
+<span class="ml-2 font-mono text-label-sm text-text-tertiary">generator-prompt.yaml</span>
+</div>
+<span class="text-label-sm font-mono text-text-tertiary">UTF-8</span>
+</div>
+<textarea class="w-full bg-transparent font-mono text-body-sm text-text-primary placeholder:text-text-tertiary resize-none focus:outline-none" placeholder="A real-time metrics telemetry dashboard for regional IoT micro-relays across South Asia with SQLite edge persistence and interactive WebGL topological nodes..." rows="4"></textarea>
+<div class="flex items-center justify-between pt-space-sm mt-space-sm bg-surface-container/30 px-space-sm py-1.5 rounded">
+<div class="flex items-center gap-space-sm text-label-sm font-mono text-text-tertiary">
+<span>Model: <strong class="text-text-secondary font-normal">Spec-Synthesizer-v4</strong></span>
+<span>·</span>
+<span>Target VM: <strong class="text-text-secondary font-normal">Firecracker (0.2vCPU)</strong></span>
+</div>
+<button class="flex items-center gap-1.5 bg-primary text-on-primary font-label-md px-space-md py-1.5 rounded hover:opacity-90 transition-all" onclick="setGlobalState('building')">
+<span class="material-symbols-outlined text-[16px]">play_arrow</span>
+<span>Compile Spec</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Quick Intake Suggestion Chips -->
+<div class="mt-space-lg flex flex-wrap items-center gap-space-xs pt-space-md bg-surface-container-lowest">
+<span class="font-mono text-label-sm text-text-tertiary mr-space-xs">Starter Blueprints:</span>
+<button class="bg-surface-elevated hover:bg-surface-overlay text-text-secondary hover:text-text-primary px-space-sm py-1 rounded text-label-sm font-mono transition-colors">
+                  Postgres + Edge API
+                </button>
+<button class="bg-surface-elevated hover:bg-surface-overlay text-text-secondary hover:text-text-primary px-space-sm py-1 rounded text-label-sm font-mono transition-colors">
+                  Autonomous Webhook Sink
+                </button>
+<button class="bg-surface-elevated hover:bg-surface-overlay text-text-secondary hover:text-text-primary px-space-sm py-1 rounded text-label-sm font-mono transition-colors">
+                  Vector Memory Registry
+                </button>
+<button class="bg-surface-elevated hover:bg-surface-overlay text-text-secondary hover:text-text-primary px-space-sm py-1 rounded text-label-sm font-mono transition-colors">
+                  Bharat Cloud Storage Node
+                </button>
+</div>
+</div>
+<!-- Right Architecture Map & Metadata -->
+<div class="lg:col-span-4 flex flex-col gap-space-md">
+<div class="bg-surface-container-lowest p-space-lg rounded-xl flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-sm text-headline-sm text-text-primary">Micro-Architecture</h3>
+<span class="material-symbols-outlined text-text-tertiary">hub</span>
+</div>
+<p class="text-body-sm font-body-sm text-text-secondary">
+                  Visual blueprint for lightweight zero-maintenance ephemeral instances generated on demand.
+                </p>
+<!-- Architecture Blueprint Vector Placeholder -->
+<div class="w-full h-48 bg-surface-elevated rounded-lg p-space-sm flex items-center justify-center relative overflow-hidden">
+<svg class="w-full h-full text-text-tertiary/60" fill="none" viewbox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+<rect fill="currentColor" fill-opacity="0.1" height="40" rx="4" stroke="currentColor" stroke-dasharray="2 2" width="70" x="20" y="30"></rect>
+<text fill="#FFFFFF" font-family="Geist" font-size="9" text-anchor="middle" x="55" y="54">Ingress CDN</text>
+<line stroke="#4cd7f6" stroke-width="1.5" x1="90" x2="130" y1="50" y2="50"></line>
+<circle cx="130" cy="50" fill="#4cd7f6" r="2"></circle>
+<rect fill="currentColor" fill-opacity="0.2" height="50" rx="4" stroke="#4cd7f6" width="80" x="130" y="25"></rect>
+<text fill="#4cd7f6" font-family="Geist" font-size="9" font-weight="600" text-anchor="middle" x="170" y="48">Firecracker VM</text>
+<text fill="#A1A1AA" font-family="Geist" font-size="8" text-anchor="middle" x="170" y="62">14MB RAM</text>
+<line stroke="#4edea3" stroke-width="1.5" x1="210" x2="245" y1="50" y2="50"></line>
+<circle cx="245" cy="50" fill="#4edea3" r="2"></circle>
+<rect fill="currentColor" fill-opacity="0.1" height="40" rx="4" stroke="currentColor" stroke-dasharray="2 2" width="60" x="245" y="30"></rect>
+<text fill="#FFFFFF" font-family="Geist" font-size="9" text-anchor="middle" x="275" y="54">Edge DB</text>
+<path d="M 170 75 L 170 110 L 95 110" fill="none" stroke="#71717A" stroke-dasharray="3 3" stroke-width="1"></path>
+<rect fill="currentColor" fill-opacity="0.08" height="30" rx="4" width="75" x="20" y="95"></rect>
+<text fill="#A1A1AA" font-family="Geist" font-size="8" text-anchor="middle" x="57" y="114">Trace Logger</text>
+</svg>
+<span class="absolute bottom-2 right-2 text-label-sm font-mono text-text-tertiary">Topology: auto-mesh</span>
+</div>
+<div class="flex flex-col gap-2 pt-2 text-label-sm font-mono text-text-tertiary">
+<div class="flex justify-between items-center py-1 bg-surface-container/20 px-2 rounded">
+<span>Target Provision Latency</span>
+<span class="text-secondary">&lt; 320ms</span>
+</div>
+<div class="flex justify-between items-center py-1 bg-surface-container/20 px-2 rounded">
+<span>Cold Sandbox Footprint</span>
+<span class="text-text-primary">8.4 MB</span>
+</div>
+<div class="flex justify-between items-center py-1 bg-surface-container/20 px-2 rounded">
+<span>Zero Idle Cloud Cost</span>
+<span class="text-primary">Enforced</span>
+</div>
+</div>
+</div>
+<!-- Tour Edition Context Card -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl flex flex-col gap-space-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary text-[18px]">tour</span>
+<span class="font-headline-sm text-headline-sm text-text-primary">Bharat Builds 2026</span>
+</div>
+<p class="text-body-sm font-body-sm text-text-secondary">
+                  Special Tour Edition node running live in regional Mumbai cluster. Designed for indie software architects shipping hyper-efficient tools.
+                </p>
+<div class="flex items-center gap-2 mt-2 pt-2 bg-surface-container/30 p-2 rounded">
+<div class="h-2 w-2 rounded-full bg-secondary"></div>
+<span class="text-label-sm font-mono text-text-secondary">Keynote Session: Stage 01 // 11:30 IST</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- VIEW 2: WORKSPACE (Live App & Chat Split Placeholder) -->
+<div class="route-view hidden flex-col gap-space-lg w-full transition-opacity duration-200" id="view-workspace">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md h-[720px]">
+<!-- Left Side: Interactive Agent Chat & Context Stream -->
+<div class="lg:col-span-5 flex flex-col justify-between bg-surface-container-lowest rounded-xl overflow-hidden p-space-md">
+<div class="flex items-center justify-between pb-space-sm bg-surface-container/20 px-space-sm py-2 rounded">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">forum</span>
+<span class="font-label-md font-label-md text-text-primary">Agent Conversation</span>
+</div>
+<span class="font-mono text-label-sm text-text-tertiary">Thread: #bld-884</span>
+</div>
+<!-- Chat Message Scroll Arena -->
+<div class="flex-1 flex flex-col gap-space-md overflow-y-auto py-space-md pr-space-xs">
+<!-- System Prompt / Context Injection -->
+<div class="flex gap-space-sm items-start">
+<div class="w-6 h-6 rounded bg-surface-elevated flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[14px] text-text-tertiary">smart_toy</span>
+</div>
+<div class="flex flex-col gap-1 max-w-[85%]">
+<span class="font-mono text-label-sm text-text-tertiary">Compiler Agent · 10:41 AM</span>
+<div class="bg-surface-elevated p-space-md rounded-lg text-body-sm font-body-sm text-on-surface">
+                      Initialized target architecture for <code class="text-primary font-mono">edge-telemetry-relay</code>. Analyzing schema and compiling SQLite in-memory tables.
+                    </div>
+</div>
+</div>
+<!-- User Question -->
+<div class="flex gap-space-sm items-start flex-row-reverse">
+<div class="w-6 h-6 rounded bg-primary flex items-center justify-center shrink-0 mt-0.5 text-on-primary">
+<span class="material-symbols-outlined text-[14px]">person</span>
+</div>
+<div class="flex flex-col gap-1 items-end max-w-[85%]">
+<span class="font-mono text-label-sm text-text-tertiary">Developer · 10:42 AM</span>
+<div class="bg-surface-container p-space-md rounded-lg text-body-sm font-body-sm text-text-primary">
+                      Please expose a dynamic Webhook endpoint at <code class="text-secondary font-mono">/api/v1/ingest</code> with token authentication and rate limiting.
+                    </div>
+</div>
+</div>
+<!-- Agent Clarification / Reaction -->
+<div class="flex gap-space-sm items-start">
+<div class="w-6 h-6 rounded bg-surface-elevated flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[14px] text-primary">auto_fix_high</span>
+</div>
+<div class="flex flex-col gap-1 max-w-[85%]">
+<span class="font-mono text-label-sm text-text-tertiary">Compiler Agent · 10:42 AM</span>
+<div class="bg-surface-elevated p-space-md rounded-lg text-body-sm font-body-sm text-on-surface flex flex-col gap-2">
+<p>Injected middleware token verifier into micro-service envelope. Hot-reloading live canvas sandbox now...</p>
+<div class="flex items-center gap-2 p-2 bg-surface-base rounded font-mono text-label-sm text-secondary">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>Hot patch applied (42ms)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Message Input Form Placeholder -->
+<div class="pt-space-sm bg-surface-container/20 p-space-xs rounded-lg flex items-center gap-space-sm">
+<input class="flex-1 bg-transparent px-space-sm py-2 font-body-sm text-body-sm text-text-primary placeholder:text-text-tertiary focus:outline-none" placeholder="Request schema mutation or visual alteration..." type="text"/>
+<button class="bg-surface-elevated hover:bg-surface-overlay text-text-primary p-2 rounded transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">send</span>
+</button>
+</div>
+</div>
+<!-- Right Side: Live Interactive App Canvas -->
+<div class="lg:col-span-7 flex flex-col bg-surface-container-lowest rounded-xl overflow-hidden">
+<!-- Canvas Window Header -->
+<div class="flex items-center justify-between px-space-md py-space-sm bg-surface-container-low">
+<div class="flex items-center gap-space-sm">
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-border-strong"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-border-strong"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-border-strong"></span>
+</div>
+<div class="flex items-center gap-2 bg-surface-elevated px-space-sm py-1 rounded text-label-sm font-mono text-text-secondary">
+<span class="material-symbols-outlined text-[12px] text-secondary">lock</span>
+<span>sandboxed-app://tour26-stage-preview</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="p-1 rounded text-text-tertiary hover:text-text-primary bg-surface-elevated">
+<span class="material-symbols-outlined text-[16px]">refresh</span>
+</button>
+<button class="p-1 rounded text-text-tertiary hover:text-text-primary bg-surface-elevated">
+<span class="material-symbols-outlined text-[16px]">open_in_new</span>
+</button>
+</div>
+</div>
+<!-- Sandboxed Preview Area -->
+<div class="flex-1 bg-surface-base p-space-lg flex flex-col gap-space-md overflow-hidden relative">
+<!-- Sandbox Mock Content -->
+<div class="flex items-center justify-between pb-space-sm bg-surface-container-lowest p-space-md rounded-lg">
+<div>
+<h4 class="font-headline-sm text-headline-sm text-text-primary">Regional Relay Ingress</h4>
+<p class="text-body-sm font-body-sm text-text-tertiary">Realtime telemetry telemetry stream - Mumbai Cluster</p>
+</div>
+<div class="flex items-center gap-2 font-mono text-label-sm text-secondary bg-secondary/10 px-space-sm py-1 rounded">
+<span class="h-1.5 w-1.5 rounded-full bg-secondary"></span>
+<span>STREAM OK</span>
+</div>
+</div>
+<!-- Mock Dashboard Chart Graphic in Sandbox -->
+<div class="grid grid-cols-3 gap-space-md">
+<div class="bg-surface-container-lowest p-space-md rounded-lg flex flex-col gap-1">
+<span class="font-mono text-label-sm text-text-tertiary">Requests / sec</span>
+<span class="text-headline-md font-headline-md text-text-primary font-mono">1,492</span>
+<span class="text-label-sm text-secondary font-mono">+14.2%</span>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-lg flex flex-col gap-1">
+<span class="font-mono text-label-sm text-text-tertiary">Avg Execution</span>
+<span class="text-headline-md font-headline-md text-primary font-mono">1.2ms</span>
+<span class="text-label-sm text-text-tertiary font-mono">P99: 4.1ms</span>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-lg flex flex-col gap-1">
+<span class="font-mono text-label-sm text-text-tertiary">Active Workers</span>
+<span class="text-headline-md font-headline-md text-text-primary font-mono">8 / 16</span>
+<span class="text-label-sm text-secondary font-mono">Idle: 8</span>
+</div>
+</div>
+<!-- Mini SVG Flow Chart inside Live App -->
+<div class="flex-1 bg-surface-container-lowest p-space-md rounded-lg flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-mono text-label-sm text-text-tertiary">Micro-Transaction Log (Sandboxed)</span>
+<span class="font-mono text-label-sm text-primary">WebSocket: Live</span>
+</div>
+<div class="w-full h-32 flex items-end gap-2 pt-space-md">
+<div class="h-[60%] flex-1 bg-primary/20 hover:bg-primary/40 rounded transition-all"></div>
+<div class="h-[85%] flex-1 bg-primary/40 hover:bg-primary/60 rounded transition-all"></div>
+<div class="h-[40%] flex-1 bg-primary/20 hover:bg-primary/40 rounded transition-all"></div>
+<div class="h-[95%] flex-1 bg-primary/60 hover:bg-primary/80 rounded transition-all"></div>
+<div class="h-[75%] flex-1 bg-primary/30 hover:bg-primary/50 rounded transition-all"></div>
+<div class="h-[50%] flex-1 bg-primary/20 hover:bg-primary/40 rounded transition-all"></div>
+<div class="h-[90%] flex-1 bg-secondary/60 hover:bg-secondary/80 rounded transition-all"></div>
+<div class="h-[100%] flex-1 bg-primary/50 hover:bg-primary/70 rounded transition-all"></div>
+</div>
+<div class="flex justify-between font-mono text-label-sm text-text-tertiary pt-space-xs">
+<span>10:40:00</span>
+<span>10:41:00</span>
+<span>10:42:00</span>
+<span>Live (now)</span>
+</div>
+</div>
+<!-- Sandbox Overlay Badge -->
+<div class="absolute bottom-4 right-4 bg-surface-elevated/90 px-space-sm py-1 rounded text-label-sm font-mono text-text-tertiary flex items-center gap-1.5 shadow-md">
+<span class="material-symbols-outlined text-[14px] text-primary">security</span>
+<span>Isolated V8 Microtask</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- VIEW 3: TIMELINE (Visual Decision Graph Placeholder) -->
+<div class="route-view hidden flex-col gap-space-lg w-full transition-opacity duration-200" id="view-timeline">
+<div class="bg-surface-container-lowest p-space-xl rounded-xl flex flex-col gap-space-lg">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md pb-space-md">
+<div>
+<span class="text-label-sm font-label-sm uppercase tracking-widest text-text-tertiary font-mono">Execution Tree</span>
+<h3 class="text-headline-lg font-headline-lg text-text-primary tracking-tight">Deterministic Graph Checkpoints</h3>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-1.5 bg-surface-elevated px-space-md py-1.5 rounded font-label-md text-label-md text-text-secondary hover:text-text-primary">
+<span class="material-symbols-outlined text-[16px]">fork_right</span>
+<span>Fork Branch</span>
+</button>
+<button class="flex items-center gap-1.5 bg-surface-elevated px-space-md py-1.5 rounded font-label-md text-label-md text-text-secondary hover:text-text-primary">
+<span class="material-symbols-outlined text-[16px]">history</span>
+<span>Revert to Head</span>
+</button>
+</div>
+</div>
+<!-- Visual Decision Graph Wireframe -->
+<div class="w-full bg-surface-elevated rounded-lg p-space-lg overflow-x-auto min-h-[380px] flex items-center justify-center relative">
+<svg class="w-full min-w-[760px] h-64" fill="none" viewbox="0 0 760 220" xmlns="http://www.w3.org/2000/svg">
+<!-- Connectors -->
+<path d="M 120 110 L 250 110" stroke="#27272A" stroke-width="2"></path>
+<path d="M 250 110 L 380 60" stroke="#4cd7f6" stroke-dasharray="4 4" stroke-width="2"></path>
+<path d="M 250 110 L 380 160" stroke="#27272A" stroke-width="2"></path>
+<path d="M 380 60 L 520 60" stroke="#4cd7f6" stroke-width="2"></path>
+<path d="M 380 160 L 520 160" stroke="#27272A" stroke-width="2"></path>
+<path d="M 520 60 L 650 110" stroke="#4edea3" stroke-width="2"></path>
+<path d="M 520 160 L 650 110" stroke="#27272A" stroke-width="2"></path>
+<!-- Node 1: Prompt Ingest -->
+<g transform="translate(40, 80)">
+<rect fill="#0e0e0e" height="60" rx="6" stroke="#27272A" stroke-width="1.5" width="140"></rect>
+<circle cx="20" cy="30" fill="#4cd7f6" r="5"></circle>
+<text fill="#FFFFFF" font-family="Geist" font-size="11" font-weight="600" x="35" y="27">01. INGESTION</text>
+<text fill="#71717A" font-family="Geist" font-size="9" x="35" y="42">Natural Lang AST</text>
+</g>
+<!-- Node 2: Synthesis Core -->
+<g transform="translate(230, 80)">
+<rect fill="#0e0e0e" height="60" rx="6" stroke="#4cd7f6" stroke-width="1.5" width="140"></rect>
+<circle cx="20" cy="30" fill="#4cd7f6" r="5"></circle>
+<text fill="#FFFFFF" font-family="Geist" font-size="11" font-weight="600" x="35" y="27">02. SYNTHESIS</text>
+<text fill="#4cd7f6" font-family="Geist" font-size="9" x="35" y="42">Active Spec Tree</text>
+</g>
+<!-- Node 3A: Edge WASM (Selected) -->
+<g transform="translate(420, 30)">
+<rect fill="#0e0e0e" height="60" rx="6" stroke="#4edea3" stroke-width="1.5" width="140"></rect>
+<circle cx="20" cy="30" fill="#4edea3" r="5"></circle>
+<text fill="#FFFFFF" font-family="Geist" font-size="11" font-weight="600" x="35" y="27">BRANCH: V8 VM</text>
+<text fill="#4edea3" font-family="Geist" font-size="9" x="35" y="42">Target: Primary Edge</text>
+</g>
+<!-- Node 3B: Docker Fallback (Discarded) -->
+<g transform="translate(420, 130)">
+<rect fill="#0e0e0e" height="60" opacity="0.6" rx="6" stroke="#27272A" stroke-width="1.5" width="140"></rect>
+<circle cx="20" cy="30" fill="#71717A" r="5"></circle>
+<text fill="#A1A1AA" font-family="Geist" font-size="11" font-weight="600" x="35" y="27">BRANCH: OCI</text>
+<text fill="#71717A" font-family="Geist" font-size="9" x="35" y="42">Pruned (High Latency)</text>
+</g>
+<!-- Node 4: Production Endpoint -->
+<g transform="translate(610, 80)">
+<rect fill="#0e0e0e" height="60" rx="6" stroke="#4edea3" stroke-width="1.5" width="130"></rect>
+<circle cx="20" cy="30" fill="#4edea3" r="5"></circle>
+<text fill="#FFFFFF" font-family="Geist" font-size="11" font-weight="600" x="35" y="27">03. DEPLOYED</text>
+<text fill="#4edea3" font-family="Geist" font-size="9" x="35" y="42">Online: blr-edge-01</text>
+</g>
+</svg>
+<div class="absolute bottom-3 left-4 flex items-center gap-4 text-label-sm font-mono text-text-tertiary">
+<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-secondary"></span> Evaluated Path</span>
+<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-border-strong"></span> Pruned Variations</span>
+</div>
+</div>
+<!-- Step Checkpoints List -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<div class="bg-surface-elevated p-space-md rounded-lg flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="font-mono text-label-sm text-primary">Checkpoint #01</span>
+<span class="font-mono text-label-sm text-text-tertiary">10:40:11</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-text-primary">Prompt Tokenized</h4>
+<p class="text-body-sm font-body-sm text-text-secondary">AST validated with 4 database entities and 2 external edge bindings.</p>
+</div>
+<div class="bg-surface-elevated p-space-md rounded-lg flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="font-mono text-label-sm text-primary">Checkpoint #02</span>
+<span class="font-mono text-label-sm text-text-tertiary">10:41:04</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-text-primary">Kernel Allocated</h4>
+<p class="text-body-sm font-body-sm text-text-secondary">Assigned 14MB lightweight sandbox in Mumbai cluster relay 01a.</p>
+</div>
+<div class="bg-surface-elevated p-space-md rounded-lg flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="font-mono text-label-sm text-secondary">Checkpoint #03</span>
+<span class="font-mono text-label-sm text-text-tertiary">10:41:19</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-text-primary">Route Resolved</h4>
+<p class="text-body-sm font-body-sm text-text-secondary">Global ingress configured and TLS certificate hot-provisioned.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Real-Time Compiler Console Output Footer Strip -->
+<section class="bg-[#0A0A0C] p-space-md rounded-xl flex flex-col gap-space-sm font-mono text-label-sm">
+<div class="flex items-center justify-between text-text-tertiary pb-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary">terminal</span>
+<span class="text-text-secondary font-mono">Active Sandbox Log Pipeline</span>
+</div>
+<span class="text-text-tertiary" id="terminal-timestamp">Live stream active</span>
+</div>
+<div class="flex flex-col gap-1 text-text-secondary" id="compiler-console-logs">
+<div class="flex items-center gap-2">
+<span class="text-text-tertiary">[10:41:12]</span>
+<span class="text-secondary">[ok]</span>
+<span>MicroVM booted in 184ms with snapshot-base #a994.</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-text-tertiary">[10:41:18]</span>
+<span class="text-primary">[route]</span>
+<span>Ingress mapped: https://acfs-092-live.internal.network -&gt; 127.0.0.1:8080</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-text-tertiary">[10:41:19]</span>
+<span class="text-secondary">[ready]</span>
+<span class="text-text-primary">Ready for user interactions. Bharat Builds Tour Edition operational.</span>
+</div>
+</div>
+</section>
+</div>
+</div>
+<script>
+    // Global Routing State Handler
+    function switchRoute(routeName) {
+      const views = {
+        'home': document.getElementById('view-home'),
+        'workspace': document.getElementById('view-workspace'),
+        'timeline': document.getElementById('view-timeline')
+      };
+
+      const tabs = {
+        'home': document.getElementById('tab-nav-home'),
+        'workspace': document.getElementById('tab-nav-workspace'),
+        'timeline': document.getElementById('tab-nav-timeline')
+      };
+
+      // Set Visibility
+      Object.keys(views).forEach(key => {
+        if (key === routeName) {
+          views[key].classList.remove('hidden');
+          views[key].classList.add('flex');
+          
+          tabs[key].classList.remove('text-text-secondary');
+          tabs[key].classList.add('bg-surface-elevated', 'text-primary');
+        } else {
+          views[key].classList.remove('flex');
+          views[key].classList.add('hidden');
+          
+          tabs[key].classList.remove('bg-surface-elevated', 'text-primary');
+          tabs[key].classList.add('text-text-secondary');
+        }
+      });
+    }
+
+    // Global Build State Controller Handler
+    function setGlobalState(state) {
+      const indicator = document.getElementById('active-state-indicator');
+      const stateName = document.getElementById('active-state-name');
+      const endpoint = document.getElementById('state-endpoint');
+      const latency = document.getElementById('telemetry-latency');
+      const consoleLogs = document.getElementById('compiler-console-logs');
+
+      // Update state buttons styling
+      const buttons = {
+        'clarifying': document.getElementById('btn-state-clarifying'),
+        'building': document.getElementById('btn-state-building'),
+        'deployed': document.getElementById('btn-state-deployed')
+      };
+
+      Object.keys(buttons).forEach(k => {
+        if (k === state) {
+          buttons[k].className = 'state-btn active-state flex items-center gap-1.5 px-space-sm py-1 rounded text-label-sm font-label-sm font-mono bg-surface-elevated text-primary shadow-sm transition-all';
+        } else {
+          buttons[k].className = 'state-btn flex items-center gap-1.5 px-space-sm py-1 rounded text-label-sm font-label-sm font-mono text-text-secondary hover:text-text-primary transition-all';
+        }
+      });
+
+      const now = new Date().toLocaleTimeString();
+
+      if (state === 'clarifying') {
+        stateName.textContent = 'CLARIFYING';
+        indicator.className = 'flex items-center gap-1.5 font-label-sm text-label-sm font-mono text-tertiary';
+        indicator.innerHTML = '<span class="h-2 w-2 rounded-full bg-tertiary animate-pulse"></span><span>CLARIFYING</span>';
+        latency.textContent = '8ms';
+        endpoint.textContent = 'waiting for spec clarification...';
+        endpoint.className = 'text-tertiary italic';
+
+        consoleLogs.innerHTML = `
+          <div class="flex items-center gap-2"><span class="text-text-tertiary">[${now}]</span><span class="text-tertiary">[clarify]</span><span>Agent parsing structural dependencies for storage and telemetry schema.</span></div>
+          <div class="flex items-center gap-2"><span class="text-text-tertiary">[${now}]</span><span class="text-text-secondary">[ast]</span><span>Generating interactive questions for edge ingress boundaries.</span></div>
+        `;
+      } else if (state === 'building') {
+        stateName.textContent = 'BUILDING';
+        indicator.className = 'flex items-center gap-1.5 font-label-sm text-label-sm font-mono text-primary';
+        indicator.innerHTML = '<span class="h-2 w-2 rounded-full bg-primary animate-ping"></span><span>BUILDING</span>';
+        latency.textContent = '48ms';
+        endpoint.textContent = 'allocating sandbox...';
+        endpoint.className = 'text-primary animate-pulse';
+
+        consoleLogs.innerHTML = `
+          <div class="flex items-center gap-2"><span class="text-text-tertiary">[${now}]</span><span class="text-primary">[build]</span><span>Spinning up lightweight V8 sandbox container...</span></div>
+          <div class="flex items-center gap-2"><span class="text-text-tertiary">[${now}]</span><span class="text-primary">[compile]</span><span>Linking SQLite persistence adapter and compiling micro-service router.</span></div>
+        `;
+      } else if (state === 'deployed') {
+        stateName.textContent = 'DEPLOYED';
+        indicator.className = 'flex items-center gap-1.5 font-label-sm text-label-sm font-mono text-secondary';
+        indicator.innerHTML = '<span class="h-2 w-2 rounded-full bg-secondary animate-ping opacity-75"></span><span class="h-2 w-2 rounded-full bg-secondary -ml-3.5"></span><span>DEPLOYED</span>';
+        latency.textContent = '19ms';
+        endpoint.textContent = 'https://acfs-092-live.internal.network';
+        endpoint.className = 'text-primary hover:underline flex items-center gap-1';
+
+        consoleLogs.innerHTML = `
+          <div class="flex items-center gap-2"><span class="text-text-tertiary">[${now}]</span><span class="text-secondary">[ok]</span><span>MicroVM booted in 184ms with snapshot-base #a994.</span></div>
+          <div class="flex items-center gap-2"><span class="text-text-tertiary">[${now}]</span><span class="text-primary">[route]</span><span>Ingress mapped: https://acfs-092-live.internal.network</span></div>
+          <div class="flex items-center gap-2"><span class="text-text-tertiary">[${now}]</span><span class="text-secondary">[ready]</span><span class="text-text-primary">Ready for traffic. Active across Bharat Builds Tour 2026 nodes.</span></div>
+        `;
+      }
+    }
+
+    // Keyboard navigation listener (1, 2, 3 shortcuts)
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === '1') switchRoute('home');
+      if (e.key === '2') switchRoute('workspace');
+      if (e.key === '3') switchRoute('timeline');
+    });
+
+    // Handle App Shell Header Nav Clicks if present
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('header nav a').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const target = link.getAttribute('data-path');
+          if (target && ['home', 'workspace', 'timeline'].includes(target)) {
+            switchRoute(target);
+          }
+        });
+      });
+    });
+  </script>
+</div></main><footer class="w-full bg-[#050505]/90 backdrop-blur-xl border-t border-border-subtle py-space-sm text-text-tertiary"><div class="w-full px-gutter-desktop max-w-[1440px] mx-auto flex flex-col md:flex-row items-center justify-between gap-space-sm text-label-sm font-label-sm font-mono"><div><span class="text-text-secondary">Bharat Builds Tour 2026</span><span class="mx-2 text-border-strong">|</span><span>Node ID: <span class="text-text-primary">bb-mum-01a</span></span><span class="mx-2 text-border-strong">|</span><span>Engine: <span class="text-text-primary">v2.4-edge</span></span></div><div class="flex items-center gap-space-md"><span>Region: <span class="text-text-secondary">ap-south-1 (Mumbai)</span></span><span class="mx-2 text-border-strong">|</span><div class="flex items-center gap-1.5"><span class="h-1.5 w-1.5 rounded-full bg-primary"></span><span>State: <span class="text-primary">Active Pipeline</span></span></div></div></div></footer></body></html>
