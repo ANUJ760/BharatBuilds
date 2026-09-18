@@ -209,5 +209,19 @@ class CandidateVerificationResult(BaseModel):
     verified_at: datetime = Field(default_factory=_utcnow)
 
 
+class MaintenanceResult(BaseModel):
+    """Structured outcome returned by MaintenanceOrchestrator."""
+
+    job: MaintenanceJob
+    status: MaintenanceStatus
+    diagnosis: Optional[str] = None
+    summary: Optional[str] = None
+    candidate_code: Optional[str] = None
+    repair_result: Optional[RepairResult] = None
+    verification_result: Optional[CandidateVerificationResult] = None
+    timeline_steps: list[TimelineStep] = Field(default_factory=list)
+
+
+
 
 

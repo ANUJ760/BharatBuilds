@@ -10,6 +10,7 @@ from backend.models.app import (
     Invite,
     MaintenanceIssue,
     MaintenanceJob,
+    MaintenanceResult,
     MaintenanceStatus,
     RepairResult,
     Role,
@@ -28,6 +29,7 @@ __all__ = [
     "Invite",
     "MaintenanceIssue",
     "MaintenanceJob",
+    "MaintenanceResult",
     "MaintenanceStatus",
     "RepairResult",
     "Role",
@@ -35,6 +37,7 @@ __all__ = [
     "StepType",
     "TimelineStep",
 ]
+
 
 
 
