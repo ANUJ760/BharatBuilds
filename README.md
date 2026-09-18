@@ -1,2 +1,214 @@
-# BharatBuilds
-Automated creation and deployment of small tools for startups using AWS.
+# [Project Name TBD]
+
+> A cloud for small software — turn a plain-language prompt into a live, authenticated, shareable web app in under a minute, deployed on real AWS infrastructure, with a full visual record of every decision the agent made along the way.
+
+Built for **Bharat Builds Tour 2026 (First Commit)** by WeMakeDevs × AWS.
+
+---
+
+## 1. The Problem
+
+AI agents can now write a working app from a prompt in seconds — a form, a tracker, a small internal tool. But turning that generated code into something a real person can actually *use* still requires:
+
+- A cloud account and DevOps knowledge to deploy it
+- Manually wiring up authentication
+- A database or storage layer, even for something tiny
+- A way to share it with teammates that isn't "send them a zip file"
+- Trust that when you ask the agent to change something, it won't silently break what already worked
+
+Incumbent clouds (AWS, Azure, GCP) were built for **Big Software** — systems designed to scale to millions of users, at the cost of significant setup complexity. Most AI-generated apps are the opposite: **Small Software** — purpose-built tools for one person or a small team, that need to be deployed and shared as easily as a Google Doc.
+
+This project is a thin, opinionated cloud layer built specifically for that gap — running entirely on AWS.
+
+---
+
+## 2. Core Idea
+
+1. A user describes what they want in plain language.
+2. The agent checks whether the request is ambiguous in ways that would materially change the app, and asks up to 3 quick questions if so — otherwise it proceeds immediately.
+3. The agent plans, writes, and deploys the app to a live AWS-hosted URL.
+4. The app is wrapped in authentication and sharing out of the box — no code changes needed.
+5. Every step the agent took (reasoning, tool calls, code generated, retries) is recorded as a node in a visual decision timeline.
+6. The user can inspect any past step and **revert the live app to that exact state** if a later change broke something.
+
+---
+
+## 3. Feature Breakdown
+
+### 3.1 Prompt-to-App Generation
+- User submits a plain-language request (chat interface).
+- Agent generates a working single-purpose app (form + logic + simple UI).
+- Powered by **Amazon Bedrock**.
+
+### 3.2 Clarify-Then-Build
+- Before generating any code, a fast "ambiguity check" pass runs on the prompt.
+- If the request is underspecified in a way that would change the resulting app's structure (data fields, roles/permissions, single vs. multi-user, etc.), the agent asks up to **3** targeted questions, each with a suggested default.
+- The user can tap a suggested default or answer directly — no open-ended back-and-forth.
+- Once resolved, the build proceeds **without further interruption**.
+- This step is itself logged as the first node in the Decision Timeline (see 3.5).
+
+### 3.3 Instant Deploy on AWS
+- Generated app code is deployed to a live, publicly reachable URL within ~10–20 seconds.
+- Runs in an isolated per-app sandbox (containerized).
+- No manual config screens, no user-managed infrastructure.
+
+### 3.4 Zero-Config Sharing & Auth
+- Every deployed app is wrapped with authentication — the user never edits the generated app's code to add login.
+- Owner can invite others by email/phone; invitees get a lightweight login (magic link / OTP) and a **Viewer** or **Editor** role.
+- Sharing an app should feel exactly like sharing a Google Doc: one link, one invite step, no separate cloud account required for collaborators.
+
+### 3.5 Decision Timeline & Backtrack
+- Every agent action — plan, tool call, code generation, retry, deploy — is logged as a node in a tree/timeline.
+- Nodes are visually connected: the main trunk shows the successful path; retries or corrected mistakes branch off and are visually distinguished.
+- Clicking any node opens a side panel showing:
+  - What the agent saw as input at that step
+  - Its reasoning/plan text
+  - The code diff produced (if any)
+  - Latency and token usage
+  - Status (ok / error / reverted)
+- A **"Revert to here"** action re-deploys the exact code snapshot stored at that step, instantly rolling the live app back — no need to re-prompt or replay history.
+
+### 3.6 Live Editing
+- Owner can describe a change in chat ("add a summary view", "add a new field").
+- Agent edits the existing app and redeploys to the **same URL** — the link never changes.
+- Every edit is captured as a new node in the Decision Timeline, so it's always inspectable and revertible.
+
+---
+
+## 4. Architecture
+
+```
+                        ┌─────────────────────────┐
+                        │   Dashboard (Frontend)   │
+                        │   S3 + CloudFront         │
+                        └────────────┬─────────────┘
+                                     │
+                         ┌───────────▼────────────┐
+                         │   API Layer              │
+                         │   API Gateway + Lambda    │
+                         └───────────┬────────────┘
+                                     │
+        ┌────────────────────────────┼─────────────────────────────┐
+        │                            │                              │
+┌───────▼────────┐        ┌──────────▼──────────┐        ┌─────────▼─────────┐
+│  Agent Layer     │        │  Deploy Layer         │        │  Auth Layer         │
+│  Amazon Bedrock   │        │  AWS Fargate (ECS)    │        │  Amazon Cognito      │
+│  - Clarify pass   │        │  or Lambda Function    │        │  - Magic link/OTP    │
+│  - Plan/codegen   │        │    URLs per app        │        │  - Viewer/Editor      │
+│  - ReAct loop      │        │  ALB path routing       │        │    roles              │
+└───────┬────────┘        └──────────┬──────────┘        └─────────┬─────────┘
+        │                            │                              │
+        └────────────────────────────┼──────────────────────────────┘
+                                     │
+                       ┌─────────────▼─────────────┐
+                       │  Data Layer                 │
+                       │  DynamoDB                    │
+                       │  - App metadata                │
+                       │  - Decision timeline / traces   │
+                       │  - Code snapshots per step        │
+                       │  S3 (generated app assets)          │
+                       └───────────────────────────────────┘
+```
+
+### AWS Services Used
+
+| Layer | Service | Purpose |
+|---|---|---|
+| Agent / codegen | **Amazon Bedrock** | Clarify pass, planning, code generation, live edits |
+| App runtime | **AWS Fargate (ECS)** | Isolated sandbox per deployed app |
+| Alternate/fast-path runtime | **AWS Lambda + Function URLs** | Near-instant deploy for lightweight apps |
+| Routing | **Application Load Balancer** / **API Gateway** | Per-app path-based routing to live URLs |
+| Auth & sharing | **Amazon Cognito** | Magic link/OTP login, role-based access, wraps generated apps without modifying their code |
+| Invites | **Amazon SES** | Email invitations for sharing |
+| Data store | **Amazon DynamoDB** | App metadata, decision timeline/trace log, code snapshots |
+| Static hosting | **Amazon S3 + CloudFront** | Dashboard frontend, generated static assets |
+| Infra-as-code | **AWS CDK** | Reproducible deployment of the platform itself |
+
+---
+
+## 5. Tech Stack
+
+- **Frontend:** React + Tailwind, React Flow (for the Decision Timeline tree view)
+- **Backend:** Python + FastAPI (or Lambda-native handlers)
+- **Agent runtime:** hand-rolled ReAct loop calling Amazon Bedrock directly
+- **Data:** DynamoDB (single-table design, `app_id` + `step_id` sort key for timeline queries)
+- **Infra:** AWS CDK
+
+---
+
+## 6. User Flow (End-to-End Demo)
+
+1. **Clarify** — User types a request. Agent asks one quick clarifying question with a suggested default.
+2. **Build** — Agent plans, generates code, and deploys. Live URL appears in ~10–20 seconds.
+3. **Share** — Owner shares the link with a teammate, who gets an OTP-authenticated Viewer/Editor session — no separate signup.
+4. **Edit** — Owner asks the agent (in chat) to add a feature. App redeploys to the same URL.
+5. **Backtrack** — Owner opens the Decision Timeline, inspects each step the agent took, and reverts to a prior working version if the latest edit caused an issue.
+
+---
+
+## 7. Judging Criteria Alignment
+
+| Criteria | How this project addresses it |
+|---|---|
+| **Problem & Impact** | Solves a real, recurring gap between "AI can generate an app" and "a non-technical person can actually use and share it" |
+| **Agentic Depth** | Clarify-then-build reasoning, multi-step ReAct planning, tool use, self-correction via retries — all inspectable in the Decision Timeline |
+| **Technical Execution** | Real multi-service AWS architecture (Bedrock, Fargate/Lambda, Cognito, DynamoDB, ALB/API Gateway), not a single API wrapper |
+| **Ship It** | Fully deployed, live, reachable URL running on AWS infrastructure |
+
+---
+
+## 8. Setup & Local Development
+
+```bash
+# Clone the repo
+git clone <repo-url>
+cd <repo-name>
+
+# Backend
+cd backend
+pip install -r requirements.txt
+uvicorn main:app --reload
+
+# Frontend
+cd frontend
+npm install
+npm run dev
+
+# Infra (deploy platform to AWS)
+cd infra
+cdk bootstrap
+cdk deploy
+```
+
+### Environment Variables
+
+```
+AWS_REGION=
+BEDROCK_MODEL_ID=
+COGNITO_USER_POOL_ID=
+COGNITO_APP_CLIENT_ID=
+DYNAMODB_TABLE_NAME=
+SES_SENDER_EMAIL=
+```
+
+---
+
+## 9. Roadmap / Future Work
+
+- Branching timeline diffs (visual compare between any two nodes, not just linear revert)
+- Team-level shared workspaces (multiple apps under one organization)
+- Support for stateful multi-user apps beyond simple forms/trackers
+- Anomaly detection on agent traces (flag unusually costly or slow steps automatically)
+- Marketplace of reusable "small software" templates
+
+---
+
+## 10. Team
+
+- [Add team member names / roles]
+
+---
+
+## 11. License
+
+[Add license]
