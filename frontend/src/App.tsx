@@ -1,10 +1,19 @@
-import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Landing from './pages/Landing';
+import { Home } from './pages/Home';
+import { AppView } from './pages/AppView';
+import { Timeline } from './pages/Timeline';
 
-function App() {
+export function App() {
   return (
-    <div className="min-h-screen bg-white">
-      <h1 className="text-2xl font-bold p-8">BharatBuilds</h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/create" element={<Home />} />
+        <Route path="/app/:id" element={<AppView />} />
+        <Route path="/timeline/:id" element={<Timeline />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
