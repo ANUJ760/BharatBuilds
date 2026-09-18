@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from backend.agent.planner import plan_and_execute
 from backend.agent.trace_logger import log_steps
+from backend.auth.roles import require_editor
 from backend.config import get_settings
 from backend.deploy.lambda_deployer import deploy_to_lambda
 from backend.models.app import App, StepType, TimelineStep
@@ -24,7 +25,7 @@ class DeployRequest(BaseModel):
     clarifications: dict[str, str] | None = None
 
 
-@router.post("/{app_id}")
+@router.post("/{app_id}", dependencies=[Depends(require_editor)])
 async def deploy_app(app_id: str, body: DeployRequest):
     """Run the full pipeline: plan → codegen → deploy → log timeline.
 
