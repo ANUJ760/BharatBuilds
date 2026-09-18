@@ -9,6 +9,7 @@ from backend.models.app import (
     MaintenanceIssue,
     MaintenanceJob,
     MaintenanceStatus,
+    RepairResult,
     Role,
     StepStatus,
     StepType,
@@ -24,9 +25,11 @@ __all__ = [
     "MaintenanceIssue",
     "MaintenanceJob",
     "MaintenanceStatus",
+    "RepairResult",
     "Role",
     "StepStatus",
     "StepType",
     "TimelineStep",
 ]
+
 

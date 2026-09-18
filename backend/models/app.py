@@ -174,3 +174,14 @@ class MaintenanceJob(BaseModel):
     created_at: datetime = Field(default_factory=_utcnow)
     updated_at: datetime = Field(default_factory=_utcnow)
 
+
+class RepairResult(BaseModel):
+    """Result of an automated diagnostic and code repair execution."""
+
+    diagnosis: str = Field(default="", description="Root cause diagnosis of the issue")
+    summary: str = Field(default="", description="Summary of the modifications made")
+    patched_code: str = Field(default="", description="Complete repaired source code")
+    is_success: bool = Field(default=True, description="Whether repair succeeded")
+    error_message: Optional[str] = Field(default=None, description="Error message if repair failed")
+
+
