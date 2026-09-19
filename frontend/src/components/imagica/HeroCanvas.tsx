@@ -70,11 +70,40 @@ export default function HeroCanvas() {
       clearcoatRoughness: 0.05,
       reflectivity: 0.9,
       envMapIntensity: 1.0,
+      transparent: true,
     });
     const mainSphere = new THREE.Mesh(sphereGeo, sphereMat);
     mainSphere.position.set(0, 0.8, 0);
     mainSphere.castShadow = true;
     scene.add(mainSphere);
+
+    // Extra bubbles (colliding, still, hoverable)
+    const bubbles: THREE.Mesh[] = [];
+    for (let i = 0; i < 4; i++) {
+      // Clone material so we can adjust it per-bubble if we want
+      const bMat = sphereMat.clone();
+      const bMesh = new THREE.Mesh(sphereGeo, bMat);
+      
+      const isStill = i === 0; // Make one bubble still
+      
+      bMesh.position.set(
+        (Math.random() - 0.5) * 6, 
+        0.5 + Math.random() * 2, 
+        -1 - Math.random() * 3
+      );
+      
+      bMesh.userData = {
+        velocity: isStill ? new THREE.Vector3(0,0,0) : new THREE.Vector3((Math.random() - 0.5) * 0.02, (Math.random() - 0.5) * 0.02, (Math.random() - 0.5) * 0.02),
+        baseScale: 0.3 + Math.random() * 0.3,
+        hoverScale: 1.0,
+        isStill
+      };
+      
+      bMesh.scale.setScalar(bMesh.userData.baseScale);
+      bMesh.castShadow = true;
+      scene.add(bMesh);
+      bubbles.push(bMesh);
+    }
 
     // Water ripple plane — concentric circles emanating from sphere
     const rippleGeo = new THREE.PlaneGeometry(30, 30, 256, 256);
@@ -94,17 +123,23 @@ export default function HeroCanvas() {
     // Animate water ripples on the plane geometry
     const originalPositions = rippleGeo.attributes.position.array.slice();
 
-    // Mouse tracking
+    // Mouse tracking & Raycasting
     let mouseX = 0;
     let mouseY = 0;
     let targetMouseX = 0;
     let targetMouseY = 0;
     let scrollY = 0;
     let targetScrollY = 0;
+    
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2(-100, -100);
 
     const onMouseMove = (e: MouseEvent) => {
       targetMouseX = (e.clientX / window.innerWidth - 0.5) * 2;
       targetMouseY = -(e.clientY / window.innerHeight - 0.5) * 2;
+      
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
     };
 
     const onScroll = () => {
@@ -120,6 +155,12 @@ export default function HeroCanvas() {
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
+    
+    // Burst animation state
+    let isBursting = false;
+    let burstProgress = 0;
+    const onBurst = () => { isBursting = true; };
+    window.addEventListener("burst-auth", onBurst);
 
     const clock = new THREE.Clock();
     let animId: number;
@@ -155,13 +196,52 @@ export default function HeroCanvas() {
       mainSphere.rotation.y = t * 0.05;
 
       // Camera responds to mouse subtly
-      camera.position.x = mouseX * 0.6;
-      camera.position.y = 2.5 + mouseY * 0.3;
-      camera.lookAt(0, 0 - scrollNorm * 1.5, 0);
+      if (!isBursting) {
+        camera.position.x = mouseX * 0.6;
+        camera.position.y = 2.5 + mouseY * 0.3;
+        camera.lookAt(0, 0 - scrollNorm * 1.5, 0);
 
-      // On scroll, sphere moves down and camera follows
-      mainSphere.position.y = 0.8 + Math.sin(t * 0.8) * 0.06 - scrollNorm * 3;
+        // On scroll, sphere moves down
+        mainSphere.position.y = 0.8 + Math.sin(t * 0.8) * 0.06 - scrollNorm * 3;
+        mainSphere.position.z = 0;
+        mainSphere.scale.setScalar(1);
+      } else {
+        // Burst animation taking over
+        burstProgress += 0.05;
+        mainSphere.position.z += 0.4;
+        mainSphere.scale.setScalar(1 + burstProgress * 6);
+        (mainSphere.material as THREE.MeshPhysicalMaterial).opacity = 1 - burstProgress * 0.1;
+      }
+      
       ripplePlane.position.y = -0.8 - scrollNorm * 2;
+
+      // Update bubbles (floating, hover, collision)
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(bubbles);
+      const hoveredBubble = intersects.length > 0 ? intersects[0].object : null;
+
+      bubbles.forEach(b => {
+        // Hover scaling
+        if (hoveredBubble === b) {
+          b.userData.hoverScale += (1.4 - b.userData.hoverScale) * 0.15;
+          (b.material as THREE.MeshPhysicalMaterial).emissive = new THREE.Color(0x222222);
+        } else {
+          b.userData.hoverScale += (1.0 - b.userData.hoverScale) * 0.1;
+          (b.material as THREE.MeshPhysicalMaterial).emissive = new THREE.Color(0x000000);
+        }
+        b.scale.setScalar(b.userData.baseScale * b.userData.hoverScale);
+        
+        // Floating & boundaries
+        if (!b.userData.isStill) {
+          b.position.add(b.userData.velocity);
+          if (b.position.x > 4 || b.position.x < -4) b.userData.velocity.x *= -1;
+          if (b.position.y > 3 || b.position.y < 0) b.userData.velocity.y *= -1;
+          if (b.position.z > 1 || b.position.z < -5) b.userData.velocity.z *= -1;
+        } else {
+          // Still bubble just bobs gently
+          b.position.y += Math.sin(t * 1.2 + b.id) * 0.002;
+        }
+      });
 
       renderer.render(scene, camera);
     };
@@ -173,6 +253,7 @@ export default function HeroCanvas() {
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
+      window.removeEventListener("burst-auth", onBurst);
       renderer.dispose();
       sphereGeo.dispose();
       sphereMat.dispose();

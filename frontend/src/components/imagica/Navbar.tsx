@@ -1,9 +1,10 @@
 "use client";
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
+  const navigate = useNavigate();
   const links = [
     { name: "Product", href: "#product" },
     { name: "How it works", href: "#how-it-works" },
@@ -12,6 +13,18 @@ export default function Navbar() {
   ];
 
   const isAuthenticated = !!localStorage.getItem('bb_token');
+
+  const handleAuthClick = (e: React.MouseEvent) => {
+    if (!isAuthenticated) {
+      e.preventDefault();
+      // Trigger burst animation in 3D canvas
+      window.dispatchEvent(new CustomEvent('burst-auth'));
+      // Wait for animation to engulf screen, then navigate
+      setTimeout(() => {
+        navigate("/auth");
+      }, 800);
+    }
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-10 py-5">
@@ -41,6 +54,7 @@ export default function Navbar() {
       {/* Login button — white pill matching video */}
       <Link
         to={isAuthenticated ? "/create" : "/auth"}
+        onClick={handleAuthClick}
         className="px-5 py-2 rounded-full bg-white text-[13px] font-medium text-[#111] shadow-sm border border-white/80 hover:shadow-md transition-all duration-200"
       >
         {isAuthenticated ? "Launch App" : "Sign In"}
