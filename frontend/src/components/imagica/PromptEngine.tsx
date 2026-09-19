@@ -2,13 +2,25 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { apiCreateApp } from "../../api/client";
 
-const INDUSTRIES = ["Legal Services", "Science", "Education", "Product Design", "Corporate"];
+const INDUSTRIES = [
+  "Employee attendance tracker",
+  "Customer management tool",
+  "College event app",
+  "Inventory tracker",
+  "Appointment booking",
+  "Internal workflow tool",
+  "Invoice tracker",
+  "Small business dashboard"
+];
 const PROMPTS: Record<string, string> = {
-  "Legal Services": "A contract review tool that highlights risk clauses and suggests amendments",
-  Science: "A lab experiment tracker that logs results and generates analysis reports",
-  Education: "A student progress dashboard with quiz generation and grade tracking",
-  "Product Design": "An investing app that provides insights on stocks with an interface for trading",
-  Corporate: "A team standup aggregator that summarizes blockers and sends Slack digests",
+  "Employee attendance tracker": "A simple employee attendance and leave tracker for my startup",
+  "Customer management tool": "A lightweight CRM to manage leads, contacts, and deal stages",
+  "College event app": "An app to schedule college events, track RSVPs, and send reminders",
+  "Inventory tracker": "A stock management tool that tracks item quantities and alerts when low",
+  "Appointment booking": "A calendar app for clients to book available time slots for services",
+  "Internal workflow tool": "A task board for our team to track projects from idea to completion",
+  "Invoice tracker": "A simple tracker for sent invoices, payment statuses, and client details",
+  "Small business dashboard": "A unified dashboard showing daily sales, expenses, and key metrics",
 };
 
 export default function PromptEngine() {
@@ -19,7 +31,7 @@ export default function PromptEngine() {
 
   const pickIndustry = (ind: string) => {
     setSelectedIndustry(ind);
-    setTarget(PROMPTS[ind] ?? PROMPTS["Product Design"]);
+    setTarget(PROMPTS[ind] ?? PROMPTS["Employee attendance tracker"]);
     setTyped("");
     setTimeout(() => setStage("prompt"), 400);
   };
@@ -78,12 +90,15 @@ export default function PromptEngine() {
               transition={{ duration: 0.45 }}
               className="flex flex-col gap-8"
             >
-              <h2 className="text-[clamp(22px,3.2vw,36px)] font-normal tracking-[-0.02em] text-[#555]">
-                What industry do you want to transform?
+              <h2 className="text-[clamp(26px,4vw,42px)] font-bold tracking-[-0.03em] text-[#111]">
+                What do you want to build?
               </h2>
+              <h3 className="text-[clamp(18px,2.5vw,24px)] font-normal tracking-[-0.01em] text-[#555]">
+                Describe the problem, workflow, or small service you want to turn into software.
+              </h3>
               <div className="w-full pb-4 border-b border-[#d8d8d8]">
-                <span className="text-[clamp(26px,4vw,42px)] font-light text-[#ccc] tracking-[-0.02em]">
-                  Enter your industry
+                <span className="text-[clamp(20px,3vw,32px)] font-light text-[#ccc] tracking-[-0.02em]">
+                  e.g. A simple employee attendance and leave tracker for my startup
                 </span>
               </div>
               <div className="flex flex-wrap gap-3">

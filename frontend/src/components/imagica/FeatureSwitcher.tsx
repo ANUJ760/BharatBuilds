@@ -49,7 +49,7 @@ export default function FeatureSwitcher() {
           transition={{ duration: 0.8 }}
           className="text-center text-[clamp(32px,5vw,60px)] font-bold tracking-[-0.03em] text-[#111] leading-[1.08] mb-16"
         >
-          The simplest way to build an AI app
+          Build the small software you actually need
         </motion.h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">

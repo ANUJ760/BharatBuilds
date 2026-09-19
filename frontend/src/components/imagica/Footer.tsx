@@ -17,7 +17,7 @@ export default function Footer() {
             Ready to build?
           </h3>
           <p className="text-[15px] text-[#999] mb-10 max-w-lg mx-auto leading-relaxed">
-            Deploy your first AI-powered app in under 60 seconds. No code. No complexity. Just describe what you need.
+            Deploy your first small software in under 60 seconds. Just describe what you need.
           </p>
           <a href="http://localhost:5173" target="_blank" rel="noopener noreferrer" className="inline-block px-8 py-3.5 rounded-full bg-[#111] text-white text-[14px] font-medium hover:bg-[#333] transition-colors shadow-lg">
             Get Started Free
