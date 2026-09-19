@@ -3,6 +3,37 @@ import { Float, MeshDistortMaterial, Environment, ContactShadows } from '@react-
 import { useRef, useState, useEffect } from 'react'
 import * as THREE from 'three'
 
+function RippleFloor() {
+  const rings = [0, 1, 2];
+  const groupRef = useRef<THREE.Group>(null);
+  
+  useFrame(({ clock }) => {
+    const t = clock.elapsedTime;
+    if (groupRef.current) {
+      groupRef.current.children.forEach((child, i) => {
+        // Phase goes from 0 to 1 repeatedly
+        const phase = (t * 0.5 + i / rings.length) % 1.0; 
+        // Expand ring outwards
+        child.scale.setScalar(1 + phase * 5); 
+        // Fade out as it expands
+        const material = (child as THREE.Mesh).material as THREE.MeshBasicMaterial;
+        material.opacity = (1 - phase) * 0.15; 
+      });
+    }
+  });
+
+  return (
+    <group ref={groupRef} position={[0, -2.4, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+      {rings.map((i) => (
+        <mesh key={i}>
+          <ringGeometry args={[0.95, 1.0, 64]} />
+          <meshBasicMaterial color="#111111" transparent opacity={0.15} side={THREE.DoubleSide} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
 function AnimatedSphere({
   position,
   scale = 1,
@@ -106,18 +137,21 @@ export function Scene3D(_props?: { scrollY?: any }) {
         <directionalLight position={[5, 5, 5]} intensity={1.2} />
         <directionalLight position={[-3, 3, -3]} intensity={0.5} color="#ffffff" />
 
+        {/* Rippling water surface underneath */}
+        <RippleFloor />
+
         {/* Main central sphere */}
-        <AnimatedSphere position={[0, 0.3, 0]} scale={1.6} speed={1.5} distort={0.3} color="#ffffff" scrollFactor={0.003} isMain={true} />
+        <AnimatedSphere position={[0, 0.3, 0]} scale={1.6} speed={1.5} distort={0.3} color="#8ebfdf" scrollFactor={0.003} isMain={true} />
 
         {/* Orbiting smaller spheres */}
-        <AnimatedSphere position={[-2.8, 1, -2]} scale={0.65} speed={2.0} distort={0.4} color="#f5f5f5" scrollFactor={-0.004} />
-        <AnimatedSphere position={[3, -0.3, -1.5]} scale={0.5} speed={2.5} distort={0.45} color="#fafafa" scrollFactor={0.005} />
-        <AnimatedSphere position={[1.5, 1.8, -2.5]} scale={0.3} speed={2.8} distort={0.35} color="#f0f0f0" scrollFactor={-0.002} />
-        <AnimatedSphere position={[-1.5, -1, -0.8]} scale={0.4} speed={1.8} distort={0.4} color="#f8f8f8" scrollFactor={0.006} />
+        <AnimatedSphere position={[-2.8, 1, -2]} scale={0.65} speed={2.0} distort={0.4} color="#7cb3d9" scrollFactor={-0.004} />
+        <AnimatedSphere position={[3, -0.3, -1.5]} scale={0.5} speed={2.5} distort={0.45} color="#9ecae6" scrollFactor={0.005} />
+        <AnimatedSphere position={[1.5, 1.8, -2.5]} scale={0.3} speed={2.8} distort={0.35} color="#aed6f1" scrollFactor={-0.002} />
+        <AnimatedSphere position={[-1.5, -1, -0.8]} scale={0.4} speed={1.8} distort={0.4} color="#7cb3d9" scrollFactor={0.006} />
         
         {/* Extra orbiting spheres for more dynamics */}
-        <AnimatedSphere position={[-3.5, -2, -3]} scale={0.45} speed={2.2} distort={0.3} color="#ffffff" scrollFactor={0.004} />
-        <AnimatedSphere position={[3.5, 2, -1]} scale={0.35} speed={1.9} distort={0.5} color="#f5f5f5" scrollFactor={-0.005} />
+        <AnimatedSphere position={[-3.5, -2, -3]} scale={0.45} speed={2.2} distort={0.3} color="#8ebfdf" scrollFactor={0.004} />
+        <AnimatedSphere position={[3.5, 2, -1]} scale={0.35} speed={1.9} distort={0.5} color="#9ecae6" scrollFactor={-0.005} />
 
         <ContactShadows
           position={[0, -2.5, 0]}
