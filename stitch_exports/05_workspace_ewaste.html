@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container-lowest": "#0e0e0e", "text-secondary": "#A1A1AA", "tertiary": "#ffb873", "secondary-container": "#00a572", "surface-container-high": "#2a2a2a", "on-tertiary-fixed-variant": "#6a3b00", "secondary": "#4edea3", "background": "#131313", "surface-variant": "#353534", "on-primary-fixed": "#001f26", "on-primary-fixed-variant": "#004e5c", "on-surface-variant": "#bcc9cd", "outline-variant": "#3d494c", "on-secondary-fixed": "#002113", "inverse-surface": "#e5e2e1", "on-error-container": "#ffdad6", "secondary-fixed-dim": "#4edea3", "primary-fixed": "#acedff", "on-tertiary-fixed": "#2d1600", "text-primary": "#FFFFFF", "on-error": "#690005", "error-container": "#93000a", "on-tertiary": "#4b2800", "surface-bright": "#3a3939", "surface-container": "#201f1f", "tertiary-container": "#e89337", "text-tertiary": "#71717A", "inverse-on-surface": "#313030", "surface-container-low": "#1c1b1b", "inverse-primary": "#00687a", "border-strong": "#27272A", "on-surface": "#e5e2e1", "on-secondary-fixed-variant": "#005236", "surface-base": "#050505", "tertiary-fixed-dim": "#ffb873", "on-secondary-container": "#00311f", "on-background": "#e5e2e1", "on-tertiary-container": "#5b3200", "primary-fixed-dim": "#4cd7f6", "surface": "#131313", "outline": "#869397", "secondary-fixed": "#6ffbbe", "primary-container": "#06b6d4", "on-primary": "#003640", "surface-tint": "#4cd7f6", "tertiary-fixed": "#ffdcbf", "border-subtle": "rgba(255, 255, 255, 0.08)", "error": "#ffb4ab", "surface-dim": "#131313", "on-primary-container": "#00424f", "primary": "#4cd7f6", "surface-container-highest": "#353534", "surface-elevated": "#0D0D0F", "surface-overlay": "#18181B", "on-secondary": "#003824" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "margin-desktop": "3rem", "space-sm": "0.5rem", "space-xs": "0.25rem", "space-lg": "1.5rem", "gutter-tablet": "1.5rem", "margin-tablet": "2rem", "space-xl": "2.5rem", "gutter-desktop": "2rem", "space-md": "1rem", "space-2xl": "4rem", "margin": "1rem", "gutter": "1rem" }, "fontFamily": { "body-sm": ["Geist"], "headline-lg": ["Geist"], "headline-lg-mobile": ["Geist"], "display": ["Geist"], "label-sm": ["Geist"], "label-md": ["Geist"], "headline-md": ["Geist"], "body-md": ["Geist"], "headline-sm": ["Geist"], "body-lg": ["Geist"] }, "fontSize": { "body-sm": ["0.8125rem", { "lineHeight": "1.5", "letterSpacing": "0", "fontWeight": "400" }], "headline-lg": ["2.25rem", { "lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600" }], "headline-lg-mobile": ["1.75rem", { "lineHeight": "1.25", "letterSpacing": "-0.025em", "fontWeight": "600" }], "display": ["3.5rem", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "600" }], "label-sm": ["0.6875rem", { "lineHeight": "1.2", "letterSpacing": "0.04em", "fontWeight": "500" }], "label-md": ["0.8125rem", { "lineHeight": "1.2", "letterSpacing": "0.02em", "fontWeight": "500" }], "headline-md": ["1.5rem", { "lineHeight": "1.3", "letterSpacing": "-0.02em", "fontWeight": "500" }], "body-md": ["0.9375rem", { "lineHeight": "1.55", "letterSpacing": "-0.005em", "fontWeight": "400" }], "headline-sm": ["1.25rem", { "lineHeight": "1.4", "letterSpacing": "-0.015em", "fontWeight": "500" }], "body-lg": ["1.125rem", { "lineHeight": "1.6", "letterSpacing": "-0.01em", "fontWeight": "400" }] } } } };</script></head><body class="bg-surface-base font-body-md text-on-surface antialiased selection:bg-primary selection:text-on-primary min-h-screen flex flex-col justify-between"><header class="fixed top-0 left-0 right-0 z-50 bg-[#050505]/80 backdrop-blur-xl border-b border-border-subtle"><div class="h-16 w-full px-gutter-desktop max-w-[1440px] mx-auto flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md"><a class="flex items-center gap-space-sm group focus:outline-none" data-path="home" href="#"><img alt="Cloud for Small Software Logo" class="h-8 w-auto object-contain transition-transform group-hover:scale-105" src="https://lh3.googleusercontent.com/aida/AEtjO1WRSwkvKSeP1E2o4UlOr3EfsDgAA56OlIAQ-mHTSGY-rZn7O97adndYdisv88MRa3TA1CFhLvXVXcPaEbsPB2J23yvyJsLAXbtgHgfAMnb4bhs5fhHHZyfFc9n2EF_FvPQyvcwThfClwWoVceyk47wyDNTGd5sIkTFxQuUBLOkzEj8RrfcNA5Q_xggs0cwfgr28HieuOpckw0BXGhe6zw0C_T-ex80m-fmJPCnI6cwZnZhaApWwbQCOIg"/><span class="font-headline-sm text-headline-sm text-text-primary tracking-tight font-semibold">A Cloud for Small Software</span></a><span class="hidden lg:inline-flex items-center px-space-xs py-0.5 rounded text-label-sm font-label-sm tracking-wider uppercase bg-surface-container text-primary border border-border-subtle">BB-26 / Tour Edition</span></div><nav class="flex items-center gap-space-xs p-1 rounded-lg bg-surface-container-lowest border border-border-subtle" data-active-classes="bg-surface-elevated text-primary border-border-subtle shadow-[0_0_12px_-3px_rgba(6,182,212,0.25)]"><a class="px-space-md py-1.5 rounded text-label-md font-label-md text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-all" data-path="home" href="#">Home</a><a class="px-space-md py-1.5 rounded text-label-md font-label-md text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-all" data-path="workspace" href="#">Workspace</a><a class="px-space-md py-1.5 rounded text-label-md font-label-md text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-all" data-path="timeline" href="#">Timeline</a></nav><div class="flex items-center gap-space-md"><div class="hidden xl:flex items-center gap-space-sm px-space-sm py-1 rounded bg-surface-container-lowest border border-border-subtle"><div class="flex items-center gap-1.5"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span></span><span class="text-label-sm font-label-sm uppercase tracking-wider text-secondary font-mono">deployed</span></div><div class="h-3 w-px bg-border-strong"></div><div class="text-label-sm font-label-sm text-text-tertiary font-mono">lat: 24ms</div><div class="h-3 w-px bg-border-strong"></div><div class="text-label-sm font-label-sm text-text-tertiary font-mono">mem: 14MB</div></div><button class="hidden sm:flex items-center gap-space-xs px-space-md py-1.5 rounded bg-surface-elevated hover:bg-surface-overlay text-text-primary border border-border-subtle text-label-md font-label-md transition-all" type="button"><span class="material-symbols-outlined text-[16px] text-primary">bolt</span><span>Deploy Run</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ring-1 ring-border-subtle"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-surface-base flex-1"><div class="flex flex-col w-full">
+<!-- Active Tab State Synchronizer via shell attribute hooks -->
+<script>
+    (function () {
+      const navLinks = document.querySelectorAll('header nav a[data-path]');
+      navLinks.forEach((el) => {
+        if (el.getAttribute('data-path') === 'workspace') {
+          el.className = 'px-space-md py-1.5 rounded text-label-md font-label-md transition-all bg-surface-elevated text-primary shadow-[0_0_12px_-3px_rgba(6,182,212,0.25)]';
+        } else {
+          el.className = 'px-space-md py-1.5 rounded text-label-md font-label-md text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-all';
+        }
+      });
+    })();
+  </script>
+<!-- Workspace Control Bar -->
+<section class="w-full bg-[#080809] shadow-sm">
+<div class="max-w-[1440px] mx-auto px-space-md lg:px-gutter-desktop py-space-sm flex flex-wrap items-center justify-between gap-space-md">
+<!-- Left side: App identification & live pulse -->
+<div class="flex items-center flex-wrap gap-space-sm sm:gap-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="h-8 w-8 rounded-lg bg-surface-elevated flex items-center justify-center shadow-inner">
+<span class="material-symbols-outlined text-primary text-[18px]">recycling</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-sm text-body-md font-semibold text-text-primary tracking-tight">E-Waste Tracker</span>
+<span class="px-1.5 py-0.5 rounded text-label-sm font-label-sm uppercase tracking-wider bg-surface-container-high text-text-secondary">Micro-App</span>
+</div>
+<span class="text-label-sm font-label-sm text-text-tertiary font-mono">ID: app_ewst_mum04</span>
+</div>
+</div>
+<!-- Permanent Edge URL Pill with Interactive Copy -->
+<button class="group relative flex items-center gap-1.5 px-space-sm py-1 rounded bg-[#0e0e11] hover:bg-surface-overlay text-text-secondary hover:text-text-primary transition-all cursor-pointer" id="copy-url-btn" onclick="copyEdgeUrl()" title="Click to copy live URL">
+<span class="material-symbols-outlined text-[14px] text-primary">link</span>
+<span class="font-mono text-label-sm font-label-sm text-text-secondary group-hover:text-primary tracking-tight">https://ewaste-trk.acfs.live</span>
+<span class="material-symbols-outlined text-[13px] text-text-tertiary group-hover:text-text-primary ml-0.5" id="copy-icon">content_copy</span>
+<span class="absolute -bottom-7 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-surface-overlay text-primary font-mono text-[10px] opacity-0 pointer-events-none transition-opacity duration-150 shadow-md whitespace-nowrap" id="copy-tooltip">Copied</span>
+</button>
+<!-- Pulse state badge -->
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-secondary/10 text-secondary">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
+</span>
+<span class="font-mono text-label-sm font-label-sm tracking-wide font-medium">LIVE • 14ms edge</span>
+</div>
+</div>
+<!-- Right side: Quick operations & Invite CTA -->
+<div class="flex items-center gap-space-xs sm:gap-space-sm flex-wrap">
+<button class="flex items-center gap-1.5 px-space-sm py-1.5 rounded bg-surface-container hover:bg-surface-container-high text-text-secondary hover:text-text-primary text-label-md font-label-md transition-colors" type="button">
+<span class="material-symbols-outlined text-[15px]">terminal</span>
+<span>Logs &amp; Telemetry</span>
+</button>
+<button class="flex items-center gap-1.5 px-space-sm py-1.5 rounded bg-surface-container hover:bg-surface-container-high text-text-secondary hover:text-text-primary text-label-md font-label-md transition-colors" type="button">
+<span class="material-symbols-outlined text-[15px]">history</span>
+<span>v1.3.2</span>
+</button>
+<button class="flex items-center gap-1.5 px-space-sm py-1.5 rounded bg-surface-container hover:bg-surface-container-high text-text-secondary hover:text-text-primary text-label-md font-label-md transition-colors" type="button">
+<span class="material-symbols-outlined text-[15px]">fork_right</span>
+<span>Fork</span>
+</button>
+<button class="flex items-center gap-1.5 px-space-md py-1.5 rounded bg-text-primary hover:bg-text-primary/90 text-[#050505] text-label-md font-label-md font-semibold transition-all shadow-[0_0_16px_-4px_rgba(255,255,255,0.25)]" type="button">
+<span class="material-symbols-outlined text-[15px] font-bold">person_add</span>
+<span>Invite &amp; Share</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Dual Pane Main Workspace -->
+<div class="w-full max-w-[1440px] mx-auto px-space-md lg:px-gutter-desktop py-space-md flex-1">
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-md items-stretch min-h-[calc(100vh-140px)]">
+<!-- PANE 1: Autonomous Agent Stream & Live Control (Col 1-4) -->
+<div class="xl:col-span-4 flex flex-col bg-[#0a0a0c] rounded-lg shadow-xl overflow-hidden min-h-[600px] h-full">
+<!-- Pane Header -->
+<div class="px-space-md py-space-sm bg-[#0c0c0f] flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="h-2 w-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-mono text-label-sm font-label-sm font-semibold tracking-wider text-text-primary uppercase">Autonomous Compiler Stream</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-primary font-mono text-[10px]">Spec-Synthesizer v4</span>
+</div>
+</div>
+<!-- Scrollable Event Log -->
+<div class="flex-1 p-space-md space-y-space-md overflow-y-auto font-mono text-body-sm bg-gradient-to-b from-[#09090b] to-[#070709]">
+<!-- Event 1: Initial Prompt -->
+<div class="p-space-sm rounded bg-[#101014] hover:bg-[#131318] transition-colors space-y-1.5">
+<div class="flex items-center justify-between text-text-tertiary text-label-sm">
+<span class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[14px]">psychology</span>
+<span>01. PROMPT PARSED</span>
+</span>
+<span>10:41:02</span>
+</div>
+<p class="text-text-primary text-[12px] leading-relaxed font-body-sm font-normal">
+              “Build an e-waste drop-off tracker for regional collection points with batch weights and verification photos.”
+            </p>
+<div class="flex items-center gap-1 text-[11px] text-text-secondary pt-1">
+<span class="px-1 rounded bg-surface-container text-text-secondary text-[10px]">Intent: logistics</span>
+<span class="px-1 rounded bg-surface-container text-text-secondary text-[10px]">Audience: regional hubs</span>
+</div>
+</div>
+<!-- Event 2: Clarification Resolved -->
+<div class="p-space-sm rounded bg-[#101014] hover:bg-[#131318] transition-colors space-y-1.5">
+<div class="flex items-center justify-between text-text-tertiary text-label-sm">
+<span class="flex items-center gap-1 text-secondary">
+<span class="material-symbols-outlined text-[14px]">tune</span>
+<span>02. ARCHITECTURE CONTRACT</span>
+</span>
+<span>10:41:04</span>
+</div>
+<p class="text-text-secondary text-[12px] leading-relaxed">
+              Synthesizer resolved schema: Multi-tenant tenant boundary with collector permissions and AWS Cognito magic-link auth tokens.
+            </p>
+<div class="text-[11px] text-text-tertiary flex items-center gap-1 font-mono">
+<span class="material-symbols-outlined text-[12px] text-secondary">verified_user</span>
+<span>cognito_auth_pool: ap-south-1_bbTour26</span>
+</div>
+</div>
+<!-- Event 3: Architecture committed -->
+<div class="p-space-sm rounded bg-[#101014] hover:bg-[#131318] transition-colors space-y-1.5">
+<div class="flex items-center justify-between text-text-tertiary text-label-sm">
+<span class="flex items-center gap-1 text-tertiary">
+<span class="material-symbols-outlined text-[14px]">database</span>
+<span>03. PERSISTENCE SEEDED</span>
+</span>
+<span>10:41:09</span>
+</div>
+<p class="text-text-secondary text-[12px] leading-relaxed">
+              SQLite Edge Engine provisioned. Migrations run cleanly across 3 relation sets:
+            </p>
+<div class="bg-[#070709] p-2 rounded text-[11px] text-text-secondary font-mono space-y-0.5">
+<div class="text-primary font-medium">&gt; DROP-OFFS (id, weight_kg, station_id, status)</div>
+<div>&gt; FACILITIES (hub_id, max_capacity, supervisor)</div>
+<div>&gt; AUDIT_CERTS (hash_sha256, issued_epoch)</div>
+</div>
+</div>
+<!-- Event 4: Live Compiler Update -->
+<div class="p-space-sm rounded bg-[#101014] hover:bg-[#131318] transition-colors space-y-1.5">
+<div class="flex items-center justify-between text-text-tertiary text-label-sm">
+<span class="flex items-center gap-1 text-secondary">
+<span class="material-symbols-outlined text-[14px]">rocket_launch</span>
+<span>04. EDGE COMPILED</span>
+</span>
+<span>10:41:11</span>
+</div>
+<div class="flex items-center justify-between text-[12px] text-text-primary">
+<span>vm-ap-south-1 (Mumbai)</span>
+<span class="text-secondary font-mono">320ms build</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1 overflow-hidden">
+<div class="bg-secondary h-full w-full"></div>
+</div>
+</div>
+<!-- Live Edit Diff Card -->
+<div class="p-space-sm rounded bg-[#0b1418] shadow-sm space-y-1.5">
+<div class="flex items-center justify-between text-label-sm">
+<span class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[14px]">commit</span>
+<span>LIVE DIFF APPLIED</span>
+</span>
+<span class="text-text-tertiary text-[11px]">2m ago</span>
+</div>
+<p class="text-text-primary text-[12px]">
+              “Added summary metrics cards &amp; CSV export endpoint”
+            </p>
+<div class="flex items-center gap-2 text-[11px] font-mono text-secondary">
+<span>+ 48 lines</span>
+<span class="text-text-tertiary">•</span>
+<span class="text-text-secondary">/api/export-manifest.csv</span>
+</div>
+</div>
+<!-- Active Typing Stream Indicator -->
+<div class="flex items-center gap-2 text-[11px] text-text-tertiary font-mono pt-1">
+<span class="h-1.5 w-1.5 rounded-full bg-primary animate-ping"></span>
+<span>Agent listening for dynamic delta commands...</span>
+</div>
+</div>
+<!-- Chat / Prompt Iteration Control Bar -->
+<div class="p-space-md bg-[#0b0b0e] space-y-space-sm">
+<!-- Quick Suggestion Chips -->
+<div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-label-sm font-label-sm">
+<span class="text-text-tertiary text-[11px] whitespace-nowrap">Suggested:</span>
+<button class="px-2 py-0.5 rounded bg-surface-container hover:bg-surface-container-high text-primary hover:text-text-primary whitespace-nowrap font-mono transition-colors text-[11px]" onclick="insertChipPrompt('Add a summary view by vendor with SLA indicators')">
+              + Summary View
+            </button>
+<button class="px-2 py-0.5 rounded bg-surface-container hover:bg-surface-container-high text-primary hover:text-text-primary whitespace-nowrap font-mono transition-colors text-[11px]" onclick="insertChipPrompt('Enable bulk CSV manifest export for state pollution board')">
+              + CSV Export
+            </button>
+<button class="px-2 py-0.5 rounded bg-surface-container hover:bg-surface-container-high text-primary hover:text-text-primary whitespace-nowrap font-mono transition-colors text-[11px]" onclick="insertChipPrompt('Send daily weight threshold alerts to Slack webhook #waste-ops')">
+              + Slack Webhook
+            </button>
+</div>
+<!-- Input Field Area -->
+<div class="relative bg-[#050507] rounded-lg p-2 focus-within:ring-1 focus-within:ring-primary transition-all">
+<textarea class="w-full bg-transparent text-body-sm font-body-sm text-text-primary placeholder:text-text-tertiary focus:outline-none resize-none" id="agent-input" placeholder="Ask for live edits... (e.g. 'Add a summary view by vendor' or 'Require photo verification')" rows="2"></textarea>
+<div class="flex items-center justify-between pt-2">
+<div class="flex items-center gap-1.5 text-text-tertiary font-mono text-[11px]">
+<span class="material-symbols-outlined text-[13px] text-primary">auto_fix_high</span>
+<span>Spec-Synthesizer v4</span>
+<span class="hidden sm:inline px-1 py-0.5 rounded bg-surface-container text-[10px]">⌘ Enter</span>
+</div>
+<button class="flex items-center gap-1 px-3 py-1 rounded bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-medium transition-all shadow-[0_0_12px_-2px_rgba(76,215,246,0.4)]" id="send-edit-btn" onclick="triggerLiveEdit()">
+<span>Send Edit</span>
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- PANE 2: App Preview / Live Deployed Application Container (Col 5-12) -->
+<div class="xl:col-span-8 flex flex-col bg-[#0a0a0c] rounded-lg shadow-2xl overflow-hidden min-h-[600px] h-full">
+<!-- Browser Chrome Minimalist Header -->
+<div class="px-space-md py-2.5 bg-[#0e0e12] flex flex-wrap items-center justify-between gap-space-sm select-none">
+<!-- Traffic lights & Back/Fwd controls -->
+<div class="flex items-center gap-space-md">
+<div class="flex items-center gap-1.5">
+<span class="h-2.5 w-2.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors"></span>
+<span class="h-2.5 w-2.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors"></span>
+<span class="h-2.5 w-2.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors"></span>
+</div>
+<div class="hidden sm:flex items-center gap-1 text-text-tertiary">
+<span class="material-symbols-outlined text-[16px] hover:text-text-primary cursor-pointer">arrow_back</span>
+<span class="material-symbols-outlined text-[16px] hover:text-text-primary cursor-pointer">arrow_forward</span>
+</div>
+</div>
+<!-- Centered URL bar -->
+<div class="flex-1 max-w-xl mx-2">
+<div class="flex items-center gap-1.5 px-space-sm py-1 rounded bg-[#050507] text-text-secondary text-label-sm font-label-sm font-mono shadow-inner">
+<span class="material-symbols-outlined text-[14px] text-secondary">lock</span>
+<span class="text-text-primary">https://ewaste-trk.acfs.live</span>
+<span class="text-text-tertiary">/dashboard</span>
+<span class="ml-auto flex items-center gap-1 text-text-tertiary hover:text-primary cursor-pointer" onclick="refreshPreview()">
+<span class="material-symbols-outlined text-[14px]" id="refresh-icon">refresh</span>
+</span>
+</div>
+</div>
+<!-- Viewport sizing & pop-out actions -->
+<div class="flex items-center gap-1 text-text-secondary">
+<button class="p-1 rounded hover:bg-surface-elevated text-primary" title="Desktop View (100%)">
+<span class="material-symbols-outlined text-[16px]">desktop_windows</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-elevated text-text-tertiary hover:text-text-primary" title="Tablet View">
+<span class="material-symbols-outlined text-[16px]">tablet_mac</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-elevated text-text-tertiary hover:text-text-primary" title="Mobile View">
+<span class="material-symbols-outlined text-[16px]">smartphone</span>
+</button>
+<div class="h-3 w-px bg-surface-variant mx-1"></div>
+<a class="p-1 rounded hover:bg-surface-elevated text-text-tertiary hover:text-text-primary" href="#" title="Open in new window">
+<span class="material-symbols-outlined text-[16px]">open_in_new</span>
+</a>
+</div>
+</div>
+<!-- Inner Deployed App Frame (Simulation of Live Application UI) -->
+<div class="flex-1 bg-[#050505] p-space-md md:p-space-lg overflow-y-auto space-y-space-lg font-body-md transition-opacity duration-300" id="preview-sandbox">
+<!-- Auth Wrapper Pill -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm p-space-sm rounded-lg bg-[#0e0e12] shadow-sm">
+<div class="flex items-center gap-space-xs text-text-secondary text-label-sm font-label-sm font-mono">
+<span class="material-symbols-outlined text-[16px] text-primary">security</span>
+<span class="text-text-primary font-medium">AWS Cognito Guard</span>
+<span class="text-text-tertiary">•</span>
+<span class="text-text-tertiary">Session Token: active_26h</span>
+</div>
+<div class="flex items-center gap-space-xs text-label-sm font-label-sm">
+<span class="h-2 w-2 rounded-full bg-secondary"></span>
+<span class="text-text-primary font-mono font-medium">rahul@bharatbuilds.in</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-primary font-mono text-[10px]">Collector Admin</span>
+</div>
+</div>
+<!-- App Internal Header & Operational Metrics -->
+<div class="space-y-space-md">
+<div class="flex flex-wrap items-center justify-between gap-space-md">
+<div>
+<div class="flex items-center gap-2">
+<h1 class="font-headline-md text-headline-md font-semibold text-text-primary tracking-tight">E-Waste Lifecycle Portal</h1>
+<span class="px-2 py-0.5 rounded text-label-sm font-mono bg-primary/10 text-primary">v1.3-stable</span>
+</div>
+<p class="text-body-sm font-body-sm text-text-secondary mt-0.5">Regional Collection Hubs • West Maharashtra Grid 04</p>
+</div>
+<!-- Top Deployed App Actions -->
+<div class="flex items-center gap-space-xs flex-wrap">
+<button class="flex items-center gap-1.5 px-space-sm py-1.5 rounded bg-surface-elevated hover:bg-surface-overlay text-text-primary text-label-md font-label-md transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px] text-text-tertiary">download</span>
+<span>Export Manifest</span>
+</button>
+<button class="flex items-center gap-1.5 px-space-sm py-1.5 rounded bg-surface-elevated hover:bg-surface-overlay text-text-primary text-label-md font-label-md transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px] text-tertiary">verified</span>
+<span>Generate Certificate</span>
+</button>
+<button class="flex items-center gap-1.5 px-space-md py-1.5 rounded bg-primary text-on-primary font-label-md text-label-md font-medium hover:bg-primary-container transition-all shadow-[0_0_14px_-2px_rgba(76,215,246,0.3)]" type="button">
+<span class="material-symbols-outlined text-[16px]">add_circle</span>
+<span>+ Log Drop-Off Batch</span>
+</button>
+</div>
+</div>
+<!-- Bento Stats Metric Strip -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-md">
+<div class="p-space-md rounded-lg bg-[#0d0d10] relative overflow-hidden shadow-sm">
+<div class="text-text-tertiary font-label-sm text-label-sm uppercase tracking-wider font-mono">Total Collected (MTD)</div>
+<div class="flex items-baseline gap-space-xs mt-1">
+<span class="font-headline-lg text-headline-lg font-bold text-text-primary tracking-tight">4,820</span>
+<span class="font-mono text-body-sm text-text-tertiary">kg</span>
+</div>
+<div class="flex items-center gap-1 text-label-sm font-mono text-secondary mt-2">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+<span>+18% from last week</span>
+</div>
+<div class="absolute right-3 top-3 opacity-10 text-primary">
+<span class="material-symbols-outlined text-[48px]">scale</span>
+</div>
+</div>
+<div class="p-space-md rounded-lg bg-[#0d0d10] relative overflow-hidden shadow-sm">
+<div class="text-text-tertiary font-label-sm text-label-sm uppercase tracking-wider font-mono">Active Regional Bins</div>
+<div class="flex items-baseline gap-space-xs mt-1">
+<span class="font-headline-lg text-headline-lg font-bold text-text-primary tracking-tight">18 <span class="text-text-tertiary text-body-lg font-normal">/ 20</span></span>
+<span class="font-mono text-label-sm text-secondary font-medium">90% CAP</span>
+</div>
+<!-- Inline capacity visual progress bar -->
+<div class="w-full bg-surface-container rounded-full h-1.5 mt-3 overflow-hidden">
+<div class="bg-gradient-to-r from-primary to-secondary h-full rounded-full" style="width: 90%;"></div>
+</div>
+<div class="text-label-sm font-mono text-text-tertiary mt-1.5">2 bins ready for truck routing</div>
+</div>
+<div class="p-space-md rounded-lg bg-[#0d0d10] relative overflow-hidden shadow-sm">
+<div class="text-text-tertiary font-label-sm text-label-sm uppercase tracking-wider font-mono">Pending Audit Certs</div>
+<div class="flex items-baseline gap-space-xs mt-1">
+<span class="font-headline-lg text-headline-lg font-bold text-tertiary tracking-tight">12</span>
+<span class="font-mono text-body-sm text-text-tertiary">batches</span>
+</div>
+<div class="flex items-center gap-1 text-label-sm font-mono text-tertiary mt-2">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+<span>Avg turnaround: 4.2h</span>
+</div>
+<div class="absolute right-3 top-3 opacity-10 text-tertiary">
+<span class="material-symbols-outlined text-[48px]">verified</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Live Data Table: Recent Drop-Off Batches -->
+<div class="space-y-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary">inventory_2</span>
+<span class="font-headline-sm text-body-md font-semibold text-text-primary">Recent Regional Ingest Batches</span>
+</div>
+<div class="flex items-center gap-2 text-label-sm font-mono text-text-tertiary">
+<span class="h-1.5 w-1.5 rounded-full bg-secondary"></span>
+<span>SQLite Edge replica sync: 0.1s ago</span>
+</div>
+</div>
+<!-- Table Container -->
+<div class="w-full rounded-lg overflow-x-auto bg-[#0a0a0d] shadow-lg">
+<table class="w-full text-left font-body-sm text-body-sm min-w-[620px]">
+<thead class="bg-[#0f0f14] text-text-tertiary font-mono text-label-sm uppercase tracking-wider">
+<tr>
+<th class="py-3 px-space-md font-medium">Batch ID</th>
+<th class="py-3 px-space-md font-medium">Material Category</th>
+<th class="py-3 px-space-md font-medium">Net Weight</th>
+<th class="py-3 px-space-md font-medium">Collection Station</th>
+<th class="py-3 px-space-md font-medium">Verification</th>
+<th class="py-3 px-space-md font-medium text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/[0.04]">
+<!-- Entry 1 -->
+<tr class="hover:bg-surface-elevated transition-colors group">
+<td class="py-3 px-space-md font-mono text-text-primary font-medium flex items-center gap-2">
+<span class="h-2 w-2 rounded-full bg-secondary"></span>
+<span>#EW-8821</span>
+</td>
+<td class="py-3 px-space-md">
+<div class="text-text-primary font-medium">Lithium-ion Batteries</div>
+<div class="text-text-tertiary text-label-sm font-mono">Hazmat Class 9 • Sealed cells</div>
+</td>
+<td class="py-3 px-space-md font-mono text-text-primary font-semibold">
+                      142.0 <span class="text-text-tertiary text-label-sm">kg</span>
+</td>
+<td class="py-3 px-space-md">
+<div class="text-text-secondary">Station 04 - Pune Central</div>
+<div class="text-text-tertiary text-label-sm font-mono">Operator: K. Deshmukh</div>
+</td>
+<td class="py-3 px-space-md">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded font-mono text-label-sm bg-secondary/10 text-secondary">
+<span class="material-symbols-outlined text-[12px]">check_circle</span>
+<span>Verified</span>
+</span>
+</td>
+<td class="py-3 px-space-md text-right">
+<button class="p-1 rounded text-text-tertiary group-hover:text-primary hover:bg-surface-container transition-colors" title="View Batch Manifest">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Entry 2 -->
+<tr class="hover:bg-surface-elevated transition-colors group">
+<td class="py-3 px-space-md font-mono text-text-primary font-medium flex items-center gap-2">
+<span class="h-2 w-2 rounded-full bg-primary"></span>
+<span>#EW-8822</span>
+</td>
+<td class="py-3 px-space-md">
+<div class="text-text-primary font-medium">PCB &amp; Motherboards</div>
+<div class="text-text-tertiary text-label-sm font-mono">Precious Metal Recovery Grade A</div>
+</td>
+<td class="py-3 px-space-md font-mono text-text-primary font-semibold">
+                      380.5 <span class="text-text-tertiary text-label-sm">kg</span>
+</td>
+<td class="py-3 px-space-md">
+<div class="text-text-secondary">Station 01 - Mumbai Hub</div>
+<div class="text-text-tertiary text-label-sm font-mono">Operator: A. Mehta</div>
+</td>
+<td class="py-3 px-space-md">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded font-mono text-label-sm bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-[12px] animate-spin">sync</span>
+<span>Processing</span>
+</span>
+</td>
+<td class="py-3 px-space-md text-right">
+<button class="p-1 rounded text-text-tertiary group-hover:text-primary hover:bg-surface-container transition-colors" title="View Batch Manifest">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Entry 3 -->
+<tr class="hover:bg-surface-elevated transition-colors group">
+<td class="py-3 px-space-md font-mono text-text-primary font-medium flex items-center gap-2">
+<span class="h-2 w-2 rounded-full bg-tertiary"></span>
+<span>#EW-8823</span>
+</td>
+<td class="py-3 px-space-md">
+<div class="text-text-primary font-medium">Industrial CRTs &amp; Lead Glass</div>
+<div class="text-text-tertiary text-label-sm font-mono">Specialized Smelting Required</div>
+</td>
+<td class="py-3 px-space-md font-mono text-text-primary font-semibold">
+                      850.0 <span class="text-text-tertiary text-label-sm">kg</span>
+</td>
+<td class="py-3 px-space-md">
+<div class="text-text-secondary">Station 07 - Bengaluru South</div>
+<div class="text-text-tertiary text-label-sm font-mono">Operator: R. Swaminathan</div>
+</td>
+<td class="py-3 px-space-md">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded font-mono text-label-sm bg-tertiary/10 text-tertiary">
+<span class="material-symbols-outlined text-[12px]">pending</span>
+<span>Pending Audit</span>
+</span>
+</td>
+<td class="py-3 px-space-md text-right">
+<button class="p-1 rounded text-text-tertiary group-hover:text-primary hover:bg-surface-container transition-colors" title="View Batch Manifest">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Bottom Visual Card: Verification Pipeline telemetry -->
+<div class="p-space-md rounded-lg bg-[#0a0a0d] flex flex-col md:flex-row items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="h-10 w-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]">hub</span>
+</div>
+<div>
+<div class="text-text-primary font-semibold font-body-md">Edge Compliance Engine</div>
+<div class="text-text-tertiary text-label-sm font-mono">Proof of Destruction: Cryptographically hashed on drop-off</div>
+</div>
+</div>
+<div class="flex items-center gap-space-md font-mono text-label-sm">
+<div>
+<span class="text-text-tertiary">Active Nodes:</span>
+<span class="text-text-primary ml-1">3/3</span>
+</div>
+<div class="h-3 w-px bg-surface-variant"></div>
+<div>
+<span class="text-text-tertiary">Chain Height:</span>
+<span class="text-secondary ml-1">#481,209</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Interactive behavior script: URL copy, Live edits, and Refresh -->
+<script>
+    function copyEdgeUrl() {
+      const urlText = 'https://ewaste-trk.acfs.live';
+      navigator.clipboard.writeText(urlText).then(() => {
+        const tooltip = document.getElementById('copy-tooltip');
+        const icon = document.getElementById('copy-icon');
+        
+        icon.textContent = 'check';
+        icon.classList.add('text-secondary');
+        tooltip.style.opacity = '1';
+        
+        setTimeout(() => {
+          tooltip.style.opacity = '0';
+          icon.textContent = 'content_copy';
+          icon.classList.remove('text-secondary');
+        }, 1800);
+      });
+    }
+
+    function insertChipPrompt(promptText) {
+      const input = document.getElementById('agent-input');
+      input.value = promptText;
+      input.focus();
+    }
+
+    function triggerLiveEdit() {
+      const input = document.getElementById('agent-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const btn = document.getElementById('send-edit-btn');
+      btn.innerHTML = '<span class="material-symbols-outlined text-[14px] animate-spin">sync</span><span>Deploying...</span>';
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.innerHTML = '<span>Send Edit</span><span class="material-symbols-outlined text-[14px]">arrow_upward</span>';
+        btn.disabled = false;
+        input.value = '';
+        refreshPreview();
+      }, 900);
+    }
+
+    function refreshPreview() {
+      const sandbox = document.getElementById('preview-sandbox');
+      const icon = document.getElementById('refresh-icon');
+      
+      icon.classList.add('animate-spin');
+      sandbox.style.opacity = '0.4';
+      
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+        sandbox.style.opacity = '1';
+      }, 450);
+    }
+
+    // Command + Enter key listener
+    document.getElementById('agent-input')?.addEventListener('keydown', function (e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault();
+        triggerLiveEdit();
+      }
+    });
+  </script>
+</div></main><footer class="w-full bg-[#050505]/90 backdrop-blur-xl border-t border-border-subtle py-space-sm text-text-tertiary"><div class="w-full px-gutter-desktop max-w-[1440px] mx-auto flex flex-col md:flex-row items-center justify-between gap-space-sm text-label-sm font-label-sm font-mono"><div><span class="text-text-secondary">Bharat Builds Tour 2026</span><span class="mx-2 text-border-strong">|</span><span>Node ID: <span class="text-text-primary">bb-mum-01a</span></span><span class="mx-2 text-border-strong">|</span><span>Engine: <span class="text-text-primary">v2.4-edge</span></span></div><div class="flex items-center gap-space-md"><span>Region: <span class="text-text-secondary">ap-south-1 (Mumbai)</span></span><span class="mx-2 text-border-strong">|</span><div class="flex items-center gap-1.5"><span class="h-1.5 w-1.5 rounded-full bg-primary"></span><span>State: <span class="text-primary">Active Pipeline</span></span></div></div></div></footer></body></html>
