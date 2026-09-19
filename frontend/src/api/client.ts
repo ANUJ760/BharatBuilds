@@ -78,8 +78,16 @@ export async function apiGetApp(appId: string) {
   return request('GET', `/apps/${appId}`);
 }
 
-export async function apiListApps() {
-  return request<{ apps: any[] }>('GET', '/apps/');
+export async function apiListApps(ownerId: string) {
+  return request<{ apps: any[] }>('GET', `/apps/?owner_id=${ownerId}`);
+}
+
+export async function apiDeleteApp(appId: string) {
+  return request('DELETE', `/apps/${appId}`);
+}
+
+export async function apiUpdateApp(appId: string, title: string) {
+  return request('PUT', `/apps/${appId}`, { title });
 }
 
 // ── Deploy ────────────────────────────────────────────────────────────────────
@@ -120,6 +128,18 @@ export async function apiGetTimeline(appId: string) {
 // ── Share ─────────────────────────────────────────────────────────────────────
 export async function apiInvite(appId: string, email: string, role = 'viewer') {
   return request('POST', `/apps/${appId}/invite`, { email, role });
+}
+
+export async function apiListCollaborators(appId: string) {
+  return request<{ collaborators: any[] }>('GET', `/apps/${appId}/collaborators`);
+}
+
+export async function apiRemoveCollaborator(appId: string, email: string) {
+  return request('DELETE', `/apps/${appId}/collaborators/${email}`);
+}
+
+export async function apiUpdateCollaboratorRole(appId: string, email: string, role: string) {
+  return request('PUT', `/apps/${appId}/collaborators/${email}`, { role });
 }
 
 // ── Health ────────────────────────────────────────────────────────────────────

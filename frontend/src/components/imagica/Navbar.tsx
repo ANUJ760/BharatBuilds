@@ -51,14 +51,24 @@ export default function Navbar() {
         ))}
       </div>
 
-      {/* Login button — white pill matching video */}
-      <Link
-        to={isAuthenticated ? "/create" : "/auth"}
-        onClick={handleAuthClick}
-        className="px-5 py-2 rounded-full bg-white text-[13px] font-medium text-[#111] shadow-sm border border-white/80 hover:shadow-md transition-all duration-200"
-      >
-        {isAuthenticated ? "Launch App" : "Sign In"}
-      </Link>
+      {/* Action buttons */}
+      <div className="flex items-center gap-3">
+        {isAuthenticated && (
+          <Link
+            to="/dashboard"
+            className="px-5 py-2 rounded-full bg-transparent text-[13px] font-medium text-[#111] border border-black/10 hover:bg-black/5 transition-all duration-200 hidden md:block"
+          >
+            Dashboard
+          </Link>
+        )}
+        <Link
+          to={isAuthenticated ? "/create" : "/auth"}
+          onClick={handleAuthClick}
+          className="px-5 py-2 rounded-full bg-white text-[13px] font-medium text-[#111] shadow-sm border border-white/80 hover:shadow-md transition-all duration-200"
+        >
+          {isAuthenticated ? "Launch App" : "Sign In"}
+        </Link>
+      </div>
     </nav>
   );
 }

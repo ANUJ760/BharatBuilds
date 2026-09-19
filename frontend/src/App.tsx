@@ -5,6 +5,7 @@ import { AppView } from './pages/AppView';
 import { Timeline } from './pages/Timeline';
 
 import Auth from './pages/Auth';
+import Dashboard from './pages/Dashboard';
 
 export function App() {
   return (
@@ -12,6 +13,7 @@ export function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/create" element={<Home />} />
         <Route path="/app/:id" element={<AppView />} />
         <Route path="/timeline/:id" element={<Timeline />} />

@@ -71,3 +71,18 @@ def delete_item(
     """Delete a single item by composite key."""
     table = _get_table(table_name, region=region)
     table.delete_item(Key={"app_id": app_id, "step_id": step_id})
+
+def scan_apps_by_owner(
+    table_name: str,
+    owner_id: str,
+    *,
+    region: str = "ap-south-1",
+) -> list[dict[str, Any]]:
+    """Scan the table for __metadata__ items matching the owner_id."""
+    from boto3.dynamodb.conditions import Attr
+    table = _get_table(table_name, region=region)
+    # This is a naive scan suitable for prototypes without a GSI
+    response = table.scan(
+        FilterExpression=Attr("step_id").eq("__metadata__") & Attr("owner_id").eq(owner_id)
+    )
+    return response.get("Items", [])

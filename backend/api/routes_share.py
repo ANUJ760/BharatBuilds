@@ -152,3 +152,51 @@ async def invite_user(app_id: str, body: InviteRequest):
         "status": "sent",
         "message_id": message_id,
     }
+
+@router.get("/apps/{app_id}/collaborators", dependencies=[Depends(require_editor)])
+async def list_collaborators(app_id: str):
+    """List all collaborators for an app."""
+    from backend.storage.dynamodb_client import query_by_app_id
+    settings = get_settings()
+    items = query_by_app_id(settings.dynamodb_table_name, app_id, region=settings.aws_region)
+    collaborators = [item for item in items if item["step_id"].startswith("invite#")]
+    return {"collaborators": collaborators}
+
+@router.delete("/apps/{app_id}/collaborators/{email}", dependencies=[Depends(require_editor)])
+async def remove_collaborator(app_id: str, email: str):
+    """Remove a collaborator's access."""
+    from backend.storage.dynamodb_client import delete_item
+    settings = get_settings()
+    delete_item(
+        settings.dynamodb_table_name,
+        app_id,
+        f"invite#{email}",
+        region=settings.aws_region,
+    )
+    return {"status": "removed"}
+
+class UpdateRoleRequest(BaseModel):
+    role: Role
+
+@router.put("/apps/{app_id}/collaborators/{email}", dependencies=[Depends(require_editor)])
+async def update_collaborator_role(app_id: str, email: str, body: UpdateRoleRequest):
+    """Update a collaborator's role."""
+    from backend.storage.dynamodb_client import get_item, put_item
+    settings = get_settings()
+    item = get_item(
+        settings.dynamodb_table_name,
+        app_id,
+        f"invite#{email}",
+        region=settings.aws_region,
+    )
+    if not item:
+        raise HTTPException(status_code=404, detail="Collaborator not found")
+        
+    role_str = body.role.value if isinstance(body.role, Role) else str(body.role).lower()
+    item["role"] = role_str
+    put_item(
+        settings.dynamodb_table_name,
+        item,
+        region=settings.aws_region,
+    )
+    return {"status": "updated", "role": role_str}
