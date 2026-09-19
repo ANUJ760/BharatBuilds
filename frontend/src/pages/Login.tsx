@@ -33,7 +33,12 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] text-[#111] font-sans selection:bg-black selection:text-white flex flex-col items-center justify-center relative overflow-hidden">
+    <motion.div 
+      initial={{ y: "15vh", opacity: 0 }} 
+      animate={{ y: 0, opacity: 1 }} 
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      className="min-h-screen bg-[#f8f9fa] text-[#111] font-sans selection:bg-black selection:text-white flex flex-col items-center justify-center relative overflow-hidden"
+    >
       <Scene3D />
       
       {/* Navbar Minimal */}
@@ -87,6 +92,6 @@ export default function Login() {
           </form>
         </div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }

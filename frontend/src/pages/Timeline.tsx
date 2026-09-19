@@ -162,7 +162,12 @@ export const Timeline = () => {
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-[#e8e8e8] text-[#111]">Loading...</div>;
 
   return (
-    <div className="flex flex-col w-full h-screen bg-[#e8e8e8] text-[#111] font-sans">
+    <motion.div 
+      initial={{ y: "15vh", opacity: 0 }} 
+      animate={{ y: 0, opacity: 1 }} 
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      className="flex flex-col w-full h-screen bg-[#e8e8e8] text-[#111] font-sans"
+    >
       <nav className="fixed top-0 z-50 w-full bg-[#e8e8e8]/80 backdrop-blur-xl border-b border-black/5 px-8 py-4 flex justify-between items-center shadow-sm">
         <Link to={`/apps/${id}`} className="text-sm font-medium flex items-center gap-2 hover:opacity-70 transition-opacity">
           <span className="material-symbols-outlined text-[18px]">arrow_back</span>
@@ -271,7 +276,7 @@ export const Timeline = () => {
           )}
         </AnimatePresence>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

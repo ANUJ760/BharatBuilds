@@ -1,8 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 export default function MissionSection() {
+  const navigate = useNavigate();
   return (
     <section id="mission" className="imagica-section imagica-section--solid flex-col py-32">
       <div className="max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -47,7 +49,19 @@ export default function MissionSection() {
                 </div>
               </div>
               <div className="flex justify-end mt-3">
-                <button className="px-4 py-1.5 rounded-full bg-[#111] text-white text-[11px] font-medium">Build Your App</button>
+                <a
+                  href="/create"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.dispatchEvent(new CustomEvent('burst-auth'));
+                    setTimeout(() => {
+                      navigate("/create");
+                    }, 900);
+                  }}
+                  className="px-4 py-1.5 rounded-full bg-[#111] text-white text-[11px] font-medium inline-block"
+                >
+                  Build Your App
+                </a>
               </div>
             </div>
           </div>

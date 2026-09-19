@@ -122,7 +122,12 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] text-[#111] font-sans selection:bg-black selection:text-white pt-24 pb-12 px-4 sm:px-10 relative overflow-hidden">
+    <motion.div 
+      initial={{ y: "15vh", opacity: 0 }} 
+      animate={{ y: 0, opacity: 1 }} 
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      className="min-h-screen bg-[#f8f9fa] text-[#111] font-sans selection:bg-black selection:text-white pt-24 pb-12 px-4 sm:px-10 relative overflow-hidden"
+    >
       <Scene3D />
       
       <nav className="fixed top-0 left-0 w-full z-40 flex items-center justify-between px-10 py-5 bg-white/40 backdrop-blur-xl border-b border-white/50">
@@ -330,6 +335,6 @@ export default function Dashboard() {
           </div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }

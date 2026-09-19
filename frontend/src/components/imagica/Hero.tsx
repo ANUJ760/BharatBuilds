@@ -1,8 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 export default function Hero() {
+  const navigate = useNavigate();
   return (
     <section className="imagica-section imagica-section--transparent flex-col pt-32">
       <div className="max-w-4xl mx-auto flex flex-col items-center text-center gap-5">
@@ -39,6 +41,13 @@ export default function Hero() {
         {/* CTA */}
         <motion.a
           href="/create"
+          onClick={(e) => {
+            e.preventDefault();
+            window.dispatchEvent(new CustomEvent('burst-auth'));
+            setTimeout(() => {
+              navigate("/create");
+            }, 900);
+          }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7, delay: 0.6 }}

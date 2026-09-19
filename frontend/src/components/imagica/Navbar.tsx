@@ -14,16 +14,14 @@ export default function Navbar() {
 
   const isAuthenticated = !!(localStorage.getItem('bb_token') || sessionStorage.getItem('bb_token'));
 
-  const handleAuthClick = (e: React.MouseEvent) => {
-    if (!isAuthenticated) {
-      e.preventDefault();
-      // Trigger burst animation in 3D canvas
-      window.dispatchEvent(new CustomEvent('burst-auth'));
-      // Wait for animation to engulf screen, then navigate
-      setTimeout(() => {
-        navigate("/login");
-      }, 800);
-    }
+  const handleNavClick = (e: React.MouseEvent, path: string) => {
+    e.preventDefault();
+    // Trigger burst animation in 3D canvas
+    window.dispatchEvent(new CustomEvent('burst-auth'));
+    // Wait for pour animation to mostly finish, then navigate
+    setTimeout(() => {
+      navigate(path);
+    }, 900); // Navigate slightly before pour finishes to allow destination page to rise up
   };
 
   return (
@@ -54,20 +52,21 @@ export default function Navbar() {
       {/* Action buttons */}
       <div className="flex items-center gap-3">
         {isAuthenticated && (
-          <Link
-            to="/dashboard"
+          <a
+            href="/dashboard"
+            onClick={(e) => handleNavClick(e, "/dashboard")}
             className="px-5 py-2 rounded-full bg-transparent text-[13px] font-medium text-[#111] border border-black/10 hover:bg-black/5 transition-all duration-200 hidden md:block"
           >
             Dashboard
-          </Link>
+          </a>
         )}
-        <Link
-          to={isAuthenticated ? "/create" : "/login"}
-          onClick={handleAuthClick}
+        <a
+          href={isAuthenticated ? "/create" : "/login"}
+          onClick={(e) => handleNavClick(e, isAuthenticated ? "/create" : "/login")}
           className="px-5 py-2 rounded-full bg-white text-[13px] font-medium text-[#111] shadow-sm border border-white/80 hover:shadow-md transition-all duration-200"
         >
           {isAuthenticated ? "Launch App" : "Sign In"}
-        </Link>
+        </a>
       </div>
     </nav>
   );

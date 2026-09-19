@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { apiGetApp } from '../api/client';
 import { useDeployStatus } from '../hooks/useDeployStatus';
 
@@ -39,8 +40,12 @@ export const AppView = () => {
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-[#f8f9fa] text-[#111]">Loading...</div>;
 
   return (
-    <div className="flex w-full h-screen bg-[#f3f4f6] text-[#111] font-sans selection:bg-black selection:text-white overflow-hidden">
-      
+    <motion.div 
+      initial={{ y: "15vh", opacity: 0 }} 
+      animate={{ y: 0, opacity: 1 }} 
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      className="flex w-full h-screen bg-[#f3f4f6] text-[#111] font-sans selection:bg-black selection:text-white overflow-hidden"
+    >
       {/* Activity Bar (VS Code style far-left) */}
       <div className="w-[48px] h-full bg-[#f8f9fa] border-r border-[#e5e7eb] flex flex-col items-center py-4 gap-4 flex-shrink-0 z-20">
         <Link to="/" className="text-gray-400 hover:text-black transition-colors mb-4">
@@ -172,7 +177,7 @@ export const AppView = () => {
         </div>
 
       </div>
-    </div>
+    </motion.div>
   );
 };
 
