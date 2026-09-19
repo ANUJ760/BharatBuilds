@@ -163,8 +163,8 @@ export const Timeline = () => {
 
   return (
     <motion.div 
-      initial={{ y: "100vh", opacity: 1 }} 
-      animate={{ y: 0, opacity: 1 }} 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
       transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
       className="flex flex-col w-full h-screen bg-[#e8e8e8] text-[#111] font-sans relative z-[100]"
     >

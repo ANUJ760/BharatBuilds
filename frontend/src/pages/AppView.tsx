@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Scene3D } from '../components/Scene3D';
+import { Logo } from '../components/imagica/Logo';
 import { apiGetApp } from '../api/client';
 import { useDeployStatus } from '../hooks/useDeployStatus';
 
@@ -41,8 +43,8 @@ export const AppView = () => {
 
   return (
     <motion.div 
-      initial={{ y: "100vh", opacity: 1 }} 
-      animate={{ y: 0, opacity: 1 }} 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
       transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
       className="flex w-full h-screen bg-[#f3f4f6] text-[#111] font-sans selection:bg-black selection:text-white overflow-hidden relative z-[100]"
     >

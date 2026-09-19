@@ -35,8 +35,8 @@ export default function Login() {
 
   return (
     <motion.div 
-      initial={{ y: "100vh", opacity: 1 }} 
-      animate={{ y: 0, opacity: 1 }} 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
       transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
       className="min-h-screen bg-[#f8f9fa] text-[#111] font-sans selection:bg-black selection:text-white flex flex-col items-center justify-center relative overflow-hidden z-[100]"
     >
