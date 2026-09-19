@@ -1,6 +1,6 @@
-# [Project Name TBD]
+# TBD
 
-> A cloud for small software — turn a plain-language prompt into a live, authenticated, shareable web app in under a minute, deployed on real AWS infrastructure, with a full visual record of every decision the agent made along the way.
+> A cloud for small software: turn plain-language prompts into live, authenticated, shareable web applications deployed on AWS infrastructure, with a visual decision timeline, deterministic rollback, and autonomous self-healing maintenance.
 
 Built for **Bharat Builds Tour 2026 (First Commit)** by WeMakeDevs × AWS.
 
@@ -8,302 +8,367 @@ Built for **Bharat Builds Tour 2026 (First Commit)** by WeMakeDevs × AWS.
 
 ## 1. The Problem
 
-AI agents can now write a working app from a prompt in seconds — a form, a tracker, a small internal tool. But turning that generated code into something a real person can actually *use* still requires:
+AI models can write working code from a prompt in seconds: a form, a tracker, a dashboard, or a lightweight internal tool. However, turning generated code into software that a team can reliably use still requires:
 
-- A cloud account and DevOps knowledge to deploy it
-- Manually wiring up authentication
-- A database or storage layer, even for something tiny
-- A way to share it with teammates that isn't "send them a zip file"
-- Trust that when you ask the agent to change something, it won't silently break what already worked
+- Cloud provisioning and DevOps knowledge to deploy and expose live URLs
+- Setting up authentication, user pools, and login flows
+- Provisioning databases or object storage for application state
+- Distributing access securely without sending raw source archives
+- Safe maintenance and bug repair that will not silently break previously working features
 
-Incumbent clouds (AWS, Azure, GCP) were built for **Big Software** — systems designed to scale to millions of users, at the cost of significant setup complexity. Most AI-generated apps are the opposite: **Small Software** — purpose-built tools for one person or a small team, that need to be deployed and shared as easily as a Google Doc.
+Traditional cloud platforms are built for large-scale enterprise systems, introducing significant setup complexity. Most AI-generated applications are small software: single-purpose tools built for an individual or small team that must be deployed, shared, and maintained with zero friction.
 
-This project is a thin, opinionated cloud layer built specifically for that gap — running entirely on AWS.
-
----
-
-## 2. Core Idea
-
-1. A user describes what they want in plain language.
-2. The agent checks whether the request is ambiguous in ways that would materially change the app, and asks up to 3 quick questions if so — otherwise it proceeds immediately.
-3. The agent plans, writes, and deploys the app to a live AWS-hosted URL.
-4. The app is wrapped in authentication and sharing out of the box — no code changes needed.
-5. Every step the agent took (reasoning, tool calls, code generated, retries) is recorded as a node in a visual decision timeline.
-6. The user can inspect any past step and **revert the live app to that exact state** if a later change broke something.
+TBD provides a dedicated, opinionated cloud platform designed specifically for small software, running natively on AWS.
 
 ---
 
-## 3. Feature Breakdown
+## 2. Core Architecture and Capabilities
+
+1. **Clarify-Then-Build**: Checks the prompt for structural ambiguities before generating code, asking up to 3 focused questions with default recommendations.
+2. **Instant Deployment**: Deploys isolated container or serverless workloads to live, HTTPS-enabled AWS URLs in seconds.
+3. **Zero-Config Auth and Sharing**: Wraps every deployed app in role-based authentication (Viewer and Editor) via magic links and OTP, without modifying the generated application logic.
+4. **Decision Timeline and Deterministic Revert**: Records every plan, tool invocation, code diff, and deployment state in an interactive tree graph, enabling one-click rollback to any historical snapshot.
+5. **Autonomous Maintenance**: Detects application errors and health degradation, diagnoses root causes with Amazon Bedrock, verifies candidate repairs locally in isolation, and enforces safety guards before any code is promoted.
+
+---
+
+## 3. Detailed Feature Breakdown
 
 ### 3.1 Prompt-to-App Generation
-- User submits a plain-language request (chat interface).
-- Agent generates a working single-purpose app (form + logic + simple UI).
-- Powered by **Amazon Bedrock**.
+- Accepts natural language descriptions through a clean chat interface.
+- Deconstructs requirements into a structured specification and generates complete, runnable Python/FastAPI or static frontend applications.
+- Powered by Amazon Bedrock foundation models with strict schema validation.
 
 ### 3.2 Clarify-Then-Build
-- Before generating any code, a fast "ambiguity check" pass runs on the prompt.
-- If the request is underspecified in a way that would change the resulting app's structure (data fields, roles/permissions, single vs. multi-user, etc.), the agent asks up to **3** targeted questions, each with a suggested default.
-- The user can tap a suggested default or answer directly — no open-ended back-and-forth.
-- Once resolved, the build proceeds **without further interruption**.
-- This step is itself logged as the first node in the Decision Timeline (see 3.5).
+- Before generating code, an ambiguity detection step evaluates whether the prompt has missing data schemas, unclear role distinctions, or conflicting requirements.
+- If ambiguities exist, the system prompts the user with up to 3 targeted multiple-choice questions with preselected defaults.
+- Once answered or confirmed, code generation executes deterministically without conversational loops.
+- Clarification questions and user choices are recorded as the root node of the Decision Timeline.
 
-### 3.3 Instant Deploy on AWS
-- Generated app code is deployed to a live, publicly reachable URL within ~10–20 seconds.
-- Runs in an isolated per-app sandbox (containerized).
-- No manual config screens, no user-managed infrastructure.
+### 3.3 Instant AWS Deployment
+- Applications are deployed to live, isolated AWS endpoints within 10 to 20 seconds.
+- Execution options include:
+  - **Fast-path runtime**: AWS Lambda functions paired with Function URLs for lightweight single-file applications.
+  - **Container runtime**: AWS Fargate (ECS) tasks behind an Application Load Balancer for multi-file or stateful applications.
+- Zero manual cloud configuration or infrastructure provisioning required by the end user.
 
-### 3.4 Zero-Config Sharing & Auth
-- Every deployed app is wrapped with authentication — the user never edits the generated app's code to add login.
-- Owner can invite others by email/phone; invitees get a lightweight login (magic link / OTP) and a **Viewer** or **Editor** role.
-- Sharing an app should feel exactly like sharing a Google Doc: one link, one invite step, no separate cloud account required for collaborators.
+### 3.4 Zero-Config Sharing and Role-Based Auth
+- Every deployed app is secured out of the box using Amazon Cognito.
+- Application owners can invite team members via email using Amazon SES.
+- Collaborators authenticate via passwordless magic links or OTP tokens.
+- Role enforcement:
+  - **Viewer**: Read-only access to the running application.
+  - **Editor**: Ability to submit modification prompts, inspect the decision timeline, trigger reverts, and request maintenance.
 
-### 3.5 Decision Timeline & Backtrack
-- Every agent action — plan, tool call, code generation, retry, deploy — is logged as a node in a tree/timeline.
-- Nodes are visually connected: the main trunk shows the successful path; retries or corrected mistakes branch off and are visually distinguished.
-- Clicking any node opens a side panel showing:
-  - What the agent saw as input at that step
-  - Its reasoning/plan text
-  - The code diff produced (if any)
-  - Latency and token usage
-  - Status (ok / error / reverted)
-- A **"Revert to here"** action re-deploys the exact code snapshot stored at that step, instantly rolling the live app back — no need to re-prompt or replay history.
+### 3.5 Decision Timeline and One-Click Revert
+- Every agent action (clarification, planning, code generation, linting, deployment, maintenance) is logged as an immutable node in Amazon DynamoDB.
+- Visualized as a connected graph where successful paths form the main trunk, while retries and maintenance repairs branch off cleanly.
+- Node inspection panel provides:
+  - Input prompt and system context
+  - LLM reasoning and execution plan
+  - Unified code diffs
+  - Execution latency and token usage metrics
+  - Node status (SUCCESS, ERROR, REVERTED)
+- **Deterministic Revert**: Instantly rolls back the live AWS deployment to the exact code snapshot stored at any previous node without re-prompting.
 
-### 3.6 Live Editing
-- Owner can describe a change in chat ("add a summary view", "add a new field").
-- Agent edits the existing app and redeploys to the **same URL** — the link never changes.
-- Every edit is captured as a new node in the Decision Timeline, so it's always inspectable and revertible.
+### 3.6 Continuous Live Editing
+- Users can request incremental changes in natural language ("add CSV export", "filter by date range").
+- The agent computes localized diffs against the latest code snapshot and redeploys to the same stable URL.
+- Each modification creates a new timeline node, maintaining a complete audit trail.
+
+### 3.7 Autonomous Maintenance and Self-Healing
+- **Health Probing**: Async synthetic HTTP health monitor tests endpoints for status codes, latency spikes, and connection failures.
+- **Root-Cause Diagnosis and Repair**: Ingests error logs, stack traces, and existing code snapshots to produce targeted code patches via Amazon Bedrock.
+- **Candidate Verification**: Compiles candidate code in an isolated environment, verifies syntax, imports the handler, and runs smoke executions to guarantee functional validity before deployment.
+- **Safety Guards**:
+  - Max 2 repair attempts per maintenance job to prevent looping.
+  - Concurrency lock per application to prevent overlapping maintenance runs.
+  - Prompt sanitization to strip injection payloads from untrusted stack traces.
+  - Configuration guardrails rejecting unauthorized modifications to authentication, environment settings, or infrastructure.
 
 ---
 
-## 4. Architecture
+## 4. System Architecture
 
 ```
-                        ┌─────────────────────────┐
-                        │   Dashboard (Frontend)   │
-                        │   S3 + CloudFront         │
-                        └────────────┬─────────────┘
-                                     │
-                         ┌───────────▼────────────┐
-                         │   API Layer              │
-                         │   API Gateway + Lambda    │
-                         └───────────┬────────────┘
-                                     │
-        ┌────────────────────────────┼─────────────────────────────┐
-        │                            │                              │
-┌───────▼────────┐        ┌──────────▼──────────┐        ┌─────────▼─────────┐
-│  Agent Layer     │        │  Deploy Layer         │        │  Auth Layer         │
-│  Amazon Bedrock   │        │  AWS Fargate (ECS)    │        │  Amazon Cognito      │
-│  - Clarify pass   │        │  or Lambda Function    │        │  - Magic link/OTP    │
-│  - Plan/codegen   │        │    URLs per app        │        │  - Viewer/Editor      │
-│  - ReAct loop      │        │  ALB path routing       │        │    roles              │
-└───────┬────────┘        └──────────┬──────────┘        └─────────┬─────────┘
-        │                            │                              │
-        └────────────────────────────┼──────────────────────────────┘
-                                     │
-                       ┌─────────────▼─────────────┐
-                       │  Data Layer                 │
-                       │  DynamoDB                    │
-                       │  - App metadata                │
-                       │  - Decision timeline / traces   │
-                       │  - Code snapshots per step        │
-                       │  S3 (generated app assets)          │
-                       └───────────────────────────────────┘
+                        +-------------------------+
+                        |   Dashboard (Frontend)  |
+                        |   S3 + CloudFront       |
+                        +------------+------------+
+                                     |
+                         +-----------v------------+
+                         |   API Layer            |
+                         |   API Gateway + Lambda |
+                         +-----------+------------+
+                                     |
+        +----------------------------+-----------------------------+
+        |                            |                             |
++-------v--------+          +--------v----------+         +--------v--------+
+|  Agent Layer   |          |  Deploy Layer     |         |  Auth Layer     |
+|  Amazon Bedrock|          |  AWS Fargate (ECS)|         |  Amazon Cognito |
+|  - Clarify     |          |  or Lambda        |         |  - Magic links  |
+|  - Codegen     |          |  Function URLs    |         |  - OTP login    |
+|  - Maintenance |          |  ALB / API GW     |         |  - Roles        |
++-------+--------+          +--------+----------+         +--------+--------+
+        |                            |                             |
+        +----------------------------+-----------------------------+
+                                     |
+                        +------------v------------+
+                        |  Data Layer             |
+                        |  DynamoDB               |
+                        |  - App metadata         |
+                        |  - Timeline step graphs |
+                        |  - Code snapshots       |
+                        |  S3 (Asset storage)     |
+                        +-------------------------+
 ```
 
-### AWS Services Used
+### AWS Services Map
 
 | Layer | Service | Purpose |
 |---|---|---|
-| Agent / codegen | **Amazon Bedrock** | Clarify pass, planning, code generation, live edits |
-| App runtime | **AWS Fargate (ECS)** | Isolated sandbox per deployed app |
-| Alternate/fast-path runtime | **AWS Lambda + Function URLs** | Near-instant deploy for lightweight apps |
-| Routing | **Application Load Balancer** / **API Gateway** | Per-app path-based routing to live URLs |
-| Auth & sharing | **Amazon Cognito** | Magic link/OTP login, role-based access, wraps generated apps without modifying their code |
-| Invites | **Amazon SES** | Email invitations for sharing |
-| Data store | **Amazon DynamoDB** | App metadata, decision timeline/trace log, code snapshots |
-| Static hosting | **Amazon S3 + CloudFront** | Dashboard frontend, generated static assets |
-| Infra-as-code | **AWS CDK** | Reproducible deployment of the platform itself |
+| AI and Orchestration | **Amazon Bedrock** | Ambiguity clarification, planning, code generation, and error diagnosis |
+| App Runtime (Fast Path) | **AWS Lambda + Function URLs** | Sub-second cold starts and rapid deployment for lightweight applications |
+| App Runtime (Container) | **AWS Fargate (ECS)** | Isolated container environments for complex applications |
+| Routing and Gateway | **Application Load Balancer / API Gateway** | Public routing, SSL termination, and path-based dispatch |
+| Authentication | **Amazon Cognito** | Passwordless user authentication, JWT session verification, and role assignments |
+| Notifications and Invites | **Amazon SES** | Secure email dispatch for workspace invites and magic links |
+| Persistence | **Amazon DynamoDB** | Single-table storage for applications, decision traces, snapshots, and maintenance state |
+| Static Hosting | **Amazon S3 + CloudFront** | Global CDN distribution for dashboard assets and generated frontends |
+| Infrastructure as Code | **AWS CDK** | Fully reproducible TypeScript CDK stacks for all cloud resources |
 
 ---
 
-## 5. Tech Stack
+## 5. Technology Stack
 
-- **Frontend:** React + Tailwind, React Flow (for the Decision Timeline tree view)
-- **Backend:** Python + FastAPI (or Lambda-native handlers)
-- **Agent runtime:** hand-rolled ReAct loop calling Amazon Bedrock directly
-- **Data:** DynamoDB (single-table design, `app_id` + `step_id` sort key for timeline queries)
-- **Infra:** AWS CDK
+- **Frontend**: React 18, TypeScript, Tailwind CSS, React Flow (interactive timeline graph), Vite
+- **Backend**: Python 3.12+, FastAPI, Pydantic v2, Boto3, HTTPX
+- **Agent and Repair Engine**: Amazon Bedrock Converse API, AST-based candidate verifiers, strict prompt guardrails
+- **Database**: Amazon DynamoDB (single-table access patterns with composite keys)
+- **Infrastructure**: AWS Cloud Development Kit (CDK) in TypeScript
 
 ---
 
-## 6. Folder Structure
+## 6. Repository Structure
 
 ```
-project-root/
-├── README.md
-├── .env.example
-├── .gitignore
-│
-├── frontend/                          # React + Tailwind dashboard — carries the Best UI track
-│   ├── public/
-│   │   └── favicon.svg
-│   ├── src/
-│   │   ├── main.tsx
-│   │   ├── App.tsx
-│   │   ├── design/                    # design system, kept separate from components
-│   │   │   ├── tokens.css             # color, type, spacing tokens
-│   │   │   ├── typography.css
-│   │   │   └── motion.css             # the one deliberate motion moment, isolated
-│   │   ├── components/
-│   │   │   ├── ui/                    # low-level primitives: Button, Input, Modal, Chip
-│   │   │   ├── chat/                  # prompt box + clarifying-question chips
-│   │   │   ├── timeline/              # Decision Timeline tree (React Flow) + side panel
-│   │   │   ├── dashboard/             # app cards, deploy status, share modal
-│   │   │   └── layout/                # shell, nav, page containers
-│   │   ├── pages/
-│   │   │   ├── Home.tsx               # prompt intake + clarify flow
-│   │   │   ├── AppView.tsx            # single deployed app: status, share, live edit
-│   │   │   └── Timeline.tsx           # full-screen decision tree + revert
-│   │   ├── hooks/
-│   │   │   ├── useAgentStream.ts      # streams agent steps as they happen
-│   │   │   └── useDeployStatus.ts
-│   │   ├── api/                       # typed client for backend endpoints
-│   │   └── lib/
-│   ├── tailwind.config.ts
-│   ├── package.json
-│   └── index.html
-│
-├── backend/                            # FastAPI (or Lambda handlers)
-│   ├── main.py
-│   ├── api/
-│   │   ├── routes_apps.py             # create/list/get deployed apps
-│   │   ├── routes_timeline.py         # GET /apps/{id}/timeline, POST /revert/{step_id}
-│   │   ├── routes_share.py            # invites, roles
-│   │   └── routes_deploy.py
+.
+├── backend/
+│   ├── main.py                         # FastAPI application entrypoint
+│   ├── config.py                       # Environment configuration and settings
+│   ├── logger.py                       # Structured logging configuration
 │   ├── agent/
-│   │   ├── clarify.py                 # ambiguity-check pass (structured JSON output)
-│   │   ├── planner.py                 # ReAct loop — plan/tool-call/codegen steps
-│   │   ├── codegen.py
-│   │   ├── bedrock_client.py
-│   │   └── trace_logger.py            # writes every agent step to DynamoDB as a timeline node
-│   ├── deploy/
-│   │   ├── fargate_deployer.py
-│   │   ├── lambda_deployer.py         # fast-path deploy for lightweight apps
-│   │   └── router.py                  # ALB/API Gateway route registration
+│   │   ├── clarify.py                  # Ambiguity detection and structured questions
+│   │   ├── planner.py                  # Multi-step planning and ReAct execution loop
+│   │   ├── codegen.py                  # Code generation and patch formatting
+│   │   ├── repair.py                   # Bedrock-backed diagnosis and repair engine
+│   │   ├── candidate_verifier.py       # Isolated AST and runtime candidate verification
+│   │   ├── health_probe.py             # Async synthetic HTTP health monitoring
+│   │   ├── safety_guards.py            # Concurrency, sanitization, and security guardrails
+│   │   ├── maintenance_orchestrator.py # End-to-end self-healing orchestrator
+│   │   ├── bedrock_client.py           # Amazon Bedrock client abstraction
+│   │   └── trace_logger.py             # Timeline node recorder for DynamoDB
+│   ├── api/
+│   │   ├── routes_apps.py              # Application lifecycle and management endpoints
+│   │   ├── routes_timeline.py          # Timeline retrieval and deterministic revert endpoints
+│   │   ├── routes_share.py             # Invitations, magic links, and role management
+│   │   ├── routes_deploy.py            # Deployment triggers and status polling
+│   │   └── routes_maintenance.py       # Maintenance issue intake and repair execution
 │   ├── auth/
-│   │   ├── cognito_client.py
-│   │   └── roles.py                   # Viewer/Editor enforcement
+│   │   ├── cognito_client.py           # Amazon Cognito authentication handlers
+│   │   └── roles.py                    # Viewer and Editor permission checks
+│   ├── deploy/
+│   │   ├── lambda_deployer.py          # AWS Lambda fast-path deployment engine
+│   │   ├── fargate_deployer.py         # AWS Fargate container deployment engine
+│   │   └── router.py                   # Dynamic route assignment
+│   ├── models/
+│   │   ├── app.py                      # Core Pydantic schemas (App, Maintenance, Verification)
+│   │   └── timeline.py                 # Decision timeline node schemas
 │   ├── storage/
-│   │   ├── dynamodb_client.py
-│   │   └── s3_client.py
-│   ├── models/                        # Pydantic schemas (App, TimelineStep, Invite, ...)
-│   ├── requirements.txt
-│   └── tests/
+│   │   ├── dynamodb_client.py          # DynamoDB single-table persistence
+│   │   └── s3_client.py                # S3 artifact and snapshot storage
+│   ├── tests/                          # Comprehensive unit and integration test suite
+│   └── requirements.txt
 │
-├── infra/                              # AWS CDK — deploys the platform itself
+├── frontend/
+│   ├── src/
+│   │   ├── main.tsx                    # React application entrypoint
+│   │   ├── App.tsx                     # Top-level routing and state providers
+│   │   ├── api/                        # Typed backend API client
+│   │   ├── components/
+│   │   │   ├── ui/                     # Design system primitives (buttons, inputs, modals)
+│   │   │   ├── chat/                   # Prompt submission and clarification chips
+│   │   │   ├── timeline/               # Decision timeline graph (React Flow) and inspector
+│   │   │   ├── dashboard/              # App cards, deployment indicators, share dialogs
+│   │   │   └── layout/                 # Navigation bars, headers, page shells
+│   │   ├── pages/
+│   │   │   ├── Home.tsx                # Prompt input and clarification page
+│   │   │   ├── AppView.tsx             # Live application viewer, sharing, and edit panel
+│   │   │   ├── Dashboard.tsx           # User application inventory
+│   │   │   ├── Timeline.tsx            # Full-screen decision tree graph and rollback UI
+│   │   │   └── Auth.tsx                # Authentication and magic link verification
+│   │   └── design/
+│   │       ├── tokens.css              # Design tokens (colors, spacing, elevations)
+│   │       ├── typography.css          # Typography scales
+│   │       └── motion.css              # Isolated animation utilities
+│   ├── package.json
+│   └── vite.config.ts
+│
+├── infra/                              # AWS CDK infrastructure definition
 │   ├── bin/
-│   │   └── app.ts
+│   │   └── app.ts                      # CDK application entrypoint
 │   ├── lib/
-│   │   ├── network-stack.ts           # VPC, ALB
-│   │   ├── compute-stack.ts           # Fargate cluster, Lambda functions
-│   │   ├── data-stack.ts              # DynamoDB tables, S3 buckets
-│   │   ├── auth-stack.ts              # Cognito user pool, app client
-│   │   └── frontend-stack.ts          # S3 + CloudFront
+│   │   ├── network-stack.ts            # VPC, subnets, and security groups
+│   │   ├── compute-stack.ts            # ECS cluster, task definitions, Lambda handlers
+│   │   ├── data-stack.ts               # DynamoDB tables and S3 buckets
+│   │   ├── auth-stack.ts               # Cognito user pools and clients
+│   │   └── frontend-stack.ts           # S3 hosting and CloudFront distribution
 │   ├── cdk.json
 │   └── package.json
 │
-├── generated-app-runtime/              # minimal sandbox template each generated app runs inside
-│   ├── Dockerfile
-│   └── entrypoint template files
-│
-└── docs/
-    ├── architecture.md                # diagram + service mapping
-    ├── demo-script.md                 # clarify → build → edit → backtrack flow
-    └── blog/                          # drafts for the AWS Builder Center "Best Blog" entry
+└── generated-app-runtime/              # Base sandbox container runtime for generated apps
+    └── Dockerfile
 ```
 
-### Notes for the Best UI track
+---
 
-- **`design/tokens.css`** holds the palette/type/spacing decisions as their own file, not scattered Tailwind classes — keeps the visual identity intentional and easy to review as a whole.
-- **One deliberate motion moment**, isolated in `motion.css` — the strongest candidate is the timeline node animating in as the agent completes a step live.
-- **`timeline/` is its own component folder**, separate from `dashboard/` — it's the most distinctive UI surface and the strongest Best-UI evidence, so it gets room to be a considered piece rather than a bolt-on panel.
-- Keep `Home.tsx` minimal — a single input, not a dashboard shell — so it contrasts cleanly with the richer timeline view later in the demo.
+## 7. Operational Workflow
+
+### 7.1 Creation and Deployment
+1. **Prompt Intake**: The user submits a natural language app request.
+2. **Ambiguity Clarification**: The agent identifies underspecified requirements and requests targeted choices with recommended defaults.
+3. **Plan and Codegen**: The agent creates an execution plan, generates structured application code, and validates imports.
+4. **Deploy**: The code is packaged and deployed to an isolated AWS Lambda or Fargate endpoint.
+5. **Timeline Logging**: All steps, rationale, and the initial code snapshot are committed to DynamoDB.
+
+### 7.2 Sharing and Collaboration
+1. **Invite**: The app owner invites collaborators by email.
+2. **Session**: Collaborators receive an SES-dispatched link and authenticate via Cognito OTP.
+3. **Role Enforcement**: Viewers access the application UI; Editors can submit modification requests and manage rollbacks.
+
+### 7.3 Iterative Editing and Reversion
+1. **Chat Updates**: The owner requests updates; the agent generates a patch and redeploys to the same URL.
+2. **Audit and Rollback**: If a change causes unexpected behavior, the user opens the timeline, selects a prior verified node, and triggers a deterministic rollback.
+
+### 7.4 Auto-Maintenance Pipeline
+```
+[Issue Detected / Submitted]
+             |
+             v
+[Safety Guards Check] ---> (Reject if invalid/unsafe/exceeded attempts)
+             |
+             v
+[Bedrock Diagnosis & Repair]
+             |
+             v
+[Candidate Verification (Local AST + Import + Smoke Exec)]
+             |
+      +------+------+
+      |             |
+   (Passed)      (Failed)
+      |             |
+      v             v
+[Stage Candidate] [Retry Repair (Max 2 Attempts)]
+```
 
 ---
 
-## 7. User Flow (End-to-End Demo)
+## 8. Safety and Reliability Controls
 
-1. **Clarify** — User types a request. Agent asks one quick clarifying question with a suggested default.
-2. **Build** — Agent plans, generates code, and deploys. Live URL appears in ~10–20 seconds.
-3. **Share** — Owner shares the link with a teammate, who gets an OTP-authenticated Viewer/Editor session — no separate signup.
-4. **Edit** — Owner asks the agent (in chat) to add a feature. App redeploys to the same URL.
-5. **Backtrack** — Owner opens the Decision Timeline, inspects each step the agent took, and reverts to a prior working version if the latest edit caused an issue.
-
----
-
-## 8. Judging Criteria Alignment
-
-| Criteria | How this project addresses it |
-|---|---|
-| **Problem & Impact** | Solves a real, recurring gap between "AI can generate an app" and "a non-technical person can actually use and share it" |
-| **Agentic Depth** | Clarify-then-build reasoning, multi-step ReAct planning, tool use, self-correction via retries — all inspectable in the Decision Timeline |
-| **Technical Execution** | Real multi-service AWS architecture (Bedrock, Fargate/Lambda, Cognito, DynamoDB, ALB/API Gateway), not a single API wrapper |
-| **Ship It** | Fully deployed, live, reachable URL running on AWS infrastructure |
+- **Per-Job Attempt Budget**: Strictly enforces a maximum of 2 repair attempts per maintenance job to eliminate infinite loops.
+- **Concurrency Locks**: Prevents overlapping maintenance jobs from executing against the same application.
+- **Input Sanitization**: Cleans untrusted stack traces, error outputs, and issue descriptions before embedding them in LLM prompts to prevent prompt injection.
+- **Configuration Protection**: Rejects patches attempting to modify system-level configurations, authentication mechanisms, or cloud infrastructure.
+- **Pre-Deployment Isolation**: All candidate code must pass AST compilation, handler extraction, and isolated execution tests before deployment is initiated.
 
 ---
 
-## 9. Setup & Local Development
+## 9. Getting Started
+
+### Prerequisites
+- Python 3.12+
+- Node.js 20+ and npm
+- AWS CLI configured with appropriate credentials
+- AWS CDK CLI installed globally (`npm install -g aws-cdk`)
+
+### 9.1 Backend Setup
 
 ```bash
-# Clone the repo
-git clone <repo-url>
-cd <repo-name>
-
-# Backend
 cd backend
+python -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
-uvicorn main:app --reload
 
-# Frontend
+# Run backend test suite (68 tests across models, agent, API, and maintenance)
+pytest
+
+# Start local API server
+uvicorn main:app --reload --port 8000
+```
+
+### 9.2 Frontend Setup
+
+```bash
 cd frontend
 npm install
 npm run dev
+```
 
-# Infra (deploy platform to AWS)
+### 9.3 Infrastructure Deployment
+
+```bash
 cd infra
+npm install
 cdk bootstrap
-cdk deploy
-```
-
-### Environment Variables
-
-```
-AWS_REGION=
-BEDROCK_MODEL_ID=
-COGNITO_USER_POOL_ID=
-COGNITO_APP_CLIENT_ID=
-DYNAMODB_TABLE_NAME=
-SES_SENDER_EMAIL=
+cdk deploy --all
 ```
 
 ---
 
-## 10. Roadmap / Future Work
+## 10. Configuration
 
-- Branching timeline diffs (visual compare between any two nodes, not just linear revert)
-- Team-level shared workspaces (multiple apps under one organization)
-- Support for stateful multi-user apps beyond simple forms/trackers
-- Anomaly detection on agent traces (flag unusually costly or slow steps automatically)
-- Marketplace of reusable "small software" templates
+Create a `.env` file in the `backend/` directory with the following variables:
+
+```env
+# AWS Configuration
+AWS_REGION=us-east-1
+BEDROCK_MODEL_ID=anthropic.claude-3-5-sonnet-20241022-v2:0
+
+# Authentication (Cognito)
+COGNITO_USER_POOL_ID=us-east-1_example
+COGNITO_APP_CLIENT_ID=exampleclientid1234567890
+
+# Persistence
+DYNAMODB_TABLE_NAME=tbd-primary-store
+S3_ASSETS_BUCKET=tbd-app-assets
+
+# Email Delivery
+SES_SENDER_EMAIL=noreply@example.com
+
+# Deployment Modes
+DEPLOYMENT_MODE=lambda  # options: lambda, fargate
+```
 
 ---
 
-## 11. Team
+## 11. Testing and Verification
 
-- [Add team member names / roles]
+The test suite covers unit, contract, and API behavior with fully mocked AWS services:
+
+```bash
+cd backend
+pytest -v
+```
+
+Test coverage includes:
+- **Clarification logic**: Ambiguity detection, question count limits, default value generation
+- **Code generation and planning**: Plan generation, structured output extraction, syntax checks
+- **Decision timeline and rollback**: Node creation, step linking, deterministic snapshot retrieval
+- **Authentication and roles**: Token validation, viewer vs editor role enforcement
+- **Autonomous maintenance**: Health probe responses, Bedrock diagnosis parsing, candidate verification, safety guardrails, concurrency locks, and maintenance orchestrator workflows
 
 ---
 
 ## 12. License
 
-[Add license]
+This project is licensed under the MIT License.
