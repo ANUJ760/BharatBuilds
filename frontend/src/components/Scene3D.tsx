@@ -30,15 +30,15 @@ function AnimatedSphere({
   })
 
   return (
-    <Float speed={speed} rotationIntensity={0.4} floatIntensity={1.5}>
+    <Float speed={speed * 1.5} rotationIntensity={1.2} floatIntensity={3.5}>
       <mesh ref={meshRef} position={position} scale={scale}>
         <sphereGeometry args={[1, 64, 64]} />
         <MeshDistortMaterial
           color={color}
           roughness={0.08}
           metalness={0.1}
-          distort={distort}
-          speed={2}
+          distort={distort * 1.5}
+          speed={3}
         />
       </mesh>
     </Float>
@@ -54,25 +54,29 @@ export function Scene3D(_props?: { scrollY?: any }) {
         gl={{ antialias: true, alpha: true }}
         style={{ background: 'transparent' }}
       >
-        <ambientLight intensity={0.8} />
-        <directionalLight position={[5, 5, 5]} intensity={1} />
-        <directionalLight position={[-3, 3, -3]} intensity={0.3} color="#e8e0ff" />
+        <ambientLight intensity={0.9} />
+        <directionalLight position={[5, 5, 5]} intensity={1.2} />
+        <directionalLight position={[-3, 3, -3]} intensity={0.5} color="#ffffff" />
 
         {/* Main central sphere */}
-        <AnimatedSphere position={[0, 0.3, 0]} scale={1.6} speed={1.2} distort={0.25} color="#f5f5f5" scrollFactor={0.002} />
+        <AnimatedSphere position={[0, 0.3, 0]} scale={1.6} speed={1.5} distort={0.3} color="#ffffff" scrollFactor={0.003} />
 
         {/* Orbiting smaller spheres */}
-        <AnimatedSphere position={[-2.8, 1, -2]} scale={0.65} speed={1.8} distort={0.35} color="#ffffff" scrollFactor={-0.003} />
-        <AnimatedSphere position={[3, -0.3, -1.5]} scale={0.5} speed={2.2} distort={0.4} color="#f0f0f8" scrollFactor={0.004} />
-        <AnimatedSphere position={[1.5, 1.8, -2.5]} scale={0.3} speed={2.5} distort={0.3} color="#fafafa" scrollFactor={-0.0015} />
-        <AnimatedSphere position={[-1.5, -1, -0.8]} scale={0.4} speed={1.6} distort={0.35} color="#f8f8ff" scrollFactor={0.005} />
+        <AnimatedSphere position={[-2.8, 1, -2]} scale={0.65} speed={2.0} distort={0.4} color="#f5f5f5" scrollFactor={-0.004} />
+        <AnimatedSphere position={[3, -0.3, -1.5]} scale={0.5} speed={2.5} distort={0.45} color="#fafafa" scrollFactor={0.005} />
+        <AnimatedSphere position={[1.5, 1.8, -2.5]} scale={0.3} speed={2.8} distort={0.35} color="#f0f0f0" scrollFactor={-0.002} />
+        <AnimatedSphere position={[-1.5, -1, -0.8]} scale={0.4} speed={1.8} distort={0.4} color="#f8f8f8" scrollFactor={0.006} />
+        
+        {/* Extra orbiting spheres for more dynamics */}
+        <AnimatedSphere position={[-3.5, -2, -3]} scale={0.45} speed={2.2} distort={0.3} color="#ffffff" scrollFactor={0.004} />
+        <AnimatedSphere position={[3.5, 2, -1]} scale={0.35} speed={1.9} distort={0.5} color="#f5f5f5" scrollFactor={-0.005} />
 
         <ContactShadows
           position={[0, -2.5, 0]}
-          opacity={0.2}
-          scale={12}
-          blur={2.5}
-          far={4}
+          opacity={0.3}
+          scale={15}
+          blur={3}
+          far={5}
         />
 
         <Environment preset="studio" />

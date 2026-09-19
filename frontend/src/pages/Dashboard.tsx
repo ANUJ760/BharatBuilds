@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trash2, Users, MoreVertical, X, Edit2 } from 'lucide-react';
+import { Scene3D } from '../components/Scene3D';
 import {
   apiListApps,
   apiDeleteApp,
@@ -121,8 +122,10 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#e8e8e8] text-[#111] font-sans selection:bg-black selection:text-white pt-24 pb-12 px-4 sm:px-10">
-      <nav className="fixed top-0 left-0 w-full z-40 flex items-center justify-between px-10 py-5 bg-[#e8e8e8]/80 backdrop-blur-md">
+    <div className="min-h-screen bg-[#f8f9fa] text-[#111] font-sans selection:bg-black selection:text-white pt-24 pb-12 px-4 sm:px-10 relative overflow-hidden">
+      <Scene3D />
+      
+      <nav className="fixed top-0 left-0 w-full z-40 flex items-center justify-between px-10 py-5 bg-white/40 backdrop-blur-xl border-b border-white/50">
         <button onClick={() => navigate('/')} className="flex items-center gap-2.5">
           <div className="relative w-7 h-7 rounded-full border-[2px] border-[#111] flex items-center justify-center">
             <div className="w-1.5 h-1.5 rounded-full bg-[#111] absolute -left-1 top-1/2 -translate-y-1/2" />
@@ -145,24 +148,27 @@ export default function Dashboard() {
         </div>
 
         {loading ? (
-          <div className="flex items-center gap-3 text-sm text-[#555]">
+          <div className="flex items-center gap-3 text-sm text-[#555] relative z-10">
             <div className="w-4 h-4 border-2 border-[#555] border-t-transparent rounded-full animate-spin" />
             Loading projects...
           </div>
         ) : apps.length === 0 ? (
-          <div className="p-12 text-center rounded-2xl bg-white/40 border border-black/5">
-            <p className="text-[#555] mb-4">You don't have any projects yet.</p>
+          <div className="p-12 text-center rounded-3xl bg-white/60 backdrop-blur-2xl border border-white/50 shadow-xl relative z-10">
+            <p className="text-gray-600 mb-6 font-medium">You don't have any projects yet.</p>
             <button onClick={() => navigate('/create')} className="px-5 py-2 rounded-full bg-[#111] text-white text-[13px] font-medium hover:bg-[#333] transition-colors">
               Create your first app
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
             {apps.map(app => (
-              <div key={app.app_id} className="relative group p-6 rounded-2xl bg-white/60 backdrop-blur-sm border border-white hover:border-[#ddd] hover:shadow-sm transition-all flex flex-col justify-between min-h-[160px]">
+              <div key={app.app_id} className="group p-6 rounded-3xl bg-white/60 backdrop-blur-2xl border border-white/80 shadow-lg shadow-black/5 hover:shadow-xl hover:shadow-black/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[160px]">
                 <div>
-                  <h3 className="font-semibold text-lg text-[#111] mb-1 truncate">{app.title || "Untitled App"}</h3>
-                  <div className="text-xs text-[#666] font-mono mb-4">{app.app_id.substring(0, 8)} • {app.status}</div>
+                  <h3 className="font-semibold text-[17px] text-[#111] mb-1.5 truncate drop-shadow-sm">{app.title || "Untitled App"}</h3>
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wider bg-white text-gray-600 border border-gray-100 shadow-sm">{app.status}</span>
+                    <span className="text-[10px] text-gray-400 font-mono">{app.app_id.substring(0, 8)}</span>
+                  </div>
                 </div>
                 
                 <div className="flex items-center gap-2 justify-between">

@@ -67,10 +67,13 @@ export function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-black font-sans selection:bg-black selection:text-white overflow-hidden flex flex-col items-center justify-center relative">
-      <div className="fixed inset-0 z-0 pointer-events-none opacity-50">
+    <div className="min-h-screen bg-[#f8f9fa] text-[#111] font-sans selection:bg-black selection:text-white overflow-hidden flex flex-col items-center justify-center relative">
+      <div className="fixed inset-0 z-0 pointer-events-none">
         <Scene3D />
       </div>
+
+      {/* Subtle overlay for legibility */}
+      <div className="fixed inset-0 z-0 bg-white/30 backdrop-blur-[2px] pointer-events-none" />
 
       <nav className="fixed top-0 w-full z-50 px-8 py-6 flex justify-between items-center">
         <button onClick={() => navigate('/')} className="text-xl tracking-tighter font-medium flex items-center gap-2">
@@ -82,35 +85,51 @@ export function Home() {
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative z-10 w-full max-w-2xl px-6"
+        className="relative z-10 w-full max-w-3xl px-6"
       >
-        <h1 className="text-4xl font-medium tracking-tighter mb-8 text-center">What would you like to build?</h1>
+        <h1 className="text-[clamp(32px,5vw,56px)] font-medium tracking-tight mb-8 text-center drop-shadow-sm text-[#111]">
+          What would you like to build?
+        </h1>
         
-        <div className="bg-white/40 backdrop-blur-xl border border-black/10 rounded-3xl p-2 shadow-2xl">
+        <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl p-3 shadow-2xl shadow-black/5 focus-within:shadow-black/10 focus-within:border-[#ccc] transition-all duration-300">
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="e.g. Build an e-waste drop-off tracker..."
-            className="w-full h-32 bg-transparent resize-none p-6 text-xl outline-none placeholder:text-gray-400"
+            className="w-full h-40 bg-transparent resize-none p-6 text-[18px] outline-none placeholder:text-gray-400 font-medium"
           />
           
           <div className="flex justify-end p-2">
             {!clarifications ? (
-              <button 
-                onClick={handleClarify}
-                disabled={isClarifying || !prompt}
-                className="px-6 py-3 bg-black text-white rounded-full font-medium hover:bg-gray-900 transition-colors disabled:opacity-50 flex items-center gap-2"
-              >
-                {isClarifying ? <span className="material-symbols-outlined animate-spin">sync</span> : 'Review Requirements'}
-              </button>
-            ) : (
-              <button 
-                onClick={handleBuild}
-                disabled={isBuilding}
-                className="px-6 py-3 bg-black text-white rounded-full font-medium hover:bg-gray-900 transition-colors disabled:opacity-50 flex items-center gap-2"
-              >
-                {isBuilding ? <span className="material-symbols-outlined animate-spin">sync</span> : 'Generate App'}
-              </button>
+                <button 
+                  onClick={handleClarify}
+                  disabled={isClarifying || !prompt.trim()}
+                  className="px-6 py-3 rounded-2xl bg-[#111] text-white text-[15px] font-medium hover:bg-black transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0 flex items-center gap-2"
+                >
+                  {isClarifying ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <span>Design Architecture</span>
+                      <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                    </>
+                  )}
+                </button>
+              ) : (
+                <button 
+                  onClick={handleBuild}
+                  disabled={isBuilding}
+                  className="px-6 py-3 rounded-2xl bg-[#111] text-white text-[15px] font-medium hover:bg-black transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0 flex items-center gap-2"
+                >
+                  {isBuilding ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <span>Deploy Application</span>
+                      <span className="material-symbols-outlined text-[18px]">rocket_launch</span>
+                    </>
+                  )}
+                </button>
             )}
           </div>
         </div>
