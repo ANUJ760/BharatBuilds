@@ -52,7 +52,7 @@ function AnimatedSphere({
 
     // Liquid hover effect
     if (materialRef.current) {
-      const targetDistort = hovered ? distort * 3.0 : distort * 1.5
+      const targetDistort = hovered ? distort * 4.0 : distort * 2.0
       const targetSpeed = hovered ? 8 : 3
       
       materialRef.current.distort = THREE.MathUtils.lerp(
@@ -81,9 +81,11 @@ function AnimatedSphere({
         <MeshDistortMaterial
           ref={materialRef}
           color={color}
-          roughness={0.05}
-          metalness={0.15}
-          distort={distort * 1.5}
+          roughness={0.0}
+          metalness={0.1}
+          clearcoat={1.0}
+          clearcoatRoughness={0.1}
+          distort={distort * 2.0} // increased for more glob-like distortion
           speed={3}
         />
       </mesh>
