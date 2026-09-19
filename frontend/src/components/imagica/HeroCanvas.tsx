@@ -229,6 +229,7 @@ export default function HeroCanvas() {
     // Burst animation state
     let isBursting = false;
     let burstProgress = 0;
+    let burstVelocity = 0.002;
     const onBurst = () => {
       isBursting = true;
     };
@@ -314,21 +315,22 @@ export default function HeroCanvas() {
         mainSphere.position.z = 0;
         mainSphere.scale.setScalar(1);
       } else {
-        // Liquid pour transition
-        burstProgress += 0.015; // Smooth, premium pour
+        // Liquid pour transition with gravity/acceleration
+        burstVelocity += 0.001; // Gravity acceleration
+        burstProgress += burstVelocity; 
         
         // Stretch vertically, squeeze horizontally to form a stream
-        const stretchY = 1 + burstProgress * 6;
-        const squeezeXZ = Math.max(0.01, 1 - burstProgress * 1.8);
+        const stretchY = 1 + burstProgress * 5;
+        const squeezeXZ = Math.max(0.01, 1 - burstProgress * 1.5);
         
         mainSphere.scale.set(squeezeXZ, stretchY, squeezeXZ);
         
         // Pour downwards
-        mainSphere.position.y = 0.8 - (burstProgress * 12) - scrollNorm * 3;
+        mainSphere.position.y = 0.8 - (burstProgress * 15) - scrollNorm * 3;
         
-        // Extreme fluid deformation during pour
-        mainDistortAmount += (0.5 - mainDistortAmount) * 0.1;
-        applyLiquidDistort(sphereGeo, mainOriginalPositions, mainDistortAmount + burstProgress * 0.5, t * 3, 0);
+        // Fluid deformation during pour
+        mainDistortAmount += (0.4 - mainDistortAmount) * 0.1;
+        applyLiquidDistort(sphereGeo, mainOriginalPositions, mainDistortAmount + burstProgress * 0.3, t * 3, 0);
         
         mainSphere.rotation.y += 0.02;
       }
