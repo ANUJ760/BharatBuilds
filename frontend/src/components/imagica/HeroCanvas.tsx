@@ -314,10 +314,23 @@ export default function HeroCanvas() {
         mainSphere.position.z = 0;
         mainSphere.scale.setScalar(1);
       } else {
-        burstProgress += 0.03;
-        const shrinkScale = Math.max(0, 1 - burstProgress * 1.5);
-        mainSphere.scale.setScalar(shrinkScale);
-        mainSphere.rotation.y += 0.1;
+        // Liquid pour transition
+        burstProgress += 0.015; // Smooth, premium pour
+        
+        // Stretch vertically, squeeze horizontally to form a stream
+        const stretchY = 1 + burstProgress * 6;
+        const squeezeXZ = Math.max(0.01, 1 - burstProgress * 1.8);
+        
+        mainSphere.scale.set(squeezeXZ, stretchY, squeezeXZ);
+        
+        // Pour downwards
+        mainSphere.position.y = 0.8 - (burstProgress * 12) - scrollNorm * 3;
+        
+        // Extreme fluid deformation during pour
+        mainDistortAmount += (0.5 - mainDistortAmount) * 0.1;
+        applyLiquidDistort(sphereGeo, mainOriginalPositions, mainDistortAmount + burstProgress * 0.5, t * 3, 0);
+        
+        mainSphere.rotation.y += 0.02;
       }
 
       ripplePlane.position.y = -0.8 - scrollNorm * 2;
