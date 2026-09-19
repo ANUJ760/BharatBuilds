@@ -81,9 +81,9 @@ export function Home() {
 
   return (
     <motion.div 
-      initial={{ y: "15vh", opacity: 0 }} 
+      initial={{ y: "30vh", opacity: 0 }} 
       animate={{ y: 0, opacity: 1 }} 
-      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
       className="min-h-screen bg-[#f8f9fa] text-[#111] font-sans selection:bg-black selection:text-white overflow-hidden flex flex-col items-center justify-center relative"
     >
       <div className="fixed inset-0 z-0">
