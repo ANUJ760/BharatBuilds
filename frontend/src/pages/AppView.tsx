@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Scene3D } from '../components/Scene3D';
-import { Logo } from '../components/imagica/Logo';
 import { apiGetApp } from '../api/client';
 import { useDeployStatus } from '../hooks/useDeployStatus';
 
