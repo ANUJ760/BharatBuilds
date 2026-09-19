@@ -32,15 +32,15 @@ export const AppView = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center bg-white text-black">Loading...</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center bg-[#e8e8e8] text-[#111]">Loading...</div>;
 
   return (
-    <div className="flex flex-col w-full min-h-screen bg-gray-50 text-black font-sans selection:bg-black selection:text-white">
+    <div className="flex flex-col w-full min-h-screen bg-[#e8e8e8] text-[#111] font-sans selection:bg-black selection:text-white">
       {/* Workspace Control Bar - Light Glassmorphism */}
-      <section className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-xl border-b border-black/5 shadow-sm">
+      <section className="sticky top-0 z-40 w-full bg-[#e8e8e8]/80 backdrop-blur-xl border-b border-black/5 shadow-sm">
         <div className="max-w-[1440px] mx-auto px-4 lg:px-12 py-3 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <Link to="/" className="text-gray-500 hover:text-black transition-colors flex items-center">
+            <Link to="/" className="text-[#555] hover:text-black transition-colors flex items-center">
               <span className="material-symbols-outlined">home</span>
             </Link>
             <div className="h-8 w-px bg-gray-200"></div>

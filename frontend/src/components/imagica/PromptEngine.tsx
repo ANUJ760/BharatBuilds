@@ -1,7 +1,6 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { apiCreateApp } from "../../api/client";
 
 const INDUSTRIES = ["Legal Services", "Science", "Education", "Product Design", "Corporate"];
 const PROMPTS: Record<string, string> = {
@@ -36,12 +35,34 @@ export default function PromptEngine() {
     return () => clearTimeout(t);
   }, [stage, typed, target]);
 
-  // Generation timer
+  // Generation timer and API call
   useEffect(() => {
     if (stage !== "generating") return;
-    const t = setTimeout(() => setStage("done"), 3000);
-    return () => clearTimeout(t);
-  }, [stage]);
+
+    let mounted = true;
+    const create = async () => {
+      try {
+        const ownerId = localStorage.getItem('bb_user') || 'anonymous';
+        // In a real app we might want to ensure the token exists here
+        const res = await apiCreateApp(target, ownerId, `${selectedIndustry} App`);
+        
+        if (mounted) {
+          // Wait at least 2s for visual effect
+          setTimeout(() => setStage("done"), 2000);
+        }
+      } catch (err) {
+        console.error("Failed to create app:", err);
+        if (mounted) {
+          // Fallback if API is offline
+          setTimeout(() => setStage("done"), 2000);
+        }
+      }
+    };
+    
+    create();
+    
+    return () => { mounted = false; };
+  }, [stage, target, selectedIndustry]);
 
   return (
     <section id="product" className="imagica-section imagica-section--solid flex-col">

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
   const links = [
@@ -9,6 +10,8 @@ export default function Navbar() {
     { name: "Features", href: "#features" },
     { name: "Mission", href: "#mission" },
   ];
+
+  const isAuthenticated = !!localStorage.getItem('bb_token');
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-10 py-5">
@@ -36,14 +39,12 @@ export default function Navbar() {
       </div>
 
       {/* Login button — white pill matching video */}
-      <a
-        href="http://localhost:5173"
-        target="_blank"
-        rel="noopener noreferrer"
+      <Link
+        to={isAuthenticated ? "/create" : "/auth"}
         className="px-5 py-2 rounded-full bg-white text-[13px] font-medium text-[#111] shadow-sm border border-white/80 hover:shadow-md transition-all duration-200"
       >
-        Launch App
-      </a>
+        {isAuthenticated ? "Launch App" : "Sign In"}
+      </Link>
     </nav>
   );
 }
