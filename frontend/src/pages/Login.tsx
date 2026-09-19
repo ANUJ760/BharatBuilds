@@ -52,9 +52,9 @@ export default function Login() {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md relative z-10"
+        className="w-full max-w-md relative z-10 pointer-events-none"
       >
-        <div className="p-10 flex flex-col items-center text-center bg-white/60 backdrop-blur-2xl border border-white/50 shadow-2xl rounded-3xl">
+        <div className="pointer-events-auto p-10 flex flex-col items-center text-center bg-white/60 backdrop-blur-2xl border border-white/50 shadow-2xl rounded-3xl">
           <h2 className="text-[clamp(24px,3vw,32px)] font-medium tracking-tight text-[#111] mb-2 drop-shadow-sm">
             Welcome back
           </h2>

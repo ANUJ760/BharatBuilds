@@ -91,13 +91,13 @@ export function Home() {
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative z-10 w-full max-w-3xl px-6"
+        className="relative z-10 w-full max-w-3xl px-6 pointer-events-none"
       >
-        <h1 className="text-[clamp(32px,5vw,56px)] font-medium tracking-tight mb-8 text-center drop-shadow-sm text-[#111]">
+        <h1 className="text-[clamp(32px,5vw,56px)] font-medium tracking-tight mb-8 text-center drop-shadow-sm text-[#111] pointer-events-auto">
           What would you like to build?
         </h1>
         
-        <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl p-3 shadow-2xl shadow-black/5 focus-within:shadow-black/10 focus-within:border-[#ccc] transition-all duration-300">
+        <div className="pointer-events-auto bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl p-3 shadow-2xl shadow-black/5 focus-within:shadow-black/10 focus-within:border-[#ccc] transition-all duration-300">
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
