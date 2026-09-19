@@ -11,10 +11,12 @@ export function Home() {
   const [clarifications, setClarifications] = useState<any>(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isBuilding, setIsBuilding] = useState(false);
+  const [error, setError] = useState('');
 
   const handleClarify = async () => {
     if (!prompt) return;
     setIsClarifying(true);
+    setError('');
     
     try {
       const data = await apiClarify(prompt);
@@ -33,6 +35,11 @@ export function Home() {
       }
     } catch (err: any) {
       console.error(err);
+      setError('Backend unavailable — proceeding with direct build...');
+      // Fallback: skip clarify and go straight to build
+      setTimeout(() => {
+        buildApp();
+      }, 1500);
     } finally {
       setIsClarifying(false);
     }
@@ -139,6 +146,16 @@ export function Home() {
             )}
           </div>
         </div>
+
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-4 px-5 py-3 rounded-2xl bg-amber-50/80 backdrop-blur-xl border border-amber-200 text-amber-800 text-[14px] font-medium text-center pointer-events-auto"
+          >
+            {error}
+          </motion.div>
+        )}
 
         {clarifications && (
           <motion.div 
