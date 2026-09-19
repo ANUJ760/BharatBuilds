@@ -42,7 +42,7 @@ export default function PromptEngine() {
     let mounted = true;
     const create = async () => {
       try {
-        const ownerId = localStorage.getItem('bb_user') || 'anonymous';
+        const ownerId = localStorage.getItem('bb_user') || sessionStorage.getItem('bb_user') || 'anonymous';
         // In a real app we might want to ensure the token exists here
         await apiCreateApp(target, ownerId, `${selectedIndustry} App`);
         

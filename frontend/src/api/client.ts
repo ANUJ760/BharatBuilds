@@ -6,7 +6,7 @@ const BASE = '';          // Vite proxy handles this
 const API_URL = BASE;
 
 function getToken(): string | null {
-  return localStorage.getItem('bb_token');
+  return localStorage.getItem('bb_token') || sessionStorage.getItem('bb_token');
 }
 
 async function request<T>(

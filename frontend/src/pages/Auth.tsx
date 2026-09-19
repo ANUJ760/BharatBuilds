@@ -16,8 +16,14 @@ export default function Auth() {
     // In a real app, this would hit /auth/login or similar to send OTP/Magic Link
     // For now, we simulate a login that gives a fake token after a delay
     setTimeout(() => {
-      localStorage.setItem('bb_token', 'mock_jwt_token_for_' + email);
-      localStorage.setItem('bb_user', email);
+      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      if (!isLocalhost) {
+        localStorage.setItem('bb_token', 'mock_jwt_token_for_' + email);
+        localStorage.setItem('bb_user', email);
+      } else {
+        sessionStorage.setItem('bb_token', 'mock_jwt_token_for_' + email);
+        sessionStorage.setItem('bb_user', email);
+      }
       setLoading(false);
       setSent(true);
       

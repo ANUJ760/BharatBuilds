@@ -12,7 +12,7 @@ export default function Navbar() {
     { name: "Mission", href: "#mission" },
   ];
 
-  const isAuthenticated = !!localStorage.getItem('bb_token');
+  const isAuthenticated = !!(localStorage.getItem('bb_token') || sessionStorage.getItem('bb_token'));
 
   const handleAuthClick = (e: React.MouseEvent) => {
     if (!isAuthenticated) {
