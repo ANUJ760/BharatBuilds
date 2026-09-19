@@ -61,7 +61,7 @@ export default function HeroCanvas() {
     scene.add(rimLight);
 
     // Main glossy white sphere — central hero object
-    const sphereGeo = new THREE.SphereGeometry(1.6, 128, 128);
+    const sphereGeo = new THREE.SphereGeometry(1.6, 64, 64);
     const sphereMat = new THREE.MeshPhysicalMaterial({
       color: 0xf0f0f0,
       roughness: 0.02,
@@ -85,8 +85,8 @@ export default function HeroCanvas() {
     // Extra bubbles — ALL greyish-white, NO blue
     const bubbleGeos: THREE.SphereGeometry[] = [];
     const bubbles: THREE.Mesh[] = [];
-    for (let i = 0; i < 12; i++) {
-      const bGeo = new THREE.SphereGeometry(1, 64, 64);
+    for (let i = 0; i < 8; i++) {
+      const bGeo = new THREE.SphereGeometry(1, 32, 32);
       bubbleGeos.push(bGeo);
 
       const bMat = new THREE.MeshPhysicalMaterial({
@@ -110,9 +110,9 @@ export default function HeroCanvas() {
       const baseScale = 0.15 + Math.random() * 0.4;
       bMesh.userData = {
         velocity: new THREE.Vector3(
-          (Math.random() - 0.5) * 0.02,
-          (Math.random() - 0.5) * 0.02,
-          (Math.random() - 0.5) * 0.02
+          (Math.random() - 0.5) * 0.06,
+          (Math.random() - 0.5) * 0.06,
+          (Math.random() - 0.5) * 0.04
         ),
         baseScale,
         originalPositions: (bGeo.attributes.position.array as Float32Array).slice(),
@@ -128,7 +128,7 @@ export default function HeroCanvas() {
     }
 
     // Water ripple plane
-    const rippleGeo = new THREE.PlaneGeometry(30, 30, 256, 256);
+    const rippleGeo = new THREE.PlaneGeometry(30, 30, 128, 128);
     const rippleMat = new THREE.MeshPhysicalMaterial({
       color: 0xe2e2e2,
       roughness: 0.15,
@@ -238,6 +238,7 @@ export default function HeroCanvas() {
     let animId: number;
 
     // Helper: apply liquid distort to a sphere geometry
+    // Skip computation entirely when amount is negligible
     function applyLiquidDistort(
       geo: THREE.SphereGeometry,
       origPositions: Float32Array,
@@ -245,6 +246,7 @@ export default function HeroCanvas() {
       time: number,
       seed: number
     ) {
+      if (amount < 0.005) return; // skip when barely visible
       const pos = geo.attributes.position.array as Float32Array;
       for (let i = 0; i < pos.length; i += 3) {
         const ox = origPositions[i];
@@ -255,11 +257,10 @@ export default function HeroCanvas() {
         const nx = ox / dist;
         const ny = oy / dist;
         const nz = oz / dist;
-        // Multi-frequency noise for organic liquid look
+        // Simplified noise for performance
         const noise =
-          Math.sin(nx * 4.0 + time * 2.0 + seed) * 0.4 +
-          Math.sin(ny * 5.0 - time * 1.5 + seed * 0.7) * 0.3 +
-          Math.sin(nz * 3.0 + time * 2.5 + seed * 1.3) * 0.3;
+          Math.sin(nx * 4.0 + time * 3.0 + seed) * 0.5 +
+          Math.sin(ny * 5.0 - time * 2.5 + seed * 0.7) * 0.5;
         const displacement = noise * amount;
         pos[i]     = ox + nx * displacement;
         pos[i + 1] = oy + ny * displacement;
