@@ -100,15 +100,18 @@ export function Home() {
         animate={{ opacity: 1, y: 0 }}
         className="relative z-10 w-full max-w-3xl px-6 pointer-events-none"
       >
-        <h1 className="text-[clamp(32px,5vw,56px)] font-medium tracking-tight mb-8 text-center drop-shadow-sm text-[#111] pointer-events-auto">
-          What would you like to build?
+        <h1 className="text-[clamp(32px,5vw,56px)] font-medium tracking-tight mb-2 text-center drop-shadow-sm text-[#111] pointer-events-auto">
+          What do you want to build?
         </h1>
+        <p className="text-center text-[15px] text-gray-500 mb-8 font-medium pointer-events-auto">
+          Describe the small software you need in plain language.
+        </p>
         
         <div className="pointer-events-auto bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl p-3 shadow-2xl shadow-black/5 focus-within:shadow-black/10 focus-within:border-[#ccc] transition-all duration-300">
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            placeholder="e.g. Build an e-waste drop-off tracker..."
+            placeholder="Describe the app you want to build…"
             className="w-full h-40 bg-transparent resize-none p-6 text-[18px] outline-none placeholder:text-gray-400 font-medium"
           />
           
@@ -123,7 +126,7 @@ export function Home() {
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   ) : (
                     <>
-                      <span>Design Architecture</span>
+                      <span>Build App</span>
                       <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
                     </>
                   )}
@@ -163,7 +166,10 @@ export function Home() {
             animate={{ opacity: 1, height: 'auto' }}
             className="mt-8 space-y-6"
           >
-            <div className="text-sm font-medium text-gray-500 uppercase tracking-widest text-center">Agent Clarifications</div>
+            <div className="text-center mb-6">
+              <h2 className="text-xl font-semibold text-[#111] mb-2">Before we build, let’s clarify a few things.</h2>
+              <p className="text-sm text-gray-500">Choose a suggested answer or enter your own.</p>
+            </div>
             {clarifications.questions.map((q: any, i: number) => (
               <div key={i} className="bg-white/60 backdrop-blur-md rounded-2xl p-6 border border-black/5 shadow-sm">
                 <h3 className="font-medium mb-1">{q.question}</h3>

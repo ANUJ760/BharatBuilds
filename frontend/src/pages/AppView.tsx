@@ -60,7 +60,7 @@ export const AppView = () => {
       {/* Sidebar (Chat / Prompt) */}
       <div className="w-[320px] h-full bg-[#f8f9fa] border-r border-[#e5e7eb] flex flex-col flex-shrink-0 z-10">
         <div className="h-[40px] px-4 flex items-center justify-between font-medium text-[11px] uppercase tracking-wider text-gray-500 border-b border-[#e5e7eb]">
-          <span>Project Chat</span>
+          <span>Your App</span>
         </div>
         
         <div className="flex-1 p-4 overflow-y-auto space-y-4 font-sans text-[13px]">
@@ -77,17 +77,17 @@ export const AppView = () => {
           <div className="bg-green-50/50 border border-green-100 rounded-xl p-3 shadow-sm">
             <div className="flex items-center gap-1.5 text-green-700 font-semibold mb-1 text-[11px] uppercase tracking-wider">
               <span className="material-symbols-outlined text-[14px]">check_circle</span>
-              System
+              Live
             </div>
             <p className="text-green-800">
-              App is deployed to an isolated MicroVM. What would you like to tweak?
+              What would you like to change?
             </p>
           </div>
         </div>
 
         {/* Chat Input */}
         <div className="p-3 bg-white border-t border-[#e5e7eb]">
-          <div className="flex items-end bg-[#f3f4f6] border border-[#e5e7eb] rounded-xl overflow-hidden focus-within:border-black focus-within:ring-1 focus-within:ring-black transition-all p-1">
+          <div className="flex items-end bg-[#f3f4f6] border border-[#e5e7eb] rounded-xl overflow-hidden focus-within:border-black focus-within:ring-1 focus-within:ring-black transition-all p-1 mb-2">
             <textarea 
               placeholder="e.g. change button color..." 
               className="flex-1 bg-transparent px-2 py-1.5 text-[13px] resize-none max-h-[100px] min-h-[36px] focus:outline-none placeholder:text-gray-500"
@@ -95,11 +95,12 @@ export const AppView = () => {
             />
             <button 
               disabled={status === 'building' || status === 'pending'}
-              className="p-1.5 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50"
+              className="px-3 py-1.5 bg-black text-white text-[12px] font-medium rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50"
             >
-              <span className="material-symbols-outlined text-[16px] leading-none">arrow_upward</span>
+              Update App
             </button>
           </div>
+          <p className="text-[11px] text-gray-400 px-1">Describe a change and the agent will update the existing app.</p>
         </div>
       </div>
 

@@ -147,9 +147,11 @@ export const Timeline = () => {
     setIsReverting(true);
     setRevertError(null);
     try {
-      await apiRevertToStep(id, selectedStep.step_id);
-      setSelectedStep(null);
-      await fetchTimeline();
+      if (window.confirm("Revert the live app to this exact state?")) {
+        await apiRevertToStep(id, selectedStep.step_id);
+        setSelectedStep(null);
+        await fetchTimeline();
+      }
     } catch (err: any) {
       setRevertError(err.message || 'Failed to revert');
     } finally {
@@ -166,8 +168,11 @@ export const Timeline = () => {
           <span className="material-symbols-outlined text-[18px]">arrow_back</span>
           Back to App
         </Link>
-        <div className="flex items-center gap-2 text-xs font-medium font-mono text-gray-500">
-          Decision Timeline • ID: {id}
+        <div className="flex flex-col items-end">
+          <div className="flex items-center gap-2 text-[14px] font-medium text-gray-800">
+            Decision Timeline
+          </div>
+          <div className="text-[11px] text-gray-500">Every step taken by the agent is recorded here.</div>
         </div>
       </nav>
 
@@ -211,7 +216,7 @@ export const Timeline = () => {
 
                 {selectedStep.reasoning && (
                   <div className="space-y-2">
-                    <h3 className="text-xs font-semibold text-gray-500 uppercase">Reasoning</h3>
+                    <h3 className="text-xs font-semibold text-gray-500 uppercase">Agent Plan</h3>
                     <div className="p-4 bg-gray-50 rounded-xl text-sm border border-gray-100 overflow-x-auto whitespace-pre-wrap">
                       {selectedStep.reasoning}
                     </div>
@@ -220,7 +225,7 @@ export const Timeline = () => {
 
                 {selectedStep.code_snapshot && (
                   <div className="space-y-2">
-                    <h3 className="text-xs font-semibold text-gray-500 uppercase">Code Snapshot</h3>
+                    <h3 className="text-xs font-semibold text-gray-500 uppercase">Code Diff</h3>
                     <div className="p-4 bg-[#1e1e1e] text-green-400 rounded-xl text-xs font-mono overflow-x-auto max-h-[300px]">
                       <pre>{selectedStep.code_snapshot}</pre>
                     </div>
@@ -239,7 +244,7 @@ export const Timeline = () => {
                     <div className="text-sm font-semibold">{selectedStep.latency_ms || 0}ms</div>
                   </div>
                   <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
-                    <div className="text-[10px] text-gray-500 uppercase">Tokens</div>
+                    <div className="text-[10px] text-gray-500 uppercase">Token Usage</div>
                     <div className="text-sm font-semibold">{selectedStep.token_usage || 0}</div>
                   </div>
                 </div>
@@ -257,7 +262,7 @@ export const Timeline = () => {
                       ) : (
                         <span className="material-symbols-outlined">history</span>
                       )}
-                      Revert to this version
+                      Revert to here
                     </button>
                   </div>
                 )}

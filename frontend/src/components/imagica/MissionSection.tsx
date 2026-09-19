@@ -8,12 +8,10 @@ export default function MissionSection() {
       <div className="max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <motion.div initial={{ opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8 }}>
           <h2 className="text-[clamp(32px,4.5vw,56px)] font-bold tracking-[-0.03em] text-[#111] leading-[1.12]">
-            Turn your app
-            <br />into a business
+            Build small software without the cloud complexity.
           </h2>
           <p className="text-[clamp(24px,3.5vw,44px)] font-normal tracking-[-0.02em] text-[#888] leading-[1.2] mt-1">
-            with one click to generate
-            <br />immediate revenue
+            Describe what you need. Let the agent build, deploy, authenticate and share it.
           </p>
         </motion.div>
 
@@ -49,7 +47,7 @@ export default function MissionSection() {
                 </div>
               </div>
               <div className="flex justify-end mt-3">
-                <button className="px-4 py-1.5 rounded-full bg-[#4488ff] text-white text-[10px] font-medium">Publish SaaS</button>
+                <button className="px-4 py-1.5 rounded-full bg-[#111] text-white text-[11px] font-medium">Build Your App</button>
               </div>
             </div>
           </div>

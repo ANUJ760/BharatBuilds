@@ -13,9 +13,7 @@ export default function HowItWorks() {
           transition={{ duration: 0.8 }}
           className="text-center text-[clamp(36px,5.5vw,68px)] font-bold tracking-[-0.03em] text-[#111] leading-[1.08] mb-4"
         >
-          Create any AI by
-          <br />
-          describing it
+          From idea to live software.
         </motion.h2>
 
         <motion.p
@@ -23,9 +21,17 @@ export default function HowItWorks() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.7, delay: 0.12 }}
-          className="text-center text-[16px] text-[#888] mb-16"
+          className="text-center text-[16px] text-[#555] font-medium mb-16 flex justify-center gap-4 sm:gap-8 flex-wrap"
         >
-          From idea to product at the speed of thought.
+          <span>Clarify</span>
+          <span>&rarr;</span>
+          <span>Build</span>
+          <span>&rarr;</span>
+          <span>Share</span>
+          <span>&rarr;</span>
+          <span>Edit</span>
+          <span>&rarr;</span>
+          <span>Backtrack</span>
         </motion.p>
 
         {/* Workspace mockup */}

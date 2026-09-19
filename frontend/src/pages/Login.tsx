@@ -56,10 +56,13 @@ export default function Login() {
       >
         <div className="pointer-events-auto p-10 flex flex-col items-center text-center bg-white/60 backdrop-blur-2xl border border-white/50 shadow-2xl rounded-3xl">
           <h2 className="text-[clamp(24px,3vw,32px)] font-medium tracking-tight text-[#111] mb-2 drop-shadow-sm">
-            Welcome back
+            Welcome to Small Software Cloud
           </h2>
-          <p className="text-[14px] text-gray-600 mb-8 font-medium">
-            Enter your email to sign in or create an account
+          <p className="text-[14px] text-gray-600 mb-2 font-medium">
+            Sign in to build, deploy and manage your small software.
+          </p>
+          <p className="text-[13px] text-gray-500 mb-8">
+            Enter your email to receive a secure login code.
           </p>
 
           <form 

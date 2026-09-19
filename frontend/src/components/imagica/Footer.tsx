@@ -25,11 +25,10 @@ export default function Footer() {
         </motion.div>
 
         <div className="mt-24 pt-8 border-t border-[#ddd] flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-[12px] text-[#bbb]">© 2024 Small Software Cloud. All rights reserved.</p>
+          <p className="text-[12px] text-[#bbb]">Small Software Cloud</p>
           <div className="flex items-center gap-6">
-            {["Privacy", "Terms", "Contact"].map(l => (
-              <a key={l} href="#" className="text-[12px] text-[#aaa] hover:text-[#666] transition-colors">{l}</a>
-            ))}
+            <span className="text-[12px] text-[#aaa]">Built for Bharat Builds Tour 2026</span>
+            <span className="text-[12px] text-[#aaa]">Built on AWS</span>
           </div>
         </div>
       </div>

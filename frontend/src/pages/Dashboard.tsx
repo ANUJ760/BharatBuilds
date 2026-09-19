@@ -265,15 +265,18 @@ export default function Dashboard() {
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm">
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="w-full max-w-lg bg-white rounded-2xl shadow-xl flex flex-col max-h-[80vh]">
               <div className="flex items-center justify-between p-6 border-b border-black/5 shrink-0">
-                <h3 className="text-lg font-semibold">Manage Access</h3>
+                <h3 className="text-lg font-semibold">Share your app</h3>
                 <button onClick={() => setAccessModalOpen(false)} className="p-1 hover:bg-black/5 rounded-md"><X className="w-5 h-5" /></button>
               </div>
               
               <div className="p-6 overflow-y-auto">
+                <p className="text-[13px] text-gray-500 mb-4">
+                  Invite people to use your app without requiring them to manage cloud infrastructure.
+                </p>
                 <div className="flex gap-2 mb-6">
                   <input 
                     type="email" 
-                    placeholder="Invite by email..." 
+                    placeholder="Enter an email address to invite a collaborator." 
                     value={inviteEmail}
                     onChange={(e) => setInviteEmail(e.target.value)}
                     className="flex-1 px-4 py-2.5 rounded-xl bg-black/5 border border-transparent focus:border-black/20 focus:outline-none text-[14px]"
@@ -286,7 +289,7 @@ export default function Dashboard() {
                     <option value="viewer">Viewer</option>
                     <option value="editor">Editor</option>
                   </select>
-                  <button onClick={handleInvite} className="px-4 py-2 rounded-xl bg-[#111] text-white text-[13px] font-medium shrink-0">Invite</button>
+                  <button onClick={handleInvite} className="px-4 py-2 rounded-xl bg-[#111] text-white text-[13px] font-medium shrink-0">Send Invite</button>
                 </div>
 
                 <h4 className="text-xs font-semibold text-[#888] uppercase tracking-wider mb-3">Collaborators</h4>

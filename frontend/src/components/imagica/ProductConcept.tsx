@@ -24,16 +24,11 @@ export default function ProductConcept() {
             </div>
 
             <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
-              Incumbent clouds were built for{" "}
-              <span className="line-through decoration-slate-400 opacity-60">Big Software</span>.
-              <br />
-              We built one for the agile tool.
+              AI can generate an app. We make it ready to use.
             </h2>
 
             <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
-              AI agents can write a working form or tracker in seconds. But turning
-              that code into something teammates can actually authenticate into,
-              store data in, and trust in production still takes hours of DevOps.
+              Small software should be as easy to deploy and share as a Google Doc.
             </p>
 
             <div className="space-y-3 pt-2">
@@ -43,10 +38,10 @@ export default function ProductConcept() {
                 </div>
                 <div>
                   <h4 className="text-sm font-semibold text-slate-900 dark:text-white">
-                    Zero Cloud Overhead
+                    Prompt-to-App
                   </h4>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    No AWS console navigation, IAM role headaches, or Terraform scripting required.
+                    Describe what you need. Get a working app.
                   </p>
                 </div>
               </div>
@@ -57,10 +52,10 @@ export default function ProductConcept() {
                 </div>
                 <div>
                   <h4 className="text-sm font-semibold text-slate-900 dark:text-white">
-                    Deterministic Decision Trails
+                    Instant AWS Deployment
                   </h4>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Never wonder why an agent picked a database table or altered an API schema.
+                    From prompt to live app.
                   </p>
                 </div>
               </div>
