@@ -5,6 +5,15 @@
 const BASE = '';          // Vite proxy handles this
 const API_URL = BASE;
 
+const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+if (isLocalhost) {
+  // Force login on every hard refresh during dev by clearing storage on initial load
+  localStorage.removeItem('bb_token');
+  localStorage.removeItem('bb_user');
+  sessionStorage.removeItem('bb_token');
+  sessionStorage.removeItem('bb_user');
+}
+
 function getToken(): string | null {
   return localStorage.getItem('bb_token') || sessionStorage.getItem('bb_token');
 }
