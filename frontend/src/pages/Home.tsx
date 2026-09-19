@@ -49,12 +49,18 @@ export function Home() {
       // Trigger deploy pipeline with clarifications
       await apiDeploy(appRes.app_id, prompt, ownerId, appRes.title, resolvedAnswers);
       
-      // Redirect to app view
-      navigate(`/apps/${appRes.app_id}`);
+      // Redirect to app view with droplet transition
+      window.dispatchEvent(new CustomEvent('burst-auth'));
+      setTimeout(() => {
+        navigate(`/apps/${appRes.app_id}`);
+      }, 1000);
     } catch (err: any) {
       if (err.status === 401) {
         // Redirect to login if unauthorized for deploy
-        navigate(`/login?return=/create`);
+        window.dispatchEvent(new CustomEvent('burst-auth'));
+        setTimeout(() => {
+          navigate(`/login?return=/create`);
+        }, 1000);
       } else {
         console.error(err);
       }
@@ -68,7 +74,7 @@ export function Home() {
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] text-[#111] font-sans selection:bg-black selection:text-white overflow-hidden flex flex-col items-center justify-center relative">
-      <div className="fixed inset-0 z-0 pointer-events-none">
+      <div className="fixed inset-0 z-0">
         <Scene3D />
       </div>
 

@@ -1,6 +1,6 @@
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Float, MeshDistortMaterial, Environment, ContactShadows } from '@react-three/drei'
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import * as THREE from 'three'
 
 function AnimatedSphere({
@@ -9,7 +9,8 @@ function AnimatedSphere({
   speed = 1,
   distort = 0.3,
   color = '#ffffff',
-  scrollFactor = 0.001
+  scrollFactor = 0.001,
+  isMain = false
 }: {
   position: [number, number, number]
   scale?: number
@@ -17,26 +18,71 @@ function AnimatedSphere({
   distort?: number
   color?: string
   scrollFactor?: number
+  isMain?: boolean
 }) {
   const meshRef = useRef<THREE.Mesh>(null)
+  const materialRef = useRef<any>(null)
+  const [hovered, setHovered] = useState(false)
+  const [isTransitioning, setIsTransitioning] = useState(false)
 
-  useFrame(() => {
+  useEffect(() => {
+    if (isMain) {
+      const handleBurst = () => {
+        setIsTransitioning(true)
+      }
+      window.addEventListener('burst-auth', handleBurst)
+      return () => window.removeEventListener('burst-auth', handleBurst)
+    }
+  }, [isMain])
+
+  useFrame((_state, delta) => {
     if (meshRef.current) {
-      // Rotate based on scroll
+      // Rotate and float based on scroll
       const scroll = window.scrollY
       meshRef.current.rotation.y = scroll * scrollFactor
       meshRef.current.position.y = position[1] + (scroll * scrollFactor * 0.5)
+
+      // Shrink effect for transition
+      if (isTransitioning) {
+        meshRef.current.scale.lerp(new THREE.Vector3(0, 0, 0), 6 * delta)
+      } else {
+        meshRef.current.scale.lerp(new THREE.Vector3(scale, scale, scale), 5 * delta)
+      }
+    }
+
+    // Liquid hover effect
+    if (materialRef.current) {
+      const targetDistort = hovered ? distort * 3.0 : distort * 1.5
+      const targetSpeed = hovered ? 8 : 3
+      
+      materialRef.current.distort = THREE.MathUtils.lerp(
+        materialRef.current.distort,
+        targetDistort,
+        0.1
+      )
+      materialRef.current.speed = THREE.MathUtils.lerp(
+        materialRef.current.speed,
+        targetSpeed,
+        0.1
+      )
     }
   })
 
   return (
-    <Float speed={speed * 1.5} rotationIntensity={1.2} floatIntensity={3.5}>
-      <mesh ref={meshRef} position={position} scale={scale}>
+    <Float speed={speed * 1.5} rotationIntensity={1.2} floatIntensity={isTransitioning ? 0 : 3.5}>
+      <mesh 
+        ref={meshRef} 
+        position={position} 
+        scale={scale}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+      >
         <sphereGeometry args={[1, 64, 64]} />
         <MeshDistortMaterial
+          ref={materialRef}
           color={color}
-          roughness={0.08}
-          metalness={0.1}
+          roughness={0.05}
+          metalness={0.15}
           distort={distort * 1.5}
           speed={3}
         />
@@ -47,7 +93,7 @@ function AnimatedSphere({
 
 export function Scene3D(_props?: { scrollY?: any }) {
   return (
-    <div className="absolute inset-0" style={{ pointerEvents: 'none' }}>
+    <div className="absolute inset-0 z-0">
       <Canvas
         camera={{ position: [0, 0.5, 8], fov: 42 }}
         dpr={[1, 2]}
@@ -59,7 +105,7 @@ export function Scene3D(_props?: { scrollY?: any }) {
         <directionalLight position={[-3, 3, -3]} intensity={0.5} color="#ffffff" />
 
         {/* Main central sphere */}
-        <AnimatedSphere position={[0, 0.3, 0]} scale={1.6} speed={1.5} distort={0.3} color="#ffffff" scrollFactor={0.003} />
+        <AnimatedSphere position={[0, 0.3, 0]} scale={1.6} speed={1.5} distort={0.3} color="#ffffff" scrollFactor={0.003} isMain={true} />
 
         {/* Orbiting smaller spheres */}
         <AnimatedSphere position={[-2.8, 1, -2]} scale={0.65} speed={2.0} distort={0.4} color="#f5f5f5" scrollFactor={-0.004} />
