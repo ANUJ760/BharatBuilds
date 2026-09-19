@@ -41,10 +41,10 @@ export const AppView = () => {
 
   return (
     <motion.div 
-      initial={{ y: "25vh", opacity: 0 }} 
+      initial={{ y: "100vh", opacity: 1 }} 
       animate={{ y: 0, opacity: 1 }} 
       transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
-      className="flex w-full h-screen bg-[#f3f4f6] text-[#111] font-sans selection:bg-black selection:text-white overflow-hidden"
+      className="flex w-full h-screen bg-[#f3f4f6] text-[#111] font-sans selection:bg-black selection:text-white overflow-hidden relative z-[100]"
     >
       {/* Activity Bar (VS Code style far-left) */}
       <div className="w-[48px] h-full bg-[#f8f9fa] border-r border-[#e5e7eb] flex flex-col items-center py-4 gap-4 flex-shrink-0 z-20">

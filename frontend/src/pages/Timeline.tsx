@@ -163,10 +163,10 @@ export const Timeline = () => {
 
   return (
     <motion.div 
-      initial={{ y: "25vh", opacity: 0 }} 
+      initial={{ y: "100vh", opacity: 1 }} 
       animate={{ y: 0, opacity: 1 }} 
       transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
-      className="flex flex-col w-full h-screen bg-[#e8e8e8] text-[#111] font-sans"
+      className="flex flex-col w-full h-screen bg-[#e8e8e8] text-[#111] font-sans relative z-[100]"
     >
       <nav className="fixed top-0 z-50 w-full bg-[#e8e8e8]/80 backdrop-blur-xl border-b border-black/5 px-8 py-4 flex justify-between items-center shadow-sm">
         <Link to={`/apps/${id}`} className="text-sm font-medium flex items-center gap-2 hover:opacity-70 transition-opacity">

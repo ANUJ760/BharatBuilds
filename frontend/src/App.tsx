@@ -1,16 +1,17 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import Landing from './pages/Landing';
 import { Home } from './pages/Home';
 import { AppView } from './pages/AppView';
 import { Timeline } from './pages/Timeline';
-
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 
-export function App() {
+function AnimatedRoutes() {
+  const location = useLocation();
   return (
-    <BrowserRouter>
-      <Routes>
+    <AnimatePresence mode="popLayout">
+      <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
@@ -18,6 +19,14 @@ export function App() {
         <Route path="/apps/:id" element={<AppView />} />
         <Route path="/apps/:id/timeline" element={<Timeline />} />
       </Routes>
+    </AnimatePresence>
+  );
+}
+
+export function App() {
+  return (
+    <BrowserRouter>
+      <AnimatedRoutes />
     </BrowserRouter>
   );
 }

@@ -1,4 +1,5 @@
 import Navbar from '../components/imagica/Navbar';
+import { motion } from 'framer-motion';
 import Hero from '../components/imagica/Hero';
 import PromptEngine from '../components/imagica/PromptEngine';
 import HowItWorks from '../components/imagica/HowItWorks';
@@ -12,7 +13,11 @@ import SmoothScroll from '../components/imagica/SmoothScroll';
 
 export default function Landing() {
   return (
-    <SmoothScroll>
+    <motion.div 
+      exit={{ opacity: 1, transition: { duration: 1.5 } }} 
+      className="absolute inset-0 w-full min-h-screen"
+    >
+      <SmoothScroll>
       <div className="relative min-h-screen">
         {/* Fixed 3D background canvas */}
         <HeroCanvas />
@@ -32,6 +37,7 @@ export default function Landing() {
           <Footer />
         </main>
       </div>
-    </SmoothScroll>
+      </SmoothScroll>
+    </motion.div>
   );
 }
