@@ -107,7 +107,7 @@ export default function HeroCanvas() {
         -1 - Math.random() * 6
       );
 
-      const baseScale = 0.15 + Math.random() * 0.4;
+      const baseScale = 0.35 + Math.random() * 0.5;
       bMesh.userData = {
         velocity: new THREE.Vector3(
           (Math.random() - 0.5) * 0.06,
