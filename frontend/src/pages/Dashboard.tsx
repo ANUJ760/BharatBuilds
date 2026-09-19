@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trash2, Users, MoreVertical, X, Edit2 } from 'lucide-react';
@@ -16,7 +16,6 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [apps, setApps] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [ownerId, setOwnerId] = useState('');
 
   // Modals state
   const [activeApp, setActiveApp] = useState<any | null>(null);
@@ -34,10 +33,9 @@ export default function Dashboard() {
   useEffect(() => {
     const user = localStorage.getItem('bb_user') || sessionStorage.getItem('bb_user');
     if (!user) {
-      navigate('/auth');
+      navigate('/login');
       return;
     }
-    setOwnerId(user);
     loadApps(user);
     
     // Close menus on outside click
@@ -169,7 +167,7 @@ export default function Dashboard() {
                 
                 <div className="flex items-center gap-2 justify-between">
                   <button 
-                    onClick={() => navigate(`/app/${app.app_id}`)}
+                    onClick={() => navigate(`/apps/${app.app_id}`)}
                     className="text-[13px] font-medium text-[#111] hover:underline"
                   >
                     Open Workspace &rarr;

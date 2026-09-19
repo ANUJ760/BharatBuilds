@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Scene3D } from '../components/Scene3D';
+import { apiClarify, apiCreateApp, apiDeploy } from '../api/client';
 
 export function Home() {
   const navigate = useNavigate();
@@ -16,48 +17,53 @@ export function Home() {
     setIsClarifying(true);
     
     try {
-      // Simulate clarification if backend is not running, otherwise hit real API
-      const res = await fetch('/apps/clarify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt })
-      });
+      const data = await apiClarify(prompt);
       
-      if (!res.ok) throw new Error('API Error');
-      const data = await res.json();
-      setClarifications(data);
-    } catch (err) {
-      // Fallback for demo if backend is offline
-      setTimeout(() => {
-        setClarifications({
-          questions: [
-            { id: 'auth', text: 'Authentication Method', options: ['Magic Link', 'OAuth', 'Anonymous'], default: 'Magic Link' },
-            { id: 'storage', text: 'Data Storage', options: ['PostgreSQL', 'DynamoDB', 'SQLite'], default: 'SQLite' }
-          ]
+      if (data.needs_clarification && data.questions && data.questions.length > 0) {
+        setClarifications(data);
+        // Pre-fill answers with suggested defaults
+        const defaultAnswers: Record<string, string> = {};
+        data.questions.forEach((q: any) => {
+          defaultAnswers[q.question] = q.suggested_default;
         });
-        setAnswers({ auth: 'Magic Link', storage: 'SQLite' });
-      }, 1500);
+        setAnswers(defaultAnswers);
+      } else {
+        // If no clarification needed, just proceed directly to build
+        await buildApp();
+      }
+    } catch (err: any) {
+      console.error(err);
     } finally {
       setIsClarifying(false);
     }
   };
 
-  const handleBuild = async () => {
+  const buildApp = async (resolvedAnswers: Record<string, string> = {}) => {
     setIsBuilding(true);
     try {
-      const res = await fetch('/apps/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt, owner_id: 'demo-user', title: 'Generated App' })
-      });
+      const ownerId = localStorage.getItem('bb_user') || sessionStorage.getItem('bb_user') || 'anonymous';
       
-      if (!res.ok) throw new Error('API Error');
-      const data = await res.json();
-      navigate(`/app/${data.app_id}`);
-    } catch (err) {
-      // Fallback for demo
-      setTimeout(() => navigate('/app/demo-app-123'), 1000);
+      // Create app
+      const appRes = await apiCreateApp(prompt, ownerId);
+      
+      // Trigger deploy pipeline with clarifications
+      await apiDeploy(appRes.app_id, prompt, ownerId, appRes.title, resolvedAnswers);
+      
+      // Redirect to app view
+      navigate(`/apps/${appRes.app_id}`);
+    } catch (err: any) {
+      if (err.status === 401) {
+        // Redirect to login if unauthorized for deploy
+        navigate(`/login?return=/create`);
+      } else {
+        console.error(err);
+      }
+      setIsBuilding(false);
     }
+  };
+
+  const handleBuild = async () => {
+    await buildApp(answers);
   };
 
   return (
@@ -116,23 +122,31 @@ export function Home() {
             className="mt-8 space-y-6"
           >
             <div className="text-sm font-medium text-gray-500 uppercase tracking-widest text-center">Agent Clarifications</div>
-            {clarifications.questions.map((q: any) => (
-              <div key={q.id} className="bg-white/60 backdrop-blur-md rounded-2xl p-6 border border-black/5 shadow-sm">
-                <h3 className="font-medium mb-4">{q.text}</h3>
-                <div className="flex flex-wrap gap-2">
-                  {q.options.map((opt: string) => (
+            {clarifications.questions.map((q: any, i: number) => (
+              <div key={i} className="bg-white/60 backdrop-blur-md rounded-2xl p-6 border border-black/5 shadow-sm">
+                <h3 className="font-medium mb-1">{q.question}</h3>
+                <p className="text-sm text-gray-500 mb-4">{q.why_it_matters}</p>
+                <div className="flex flex-col gap-3">
+                  <div className="flex flex-wrap gap-2">
                     <button
-                      key={opt}
-                      onClick={() => setAnswers({ ...answers, [q.id]: opt })}
+                      type="button"
+                      onClick={() => setAnswers({ ...answers, [q.question]: q.suggested_default })}
                       className={`px-4 py-2 rounded-full text-sm transition-colors ${
-                        answers[q.id] === opt 
+                        answers[q.question] === q.suggested_default 
                           ? 'bg-black text-white' 
                           : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
                       }`}
                     >
-                      {opt}
+                      {q.suggested_default} (Suggested)
                     </button>
-                  ))}
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Or type your own answer..."
+                    value={answers[q.question] !== q.suggested_default ? answers[q.question] || '' : ''}
+                    onChange={(e) => setAnswers({ ...answers, [q.question]: e.target.value })}
+                    className="w-full px-4 py-2 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-black text-sm"
+                  />
                 </div>
               </div>
             ))}

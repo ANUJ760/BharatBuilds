@@ -125,6 +125,16 @@ export async function apiGetTimeline(appId: string) {
   return request<{ steps: any[] }>('GET', `/apps/${appId}/timeline`);
 }
 
+export async function apiRevertToStep(appId: string, stepId: string) {
+  return request<{
+    app_id: string;
+    reverted_to_step: string;
+    revert_step_id: string;
+    live_url: string;
+    status: string;
+  }>('POST', `/apps/${appId}/revert/${stepId}`);
+}
+
 // ── Share ─────────────────────────────────────────────────────────────────────
 export async function apiInvite(appId: string, email: string, role = 'viewer') {
   return request('POST', `/apps/${appId}/invite`, { email, role });

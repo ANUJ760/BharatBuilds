@@ -21,7 +21,7 @@ export default function Navbar() {
       window.dispatchEvent(new CustomEvent('burst-auth'));
       // Wait for animation to engulf screen, then navigate
       setTimeout(() => {
-        navigate("/auth");
+        navigate("/login");
       }, 800);
     }
   };
@@ -62,7 +62,7 @@ export default function Navbar() {
           </Link>
         )}
         <Link
-          to={isAuthenticated ? "/create" : "/auth"}
+          to={isAuthenticated ? "/create" : "/login"}
           onClick={handleAuthClick}
           className="px-5 py-2 rounded-full bg-white text-[13px] font-medium text-[#111] shadow-sm border border-white/80 hover:shadow-md transition-all duration-200"
         >
