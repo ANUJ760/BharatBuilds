@@ -23,6 +23,41 @@ const PROMPTS: Record<string, string> = {
   "Small business dashboard": "A unified dashboard showing daily sales, expenses, and key metrics",
 };
 
+const PREVIEW_DATA: Record<string, { title: string; stats: [string, string][] }> = {
+  "Employee attendance tracker": {
+    title: "Employee Attendance Tracker",
+    stats: [["Employees", "12"], ["Pending Leaves", "3"], ["Uptime", "100%"]]
+  },
+  "Customer management tool": {
+    title: "Customer Management App",
+    stats: [["Active Deals", "24"], ["Contacts", "142"], ["Uptime", "100%"]]
+  },
+  "College event app": {
+    title: "College Event Management",
+    stats: [["RSVPs", "350"], ["Upcoming Events", "4"], ["Uptime", "100%"]]
+  },
+  "Inventory tracker": {
+    title: "Inventory Management App",
+    stats: [["Total Items", "4,200"], ["Low Stock", "12"], ["Uptime", "100%"]]
+  },
+  "Appointment booking": {
+    title: "Appointment Booking App",
+    stats: [["Bookings Today", "18"], ["Available Slots", "5"], ["Uptime", "100%"]]
+  },
+  "Internal workflow tool": {
+    title: "Internal Workflow Tool",
+    stats: [["Active Tasks", "45"], ["Completed", "128"], ["Uptime", "100%"]]
+  },
+  "Invoice tracker": {
+    title: "Invoice & Payment Tracker",
+    stats: [["Unpaid", "$4,250"], ["Paid (Month)", "$12,400"], ["Uptime", "100%"]]
+  },
+  "Small business dashboard": {
+    title: "Small Business Dashboard",
+    stats: [["Daily Sales", "$1,240"], ["Expenses", "$450"], ["Uptime", "100%"]]
+  }
+};
+
 export default function PromptEngine() {
   const [stage, setStage] = useState<"industry" | "prompt" | "generating" | "done">("industry");
   const [selectedIndustry, setSelectedIndustry] = useState("");
@@ -180,11 +215,13 @@ export default function PromptEngine() {
                 <div className="browser__body p-8 items-start">
                   <div className="w-full space-y-4">
                     <div className="flex items-center justify-between pb-3 border-b border-[#eee]">
-                      <span className="text-[14px] font-semibold text-[#222]">{selectedIndustry} App</span>
+                      <span className="text-[14px] font-semibold text-[#222]">
+                        {PREVIEW_DATA[selectedIndustry]?.title || `${selectedIndustry} App`}
+                      </span>
                       <span className="text-[11px] px-2 py-1 rounded-full bg-[#e8ffe8] text-[#2a7a2a]">● Live</span>
                     </div>
                     <div className="grid grid-cols-3 gap-3">
-                      {[["Users", "24"], ["API Calls", "1.2K"], ["Uptime", "100%"]].map(([label, val]) => (
+                      {(PREVIEW_DATA[selectedIndustry]?.stats || [["Users", "24"], ["API Calls", "1.2K"], ["Uptime", "100%"]]).map(([label, val]) => (
                         <div key={label} className="p-3 rounded-xl bg-white/80 border border-[#eee]">
                           <div className="text-[10px] text-[#999] mb-1">{label}</div>
                           <div className="text-[18px] font-semibold text-[#222]">{val}</div>
