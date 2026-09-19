@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Scene3D } from '../components/Scene3D';
+import { Logo } from '../components/imagica/Logo';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -44,9 +45,7 @@ export default function Login() {
       {/* Navbar Minimal */}
       <nav className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-10 py-5">
         <button onClick={() => navigate('/')} className="flex items-center gap-2.5">
-          <div className="relative w-7 h-7 rounded-full border-[2px] border-[#111] flex items-center justify-center bg-white/50 backdrop-blur-md">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#111] absolute -left-1 top-1/2 -translate-y-1/2" />
-          </div>
+          <Logo />
           <span className="text-[15px] font-semibold tracking-[-0.02em] text-[#111] drop-shadow-sm bg-white/30 px-2 py-0.5 rounded-md backdrop-blur-md">
             Small Software Cloud
           </span>

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { Logo } from "./Logo";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -28,9 +29,7 @@ export default function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-10 py-5">
       {/* Logo — matching the circle-dot + text from video */}
       <a href="#" className="flex items-center gap-2.5">
-        <div className="relative w-7 h-7 rounded-full border-[2px] border-[#111] flex items-center justify-center">
-          <div className="w-1.5 h-1.5 rounded-full bg-[#111] absolute -left-1 top-1/2 -translate-y-1/2" />
-        </div>
+        <Logo />
         <span className="text-[15px] font-semibold tracking-[-0.02em] text-[#111]">
           Small Software Cloud
         </span>
