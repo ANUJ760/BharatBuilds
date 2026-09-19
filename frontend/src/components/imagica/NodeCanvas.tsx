@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Bot, Cpu, Database, Shield, Zap, Sparkles, ArrowRight } from "lucide-react";
+import { Bot, Cpu, Shield, Zap, Sparkles } from "lucide-react";
 
 interface GraphNode {
   id: string;

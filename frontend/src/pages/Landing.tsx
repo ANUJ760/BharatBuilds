@@ -1,4 +1,3 @@
-import React from 'react';
 import Navbar from '../components/imagica/Navbar';
 import Hero from '../components/imagica/Hero';
 import PromptEngine from '../components/imagica/PromptEngine';

@@ -1,17 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   Lock,
-  Globe,
   TrendingUp,
   ShieldCheck,
   Zap,
-  CheckCircle,
   Database,
-  Search,
-  ExternalLink,
 } from "lucide-react";
 
 export default function AppShowcase() {

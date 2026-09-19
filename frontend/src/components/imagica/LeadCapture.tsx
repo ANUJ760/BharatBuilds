@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, CheckCircle2, Sparkles, Terminal, ExternalLink } from "lucide-react";
+import { ArrowRight, CheckCircle2, Sparkles, ExternalLink } from "lucide-react";
 
 export default function LeadCapture() {
   const [email, setEmail] = useState("");

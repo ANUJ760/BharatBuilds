@@ -1,17 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 import {
-  GitCommit,
   CheckCircle2,
   AlertCircle,
-  HelpCircle,
   Database,
   Shield,
   Cpu,
   Layers,
-  Sparkles,
 } from "lucide-react";
 
 interface DecisionNode {

@@ -44,7 +44,7 @@ export default function PromptEngine() {
       try {
         const ownerId = localStorage.getItem('bb_user') || 'anonymous';
         // In a real app we might want to ensure the token exists here
-        const res = await apiCreateApp(target, ownerId, `${selectedIndustry} App`);
+        await apiCreateApp(target, ownerId, `${selectedIndustry} App`);
         
         if (mounted) {
           // Wait at least 2s for visual effect

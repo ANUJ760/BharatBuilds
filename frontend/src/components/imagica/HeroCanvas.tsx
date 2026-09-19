@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
 export default function HeroCanvas() {
@@ -79,22 +79,26 @@ export default function HeroCanvas() {
 
     // Extra bubbles (colliding, still, hoverable)
     const bubbles: THREE.Mesh[] = [];
-    for (let i = 0; i < 4; i++) {
-      // Clone material so we can adjust it per-bubble if we want
+    for (let i = 0; i < 12; i++) {
+      // Clone material to make them somewhat blue and shining
       const bMat = sphereMat.clone();
+      bMat.color = new THREE.Color(0x88ccff); // Light blue tint
+      bMat.emissive = new THREE.Color(0x004488); // Blue glow
+      bMat.emissiveIntensity = 0.5;
+      
       const bMesh = new THREE.Mesh(sphereGeo, bMat);
       
       const isStill = i === 0; // Make one bubble still
       
       bMesh.position.set(
-        (Math.random() - 0.5) * 6, 
-        0.5 + Math.random() * 2, 
-        -1 - Math.random() * 3
+        (Math.random() - 0.5) * 12, 
+        0.5 + Math.random() * 4, 
+        -1 - Math.random() * 6
       );
       
       bMesh.userData = {
-        velocity: isStill ? new THREE.Vector3(0,0,0) : new THREE.Vector3((Math.random() - 0.5) * 0.02, (Math.random() - 0.5) * 0.02, (Math.random() - 0.5) * 0.02),
-        baseScale: 0.3 + Math.random() * 0.3,
+        velocity: isStill ? new THREE.Vector3(0,0,0) : new THREE.Vector3((Math.random() - 0.5) * 0.05, (Math.random() - 0.5) * 0.05, (Math.random() - 0.5) * 0.05),
+        baseScale: 0.15 + Math.random() * 0.4,
         hoverScale: 1.0,
         isStill
       };
@@ -206,11 +210,11 @@ export default function HeroCanvas() {
         mainSphere.position.z = 0;
         mainSphere.scale.setScalar(1);
       } else {
-        // Burst animation taking over
-        burstProgress += 0.05;
-        mainSphere.position.z += 0.4;
-        mainSphere.scale.setScalar(1 + burstProgress * 6);
-        (mainSphere.material as THREE.MeshPhysicalMaterial).opacity = 1 - burstProgress * 0.1;
+        // Shrink animation taking over (0.5 - 1.5s visual effect)
+        burstProgress += 0.03; // Slightly slower to fit ~1s duration
+        const shrinkScale = Math.max(0, 1 - burstProgress * 1.5);
+        mainSphere.scale.setScalar(shrinkScale);
+        mainSphere.rotation.y += 0.1; // Spin as it shrinks
       }
       
       ripplePlane.position.y = -0.8 - scrollNorm * 2;
@@ -221,25 +225,25 @@ export default function HeroCanvas() {
       const hoveredBubble = intersects.length > 0 ? intersects[0].object : null;
 
       bubbles.forEach(b => {
-        // Hover scaling
+        // Hover scaling & intense blue glow
         if (hoveredBubble === b) {
-          b.userData.hoverScale += (1.4 - b.userData.hoverScale) * 0.15;
-          (b.material as THREE.MeshPhysicalMaterial).emissive = new THREE.Color(0x222222);
+          b.userData.hoverScale += (1.5 - b.userData.hoverScale) * 0.15;
+          (b.material as THREE.MeshPhysicalMaterial).emissive = new THREE.Color(0x0088ff);
         } else {
           b.userData.hoverScale += (1.0 - b.userData.hoverScale) * 0.1;
-          (b.material as THREE.MeshPhysicalMaterial).emissive = new THREE.Color(0x000000);
+          (b.material as THREE.MeshPhysicalMaterial).emissive = new THREE.Color(0x004488);
         }
         b.scale.setScalar(b.userData.baseScale * b.userData.hoverScale);
         
         // Floating & boundaries
         if (!b.userData.isStill) {
           b.position.add(b.userData.velocity);
-          if (b.position.x > 4 || b.position.x < -4) b.userData.velocity.x *= -1;
-          if (b.position.y > 3 || b.position.y < 0) b.userData.velocity.y *= -1;
-          if (b.position.z > 1 || b.position.z < -5) b.userData.velocity.z *= -1;
+          if (b.position.x > 6 || b.position.x < -6) b.userData.velocity.x *= -1;
+          if (b.position.y > 5 || b.position.y < 0) b.userData.velocity.y *= -1;
+          if (b.position.z > 2 || b.position.z < -8) b.userData.velocity.z *= -1;
         } else {
           // Still bubble just bobs gently
-          b.position.y += Math.sin(t * 1.2 + b.id) * 0.002;
+          b.position.y += Math.sin(t * 1.5 + b.id) * 0.003;
         }
       });
 

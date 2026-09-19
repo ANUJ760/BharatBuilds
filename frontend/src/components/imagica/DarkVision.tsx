@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { motion } from "framer-motion";
 import { Sparkles, Cpu, ShieldCheck } from "lucide-react";
 
 export default function DarkVision() {

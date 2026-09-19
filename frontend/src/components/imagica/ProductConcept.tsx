@@ -1,8 +1,7 @@
 "use client";
 
-import React from "react";
 import { motion } from "framer-motion";
-import { Sparkles, Terminal, Check, Layers, Cpu, Database } from "lucide-react";
+import { Sparkles, Check } from "lucide-react";
 
 export default function ProductConcept() {
   const floatingIdeas = [
