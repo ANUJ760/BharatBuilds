@@ -10,7 +10,7 @@ export default function MissionSection() {
       <div className="max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <motion.div initial={{ opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8 }}>
           <h2 className="text-[clamp(32px,4.5vw,56px)] font-bold tracking-[-0.03em] text-[#111] leading-[1.12]">
-            Build and deploy small software without the cloud complexity.
+            Build and deploy SmallOps without the cloud complexity.
           </h2>
           <p className="text-[clamp(24px,3.5vw,44px)] font-normal tracking-[-0.02em] text-[#888] leading-[1.2] mt-1">
             Describe what you need. Let the agent build, deploy, authenticate and share it.

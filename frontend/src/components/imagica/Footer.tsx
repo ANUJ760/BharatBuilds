@@ -12,13 +12,13 @@ export default function Footer() {
         <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8 }}>
           <div className="flex items-center justify-center gap-3 mb-8">
             <Logo />
-            <span className="text-[18px] font-semibold tracking-[-0.02em] text-[#111]">Small Software Cloud</span>
+            <span className="text-[18px] font-semibold tracking-[-0.02em] text-[#111]">SmallOps</span>
           </div>
           <h3 className="text-[clamp(28px,4vw,48px)] font-bold tracking-[-0.03em] text-[#111] leading-[1.08] mb-6">
             Ready to build?
           </h3>
           <p className="text-[15px] text-[#999] mb-10 max-w-lg mx-auto leading-relaxed">
-            Deploy your first small software in under 60 seconds. Just describe what you need.
+            Deploy your first SmallOps in under 60 seconds. Just describe what you need.
           </p>
           <a 
             href="/create" 
@@ -36,7 +36,7 @@ export default function Footer() {
         </motion.div>
 
         <div className="mt-24 pt-8 border-t border-[#ddd] flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-[12px] text-[#bbb]">Small Software Cloud</p>
+          <p className="text-[12px] text-[#bbb]">SmallOps</p>
           <div className="flex items-center gap-6">
             <span className="text-[12px] text-[#aaa]">Built for Bharat Builds Tour 2026</span>
             <span className="text-[12px] text-[#aaa]">Built on AWS</span>

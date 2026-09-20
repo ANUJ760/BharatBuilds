@@ -20,7 +20,7 @@ export default function ProductConcept() {
           <div className="lg:col-span-7 space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-200/60 dark:bg-slate-800/60 text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
               <Sparkles className="w-3.5 h-3.5 text-orange-500" />
-              <span>The Small Software Thesis</span>
+              <span>The SmallOps Thesis</span>
             </div>
 
             <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
@@ -28,7 +28,7 @@ export default function ProductConcept() {
             </h2>
 
             <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
-              Small software should be as easy to deploy and share as a Google Doc.
+              SmallOps should be as easy to deploy and share as a Google Doc.
             </p>
 
             <div className="space-y-3 pt-2">

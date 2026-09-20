@@ -134,8 +134,8 @@ export default function Dashboard() {
       <nav className="fixed top-0 left-0 w-full z-40 flex items-center justify-between px-10 py-5 bg-white/40 backdrop-blur-xl border-b border-white/50">
         <button onClick={() => navigate('/')} className="flex items-center gap-2.5">
           <Logo />
-          <span className="text-[15px] font-semibold tracking-[-0.02em] text-[#111]">
-            Small Software Cloud
+          <span className="text-[14px] font-semibold tracking-[-0.02em] text-[#111] bg-white/50 px-2 py-0.5 rounded backdrop-blur-sm">
+            SmallOps
           </span>
         </button>
         <button

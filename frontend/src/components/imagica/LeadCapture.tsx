@@ -84,7 +84,7 @@ export default function LeadCapture() {
                 className="p-5 rounded-3xl bg-white/10 backdrop-blur-2xl border border-emerald-500/30 flex items-center justify-center gap-3 text-emerald-300 text-sm font-medium shadow-xl"
               >
                 <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-                <span>You&apos;re on the priority list. Welcome to Small Software Cloud!</span>
+                <span>You&apos;re on the priority list. Welcome to SmallOps!</span>
               </motion.div>
             )}
           </AnimatePresence>

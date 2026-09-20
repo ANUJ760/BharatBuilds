@@ -46,7 +46,8 @@ class TestGlobalErrorHandling:
         self, mock_settings, mock_clarify, client
     ):
         mock_settings.return_value = MagicMock(
-            bedrock_model_id="deepseek.v3-1",
+            gemini_api_key="mock",
+            gemini_model_id="gemini-2.5-pro",
             aws_region="ap-south-1",
         )
         # Trigger deliberate error during prompt clarify (e.g. Bedrock Throttling or failure)

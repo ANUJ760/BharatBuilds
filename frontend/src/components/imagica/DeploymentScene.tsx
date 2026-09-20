@@ -8,7 +8,7 @@ export default function DeploymentScene() {
       <div className="max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <motion.div initial={{ opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8 }}>
           <h2 className="text-[clamp(30px,4.5vw,52px)] font-bold tracking-[-0.03em] text-[#111] leading-[1.12]">
-            Deploy your small software
+            Deploy your SmallOps
             <br /><span className="text-[#111]">and start using it</span>
           </h2>
           <p className="text-[clamp(22px,3vw,40px)] font-normal tracking-[-0.02em] text-[#888] leading-[1.2] mt-1">

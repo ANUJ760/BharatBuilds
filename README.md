@@ -1,6 +1,6 @@
 # [Project Name TBD]
 
-> A cloud for small software — turn a plain-language prompt into a live, authenticated, shareable web app in under a minute, deployed on real AWS infrastructure, with a full visual record of every decision the agent made along the way.
+> SmallOps — turn a plain-language prompt into a live, authenticated, shareable web app in under a minute, deployed on real AWS infrastructure, with a full visual record of every decision the agent made along the way.
 
 Built for **Bharat Builds Tour 2026 (First Commit)** by WeMakeDevs × AWS.
 
@@ -16,7 +16,7 @@ AI agents can now write a working app from a prompt in seconds — a form, a tra
 - A way to share it with teammates that isn't "send them a zip file"
 - Trust that when you ask the agent to change something, it won't silently break what already worked
 
-Incumbent clouds (AWS, Azure, GCP) were built for **Big Software** — systems designed to scale to millions of users, at the cost of significant setup complexity. Most AI-generated apps are the opposite: **Small Software** — purpose-built tools for one person or a small team, that need to be deployed and shared as easily as a Google Doc.
+Incumbent clouds (AWS, Azure, GCP) were built for **Big Software** — systems designed to scale to millions of users, at the cost of significant setup complexity. Most AI-generated apps are the opposite: **SmallOps** — purpose-built tools for one person or a small team, that need to be deployed and shared as easily as a Google Doc.
 
 This project is a thin, opinionated cloud layer built specifically for that gap — running entirely on AWS.
 
@@ -294,7 +294,7 @@ SES_SENDER_EMAIL=
 - Team-level shared workspaces (multiple apps under one organization)
 - Support for stateful multi-user apps beyond simple forms/trackers
 - Anomaly detection on agent traces (flag unusually costly or slow steps automatically)
-- Marketplace of reusable "small software" templates
+- Marketplace of reusable "SmallOps" templates
 
 ---
 
@@ -307,3 +307,77 @@ SES_SENDER_EMAIL=
 ## 12. License
 
 [Add license]
+
+## Running the Application Locally
+
+### Prerequisites
+- Python 3.10+
+- Node.js 18+
+- AWS Account (for Cognito, DynamoDB, S3)
+- Gemini API Key
+
+### Configuration (`.env`)
+Create a `.env` file in the **root** of the project (`BharatBuilds/.env`) and add the following keys. 
+*Note: The system requires `gemini-2.5-flash` or higher to bypass free-tier rate limits.*
+```env
+# AWS
+AWS_REGION=ap-south-1
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+
+# Google Gemini API
+GEMINI_API_KEY=your_gemini_api_key
+GEMINI_MODEL_ID=gemini-2.5-flash
+
+# DynamoDB
+DYNAMODB_TABLE_NAME=bharatbuilds-table
+
+# Cognito
+COGNITO_USER_POOL_ID=your_user_pool_id
+COGNITO_APP_CLIENT_ID=your_client_id
+
+# Lambda deploy target (Optional)
+DEPLOY_LAMBDA_FUNCTION_NAME=bharatbuilds-deploy-runner
+```
+
+### Backend Setup
+1. From the project root, create and activate a virtual environment:
+   ```bash
+   python -m venv backend/.venv
+   source backend/.venv/bin/activate  # On Windows: backend\.venv\Scripts\activate
+   ```
+2. Install dependencies:
+   ```bash
+   pip install -r backend/requirements.txt
+   ```
+3. Run the backend server from the **project root**:
+   ```bash
+   export PYTHONPATH=. 
+   uvicorn backend.main:app --port 8000
+   ```
+   The backend will be available at `http://localhost:8000`.
+
+### Frontend Setup
+1. Open a new terminal and navigate to the `frontend` directory:
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Create a `.env` file in the `frontend` directory with your Cognito details (Vite needs these exposed):
+   ```env
+   VITE_COGNITO_USER_POOL_ID=your_user_pool_id
+   VITE_COGNITO_APP_CLIENT_ID=your_client_id
+   ```
+4. Start the frontend development server:
+   ```bash
+   npm run dev
+   ```
+   The frontend will be accessible at **`http://localhost:3000`**. *(Note: API calls are automatically proxied to port 8000).*
+
+### Application Features
+- **Authentication**: You must register an account and verify your email via the OTP sent by AWS Cognito before you can access the builder.
+- **Smart Deployment fallback**: If your AWS IAM User does not have `lambda:UpdateFunctionCode` permissions, the backend will gracefully bypass AWS Lambda and directly serve your generated HTML applications inline via the `/apps/{app_id}/live` route! 
+- **Isolated Viewer**: Deployed apps run in an isolated iframe. You can also click the "Open in New Tab" icon to use them fully standalone.

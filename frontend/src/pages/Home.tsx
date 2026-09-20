@@ -83,6 +83,7 @@ export function Home() {
     <motion.div 
       initial={{ opacity: 0 }} 
       animate={{ opacity: 1 }} 
+      exit={{ opacity: 0, filter: 'blur(10px)', transition: { duration: 0.4 } }}
       transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
       className="min-h-screen bg-[#f8f9fa] text-[#111] font-sans selection:bg-black selection:text-white overflow-hidden flex flex-col items-center justify-center relative z-[100]"
     >
@@ -109,7 +110,7 @@ export function Home() {
           What do you want to build?
         </h1>
         <p className="text-center text-[15px] text-gray-500 mb-8 font-medium pointer-events-auto">
-          Describe the small software you need in plain language.
+          Describe the SmallOps you need in plain language.
         </p>
         
         <div className="pointer-events-auto bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl p-3 shadow-2xl shadow-black/5 focus-within:shadow-black/10 focus-within:border-[#ccc] transition-all duration-300">
@@ -169,7 +170,7 @@ export function Home() {
           <motion.div 
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
-            className="mt-8 space-y-6"
+            className="mt-8 space-y-6 pointer-events-auto"
           >
             <div className="text-center mb-6">
               <h2 className="text-xl font-semibold text-[#111] mb-2">Before we build, let’s clarify a few things.</h2>

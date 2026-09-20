@@ -192,7 +192,7 @@ export default function DarkVision() {
 
         <p className="max-w-2xl mx-auto text-base sm:text-lg text-slate-400 leading-relaxed">
           No clusters to manage. No cold starts to fear. Zero manual IAM policy authoring.
-          Small Software Cloud continuously harmonizes state, compute, and security so you can focus on building.
+          SmallOps continuously harmonizes state, compute, and security so you can focus on building.
         </p>
 
         <div className="pt-6 flex flex-wrap items-center justify-center gap-4">

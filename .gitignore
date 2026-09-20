@@ -36,5 +36,5 @@ cdk.context.json
 .DS_Store
 Thumbs.db
 
-# AWS
+# aws
 .aws/

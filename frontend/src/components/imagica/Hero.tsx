@@ -15,7 +15,7 @@ export default function Hero() {
           transition={{ duration: 0.7, delay: 0.1 }}
           className="text-[13px] uppercase tracking-[0.2em] text-[#555] font-semibold"
         >
-          BUILD AND DEPLOY SMALL SOFTWARE WITH AI
+          BUILD AND DEPLOY SMALLOPS WITH AI
         </motion.p>
 
         <motion.h1
@@ -24,7 +24,7 @@ export default function Hero() {
           transition={{ duration: 0.9, delay: 0.2 }}
           className="text-[clamp(36px,6vw,72px)] font-medium leading-[1.08] tracking-[-0.035em] text-[#111] z-10"
         >
-          A cloud for small software
+          SmallOps
         </motion.h1>
 
         <motion.p

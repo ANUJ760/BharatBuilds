@@ -25,6 +25,7 @@ class AppStatus(StrEnum):
     BUILDING = "building"
     DEPLOYED = "deployed"
     FAILED = "failed"
+    CODE_READY = "code_ready"
 
 
 class StepType(StrEnum):

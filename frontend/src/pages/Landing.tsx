@@ -14,7 +14,9 @@ import SmoothScroll from '../components/imagica/SmoothScroll';
 export default function Landing() {
   return (
     <motion.div 
-      exit={{ opacity: 1, transition: { duration: 1.5 } }} 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0, filter: 'blur(5px)', transition: { duration: 0.5 } }} 
       className="absolute inset-0 w-full min-h-screen"
     >
       <SmoothScroll>

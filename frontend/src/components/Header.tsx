@@ -24,11 +24,11 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <img
               src="/logo.svg"
-              alt="Cloud for Small Software Logo"
+              alt="SmallOps Logo"
               className="h-8 w-auto object-contain transition-transform group-hover:scale-105"
             />
             <span className="font-semibold text-lg text-white tracking-tight">
-              A Cloud for Small Software
+              SmallOps
             </span>
           </button>
           <span className="hidden lg:inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono tracking-wider uppercase bg-[#201f1f] text-primary border border-white/[0.08]">

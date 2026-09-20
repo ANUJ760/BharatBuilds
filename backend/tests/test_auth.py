@@ -153,7 +153,8 @@ class TestRouteRBAC:
             "groups": ["Editor"],
         }
         mock_settings.return_value = MagicMock(
-            bedrock_model_id="deepseek.v3-1",
+            gemini_api_key="mock",
+            gemini_model_id="gemini-2.5-pro",
             aws_region="ap-south-1",
             deploy_lambda_function_name="fn-deploy",
             dynamodb_table_name="tbl-deploy",
