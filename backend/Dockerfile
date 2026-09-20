@@ -14,6 +14,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends gcc && rm -rf /
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Add AWS Lambda Web Adapter (allows FastAPI to run identically on App Runner & Lambda)
+COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:0.8.4 /opt/extensions/ /opt/extensions/
+
 # Copy application code preserving the backend directory structure
 COPY . /app/backend/
 
