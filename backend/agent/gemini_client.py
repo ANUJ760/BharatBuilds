@@ -12,7 +12,7 @@ from typing import Any
 
 import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
-from google.api_core.exceptions import RetryError, InternalServerError, TooManyRequests
+from google.api_core.exceptions import GoogleAPICallError, RetryError, InternalServerError, TooManyRequests, ResourceExhausted
 
 from backend.config import get_settings
 
@@ -75,7 +75,7 @@ def invoke_model(
                 }
             )
             return response.text
-        except (RetryError, InternalServerError, TooManyRequests) as exc:
+        except (GoogleAPICallError, RetryError, Exception) as exc:
             if attempt < MAX_RETRIES:
                 delay = BASE_DELAY_S * (2 ** attempt)
                 logger.warning(
@@ -129,7 +129,7 @@ def invoke_model_json(
                 }
             )
             return _parse_json_response(response.text)
-        except (RetryError, InternalServerError, TooManyRequests) as exc:
+        except (GoogleAPICallError, RetryError, Exception) as exc:
             if attempt < MAX_RETRIES:
                 delay = BASE_DELAY_S * (2 ** attempt)
                 logger.warning(

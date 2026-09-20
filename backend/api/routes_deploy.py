@@ -2,16 +2,19 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException
+import logging
+
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from backend.agent.planner import plan_and_execute
 from backend.agent.trace_logger import log_steps
-from backend.auth.roles import require_editor
 from backend.config import get_settings
 from backend.deploy.lambda_deployer import deploy_to_lambda
 from backend.models.app import App, StepType, TimelineStep
 from backend.storage.dynamodb_client import put_item
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/deploy", tags=["deploy"])
 
@@ -27,10 +30,7 @@ class DeployRequest(BaseModel):
 
 @router.post("/{app_id}")
 async def deploy_app(app_id: str, body: DeployRequest):
-    """Run the full pipeline: plan → codegen → deploy → log timeline.
-
-    This is the main entry point for creating and deploying an app.
-    """
+    """Run the full pipeline: plan → codegen → deploy → log timeline."""
     settings = get_settings()
 
     # Run the planner to generate code
@@ -50,13 +50,20 @@ async def deploy_app(app_id: str, body: DeployRequest):
             detail="Code generation failed — see timeline for details",
         )
 
-    # Deploy to Lambda
-    function_url = await deploy_to_lambda(
-        app_id,
-        code,
-        function_name=settings.deploy_lambda_function_name,
-        region=settings.aws_region,
-    )
+    # Attempt Lambda deploy — graceful fallback if IAM permissions are missing
+    function_url = None
+    deploy_status = "deployed"
+    try:
+        function_url = await deploy_to_lambda(
+            app_id,
+            code,
+            function_name=settings.deploy_lambda_function_name,
+            region=settings.aws_region,
+        )
+    except Exception as exc:
+        logger.warning("Lambda deploy failed (will save app anyway): %s", exc)
+        deploy_status = "code_ready"
+        # App code was generated successfully, just couldn't deploy to Lambda
 
     # Log the deploy step
     deploy_step = TimelineStep(
@@ -64,7 +71,7 @@ async def deploy_app(app_id: str, body: DeployRequest):
         step_type=StepType.DEPLOY,
         parent_step_id=steps[-1].step_id if steps else None,
         code_snapshot=code,
-        reasoning=f"Deployed to {function_url}",
+        reasoning=f"Deployed to {function_url}" if function_url else "Code generated (Lambda deploy pending — check IAM permissions)",
     )
     steps.append(deploy_step)
 
@@ -77,8 +84,8 @@ async def deploy_app(app_id: str, body: DeployRequest):
         owner_id=body.owner_id,
         title=body.title or f"App {app_id[:8]}",
         prompt=body.prompt,
-        live_url=function_url,
-        status="deployed",
+        live_url=function_url or "",
+        status=deploy_status,
     )
     put_item(
         settings.dynamodb_table_name,
@@ -88,8 +95,8 @@ async def deploy_app(app_id: str, body: DeployRequest):
 
     return {
         "app_id": app_id,
-        "live_url": function_url,
-        "status": "deployed",
+        "live_url": function_url or "",
+        "status": deploy_status,
         "steps_logged": len(steps),
     }
 
