@@ -18,6 +18,7 @@ class ClarifyRequest(BaseModel):
     """Request body for the clarify endpoint."""
 
     prompt: str
+    credentials: dict | None = None
 
 
 class CreateAppRequest(BaseModel):
@@ -45,6 +46,7 @@ async def clarify(body: ClarifyRequest):
         body.prompt,
         model_id=settings.bedrock_model_id,
         region=settings.aws_region,
+        credentials=body.credentials,
     )
     return response.model_dump()
 

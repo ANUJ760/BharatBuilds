@@ -26,12 +26,12 @@ class DeployRequest(BaseModel):
     owner_id: str
     title: str = ""
     clarifications: dict[str, str] | None = None
+    credentials: dict | None = None
 
 
 async def _run_deploy_pipeline(app_id: str, body: DeployRequest):
     """Background task that runs the actual deploy pipeline."""
     settings = get_settings()
-    logger.info(f"USING API KEY: {settings.gemini_api_key[:5]}...{settings.gemini_api_key[-5:]}")
 
     try:
         code, steps = await plan_and_execute(
@@ -39,6 +39,7 @@ async def _run_deploy_pipeline(app_id: str, body: DeployRequest):
             clarifications=body.clarifications,
             model_id=settings.bedrock_model_id,
             region=settings.aws_region,
+            credentials=body.credentials,
             app_id=app_id,
         )
 

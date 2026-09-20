@@ -49,8 +49,8 @@ export interface ClarifyResponse {
   needs_clarification: boolean;
 }
 
-export async function apiClarify(prompt: string): Promise<ClarifyResponse> {
-  return request('POST', '/apps/clarify', { prompt });
+export async function apiClarify(prompt: string, credentials?: any): Promise<ClarifyResponse> {
+  return request('POST', '/apps/clarify', { prompt, credentials });
 }
 
 export interface CreateAppResponse {
@@ -99,12 +99,14 @@ export async function apiDeploy(
   owner_id: string,
   title = '',
   clarifications: Record<string, string> | null = null,
+  credentials?: any,
 ): Promise<DeployResponse> {
   return request('POST', `/deploy/${appId}`, {
     prompt,
     owner_id,
     title,
     clarifications,
+    credentials,
   });
 }
 

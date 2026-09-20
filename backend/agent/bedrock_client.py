@@ -23,8 +23,15 @@ MAX_RETRIES = 3
 BASE_DELAY_S = 1.0  # exponential backoff: 1s, 2s, 4s
 
 
-def _get_client(region: str = "ap-south-1"):
+def _get_client(region: str = "ap-south-1", credentials: dict | None = None):
     """Return a Bedrock Runtime client."""
+    if credentials and "aws_access_key_id" in credentials:
+        return boto3.client(
+            "bedrock-runtime",
+            region_name=credentials.get("aws_region", region),
+            aws_access_key_id=credentials["aws_access_key_id"],
+            aws_secret_access_key=credentials["aws_secret_access_key"],
+        )
     return boto3.client("bedrock-runtime", region_name=region)
 
 
@@ -37,6 +44,7 @@ def invoke_model(
     system: str = "",
     model_id: str = "",
     region: str = "ap-south-1",
+    credentials: dict | None = None,
     max_tokens: int = 4096,
     temperature: float = 0.3,
 ) -> str:
@@ -70,7 +78,7 @@ def invoke_model(
     ClientError
         If all retries are exhausted.
     """
-    client = _get_client(region=region)
+    client = _get_client(region=region, credentials=credentials)
 
     messages = [{"role": "user", "content": prompt}]
 
@@ -122,6 +130,7 @@ def invoke_model_json(
     system: str = "",
     model_id: str = "",
     region: str = "ap-south-1",
+    credentials: dict | None = None,
     max_tokens: int = 4096,
     temperature: float = 0.0,
 ) -> dict[str, Any]:
@@ -148,6 +157,7 @@ def invoke_model_json(
         system=json_system,
         model_id=model_id,
         region=region,
+        credentials=credentials,
         max_tokens=max_tokens,
         temperature=temperature,
     )

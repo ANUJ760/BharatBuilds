@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Scene3D } from '../components/Scene3D';
 import { apiClarify, apiCreateApp, apiDeploy } from '../api/client';
+import { Settings, X } from 'lucide-react';
 
 export function Home() {
   const navigate = useNavigate();
@@ -13,13 +14,36 @@ export function Home() {
   const [isBuilding, setIsBuilding] = useState(false);
   const [error, setError] = useState('');
 
+  // Settings state
+  const [showSettings, setShowSettings] = useState(false);
+  const [credentials, setCredentials] = useState(() => {
+    try {
+      const stored = localStorage.getItem('bb_credentials');
+      return stored ? JSON.parse(stored) : { aws_access_key_id: '', aws_secret_access_key: '', aws_region: 'ap-south-1' };
+    } catch {
+      return { aws_access_key_id: '', aws_secret_access_key: '', aws_region: 'ap-south-1' };
+    }
+  });
+
+  const saveCredentials = (newCreds: any) => {
+    setCredentials(newCreds);
+    localStorage.setItem('bb_credentials', JSON.stringify(newCreds));
+  };
+
+  const getActiveCredentials = () => {
+    if (credentials.aws_access_key_id && credentials.aws_secret_access_key) {
+      return credentials;
+    }
+    return undefined;
+  };
+
   const handleClarify = async () => {
     if (!prompt) return;
     setIsClarifying(true);
     setError('');
     
     try {
-      const data = await apiClarify(prompt);
+      const data = await apiClarify(prompt, getActiveCredentials());
       
       if (data.needs_clarification && data.questions && data.questions.length > 0) {
         setClarifications(data);
@@ -54,7 +78,7 @@ export function Home() {
       const appRes = await apiCreateApp(prompt, ownerId);
       
       // Trigger deploy pipeline with clarifications
-      await apiDeploy(appRes.app_id, prompt, ownerId, appRes.title, resolvedAnswers);
+      await apiDeploy(appRes.app_id, prompt, ownerId, appRes.title, resolvedAnswers, getActiveCredentials());
       
       // Redirect to app view with droplet transition
       window.dispatchEvent(new CustomEvent('burst-auth'));
@@ -94,12 +118,54 @@ export function Home() {
       {/* Subtle overlay for legibility */}
       <div className="fixed inset-0 z-0 bg-white/30 backdrop-blur-[2px] pointer-events-none" />
 
-      <nav className="fixed top-0 w-full z-50 px-8 py-6 flex justify-between items-center">
+      <nav className="fixed top-0 w-full z-50 px-8 py-6 flex justify-between items-center pointer-events-auto">
         <button onClick={() => navigate('/')} className="text-xl tracking-tighter font-medium flex items-center gap-2">
           <span className="material-symbols-outlined">arrow_back</span>
           Back
         </button>
+        <button onClick={() => setShowSettings(true)} className="p-2 rounded-full hover:bg-black/5 transition-colors flex items-center gap-2 text-sm font-medium">
+          <Settings className="w-5 h-5" />
+          <span>BYOK</span>
+        </button>
       </nav>
+
+      <AnimatePresence>
+        {showSettings && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 pointer-events-auto"
+          >
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative"
+            >
+              <button onClick={() => setShowSettings(false)} className="absolute top-6 right-6 p-1 rounded-md hover:bg-black/5">
+                <X className="w-5 h-5" />
+              </button>
+              <h2 className="text-xl font-semibold mb-2">Bring Your Own Key</h2>
+              <p className="text-sm text-gray-500 mb-6">Connect your own AWS Bedrock account to bypass platform rate limits.</p>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">AWS Access Key ID</label>
+                  <input type="text" value={credentials.aws_access_key_id} onChange={e => saveCredentials({...credentials, aws_access_key_id: e.target.value})} className="w-full px-4 py-2.5 bg-black/5 rounded-xl text-sm outline-none border border-transparent focus:border-black/20" placeholder="AKIA..." />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">AWS Secret Access Key</label>
+                  <input type="password" value={credentials.aws_secret_access_key} onChange={e => saveCredentials({...credentials, aws_secret_access_key: e.target.value})} className="w-full px-4 py-2.5 bg-black/5 rounded-xl text-sm outline-none border border-transparent focus:border-black/20" placeholder="Secret Key" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">AWS Region</label>
+                  <input type="text" value={credentials.aws_region} onChange={e => saveCredentials({...credentials, aws_region: e.target.value})} className="w-full px-4 py-2.5 bg-black/5 rounded-xl text-sm outline-none border border-transparent focus:border-black/20" placeholder="us-east-1" />
+                </div>
+              </div>
+              <button onClick={() => setShowSettings(false)} className="mt-8 w-full py-3 bg-[#111] text-white rounded-xl font-medium text-sm hover:bg-black">
+                Save Settings
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <motion.div 
         initial={{ opacity: 0, y: 30 }}

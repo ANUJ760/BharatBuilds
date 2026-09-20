@@ -13,15 +13,23 @@ logger = logging.getLogger(__name__)
 
 def invoke_model(*args, **kwargs) -> str:
     settings = get_settings()
+    credentials = kwargs.pop("credentials", None)
     
-    if getattr(settings, "bedrock_model_id", None):
+    # Use Bedrock if user provided BYOK credentials OR if we have a default bedrock model configured
+    if credentials or getattr(settings, "bedrock_model_id", None):
         try:
+            if credentials:
+                kwargs["credentials"] = credentials
             return bedrock_client.invoke_model(*args, **kwargs)
         except Exception as e:
-            logger.warning(f"Bedrock invocation failed: {e}. Falling back to Gemini API.")
+            if credentials:
+                logger.warning(f"User BYOK Bedrock invocation failed: {e}. Falling back to default Gemini API.")
+            else:
+                logger.warning(f"Bedrock invocation failed: {e}. Falling back to Gemini API.")
             
     # Fallback to Gemini
     kwargs.pop("region", None)
+    kwargs.pop("credentials", None)
     if "model_id" not in kwargs or not kwargs["model_id"]:
         kwargs["model_id"] = getattr(settings, "gemini_model_id", "gemini-2.5-flash")
     return gemini_client.invoke_model(*args, **kwargs)
@@ -29,15 +37,22 @@ def invoke_model(*args, **kwargs) -> str:
 
 def invoke_model_json(*args, **kwargs) -> dict[str, Any]:
     settings = get_settings()
+    credentials = kwargs.pop("credentials", None)
     
-    if getattr(settings, "bedrock_model_id", None):
+    if credentials or getattr(settings, "bedrock_model_id", None):
         try:
+            if credentials:
+                kwargs["credentials"] = credentials
             return bedrock_client.invoke_model_json(*args, **kwargs)
         except Exception as e:
-            logger.warning(f"Bedrock JSON invocation failed: {e}. Falling back to Gemini API.")
+            if credentials:
+                logger.warning(f"User BYOK Bedrock JSON invocation failed: {e}. Falling back to Gemini API.")
+            else:
+                logger.warning(f"Bedrock JSON invocation failed: {e}. Falling back to Gemini API.")
             
     # Fallback to Gemini
     kwargs.pop("region", None)
+    kwargs.pop("credentials", None)
     if "model_id" not in kwargs or not kwargs["model_id"]:
         kwargs["model_id"] = getattr(settings, "gemini_model_id", "gemini-2.5-flash")
     return gemini_client.invoke_model_json(*args, **kwargs)
