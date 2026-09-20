@@ -3,34 +3,32 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Scene3D } from '../components/Scene3D';
 import { Logo } from '../components/imagica/Logo';
+import { loginWithCognito } from '../api/auth';
 
 export default function Login() {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || !password) return;
     
     setLoading(true);
-    // Directly log in (Mocking)
-    setTimeout(() => {
-      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-      if (!isLocalhost) {
-        localStorage.setItem('bb_token', 'mock_jwt_token_for_' + email);
-        localStorage.setItem('bb_user', email);
-      } else {
-        sessionStorage.setItem('bb_token', 'mock_jwt_token_for_' + email);
-        sessionStorage.setItem('bb_user', email);
-      }
+    setError(null);
+    try {
+      await loginWithCognito(email, password);
       setLoading(false);
       
-      // Redirect back to return URL or home
       const params = new URLSearchParams(window.location.search);
       const returnUrl = params.get('return') || '/';
       navigate(returnUrl);
-    }, 1000);
+    } catch (err: any) {
+      setLoading(false);
+      setError(err.message || 'Login failed');
+    }
   };
 
   return (
@@ -65,13 +63,16 @@ export default function Login() {
           <p className="text-[14px] text-gray-600 mb-2 font-medium">
             Sign in to build, deploy and manage your small software.
           </p>
-          <p className="text-[13px] text-gray-500 mb-8">
-            Enter your email to receive a secure login code.
-          </p>
+
+          {error && (
+            <div className="w-full p-3 mb-4 bg-red-50 text-red-600 rounded-xl text-sm border border-red-100">
+              {error}
+            </div>
+          )}
 
           <form 
             onSubmit={handleLogin} 
-            className="w-full flex flex-col gap-4"
+            className="w-full flex flex-col gap-4 mt-6"
           >
             <input
               type="email"
@@ -81,12 +82,20 @@ export default function Login() {
               required
               className="w-full px-5 py-3.5 rounded-xl bg-white/70 border border-white/80 focus:outline-none focus:ring-2 focus:ring-black/5 focus:bg-white text-[15px] shadow-sm transition-all"
             />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full px-5 py-3.5 rounded-xl bg-white/70 border border-white/80 focus:outline-none focus:ring-2 focus:ring-black/5 focus:bg-white text-[15px] shadow-sm transition-all"
+            />
             <button 
               type="submit"
               disabled={loading}
               className="w-full px-5 py-3.5 rounded-xl bg-[#111] text-white text-[14px] font-medium shadow-xl shadow-black/10 hover:shadow-black/20 hover:-translate-y-0.5 hover:bg-[#000] transition-all disabled:opacity-50 disabled:hover:translate-y-0 flex items-center justify-center gap-2"
             >
-              {loading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : 'Continue'}
+              {loading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : 'Sign In'}
             </button>
           </form>
         </div>
