@@ -16,7 +16,7 @@ import logging
 import time
 from typing import Any
 
-from backend.agent.bedrock_client import invoke_model, invoke_model_json
+from backend.agent.gemini_client import invoke_model, invoke_model_json
 from backend.agent.codegen import generate_code
 from backend.models.app import StepStatus, StepType, TimelineStep
 

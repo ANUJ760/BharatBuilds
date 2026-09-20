@@ -307,3 +307,65 @@ SES_SENDER_EMAIL=
 ## 12. License
 
 [Add license]
+
+## Running the Application Locally
+
+### Prerequisites
+- Python 3.10+
+- Node.js 18+
+- AWS CLI configured with active credentials (`aws configure`)
+- Gemini API Key
+
+### Backend Setup
+1. Navigate to the `backend` directory:
+   ```bash
+   cd backend
+   ```
+2. Create and activate a virtual environment:
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   ```
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Copy the `.env.example` to `.env` in the project root and fill in your AWS details and Gemini API Key:
+   ```bash
+   cp ../.env.example ../.env
+   ```
+5. Run the backend server:
+   ```bash
+   uvicorn main:app --reload
+   ```
+   The backend will be available at `http://localhost:8000`.
+
+### Frontend Setup
+1. Navigate to the `frontend` directory:
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Create a `.env` file in the `frontend` directory with your backend URL and Cognito details:
+   ```env
+   VITE_API_BASE_URL=http://localhost:8000
+   VITE_COGNITO_USER_POOL_ID=your_pool_id
+   VITE_COGNITO_APP_CLIENT_ID=your_client_id
+   VITE_COGNITO_REGION=ap-south-1
+   ```
+4. Start the frontend development server:
+   ```bash
+   npm run dev
+   ```
+   The frontend will be accessible at the local URL provided by Vite (usually `http://localhost:5173`).
+
+### Testing the Software
+1. **Health Check**: Open `http://localhost:8000/health` in your browser. You should see a JSON response confirming the backend is running and the Gemini API key is configured.
+2. **App Creation**: Open the frontend in your browser. Type a prompt to create an app.
+3. **Clarification**: If the AI needs more details, it will ask clarifying questions. Provide answers.
+4. **Deploy**: Once answers are provided, the deploy pipeline runs. The AI plans, writes code, and deploys to AWS Lambda.
+5. **Timeline**: You can view the live timeline of steps taken by the AI.
+6. **Editing**: In the app view, ask for a feature addition. The AI will generate new code, redeploy, and log the steps to the timeline.

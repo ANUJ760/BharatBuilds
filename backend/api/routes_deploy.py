@@ -37,7 +37,7 @@ async def deploy_app(app_id: str, body: DeployRequest):
     code, steps = await plan_and_execute(
         body.prompt,
         clarifications=body.clarifications,
-        model_id=settings.bedrock_model_id,
+        model_id=settings.gemini_model_id,
         region=settings.aws_region,
         app_id=app_id,
     )

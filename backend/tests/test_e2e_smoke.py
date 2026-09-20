@@ -105,7 +105,8 @@ class TestEndToEndSmokeFlow:
     ):
         settings_mock = MagicMock(
             aws_region=TEST_REGION,
-            bedrock_model_id="deepseek.v3-1",
+            gemini_api_key="mock",
+            gemini_model_id="gemini-2.5-pro",
             dynamodb_table_name=TEST_TABLE,
             s3_assets_bucket=TEST_BUCKET,
             cognito_user_pool_id="ap-south-1_smoke",

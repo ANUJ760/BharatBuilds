@@ -159,7 +159,8 @@ async def health():
         settings: Settings = get_settings()
         config_present = {
             "aws_region": bool(settings.aws_region),
-            "bedrock_model_id": bool(settings.bedrock_model_id),
+            "gemini_api_key": bool(settings.gemini_api_key),
+            "gemini_model_id": bool(settings.gemini_model_id),
             "dynamodb_table_name": bool(settings.dynamodb_table_name),
             "s3_assets_bucket": bool(settings.s3_assets_bucket),
             "cognito_user_pool_id": bool(settings.cognito_user_pool_id),

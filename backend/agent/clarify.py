@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import logging
 
-from backend.agent.bedrock_client import invoke_model_json
+from backend.agent.gemini_client import invoke_model_json
 from backend.models.app import ClarifyQuestion, ClarifyResponse
 
 logger = logging.getLogger(__name__)

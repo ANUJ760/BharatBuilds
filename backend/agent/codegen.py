@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import logging
 
-from backend.agent.bedrock_client import invoke_model
+from backend.agent.gemini_client import invoke_model
 
 logger = logging.getLogger(__name__)
 

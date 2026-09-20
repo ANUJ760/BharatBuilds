@@ -28,10 +28,13 @@ class Settings(BaseSettings):
     aws_region: str = Field(default="ap-south-1", description="AWS region")
     aws_profile: str = Field(default="default", description="AWS CLI profile name")
 
-    # ── Amazon Bedrock ───────────────────────────────────────────────────
-    bedrock_model_id: str = Field(
-        default="deepseek.v3-1",
-        description="Bedrock model identifier for the agent",
+    # ── Google Gemini ───────────────────────────────────────────────────
+    gemini_api_key: str = Field(
+        ..., description="Google Gemini API Key"
+    )
+    gemini_model_id: str = Field(
+        default="gemini-2.5-pro",
+        description="Gemini model identifier for the agent",
     )
 
     # ── DynamoDB ─────────────────────────────────────────────────────────

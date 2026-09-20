@@ -40,7 +40,7 @@ async def clarify(body: ClarifyRequest):
     settings = get_settings()
     response = await check_ambiguity(
         body.prompt,
-        model_id=settings.bedrock_model_id,
+        model_id=settings.gemini_model_id,
         region=settings.aws_region,
     )
     return response.model_dump()
