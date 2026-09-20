@@ -63,12 +63,17 @@ async def revert_to_step(app_id: str, step_id: str):
         )
 
     # Re-deploy the code snapshot
-    function_url = await deploy_to_lambda(
-        app_id,
-        target_step.code_snapshot,
-        function_name=settings.deploy_lambda_function_name,
-        region=settings.aws_region,
-    )
+    try:
+        function_url = await deploy_to_lambda(
+            app_id,
+            target_step.code_snapshot,
+            function_name=settings.deploy_lambda_function_name,
+            region=settings.aws_region,
+        )
+    except Exception as exc:
+        import logging
+        logging.getLogger(__name__).warning(f"Lambda deploy failed during revert: {exc}")
+        function_url = f"/apps/{app_id}/live"
 
     # Log the revert as a new timeline node
     revert_step = TimelineStep(
