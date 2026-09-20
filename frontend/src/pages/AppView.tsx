@@ -37,7 +37,41 @@ export const AppView = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center bg-[#f8f9fa] text-[#111]">Loading...</div>;
+  if (loading) {
+    const bubbles = [
+      { size: 40, top: '20%', left: '30%', delay: 0 },
+      { size: 60, top: '70%', left: '60%', delay: 0.5 },
+      { size: 30, top: '40%', left: '70%', delay: 1 },
+      { size: 50, top: '80%', left: '20%', delay: 1.5 },
+      { size: 45, top: '30%', left: '50%', delay: 0.2 },
+    ];
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f8f9fa] relative overflow-hidden">
+        {bubbles.map((b, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full bg-black/5"
+            style={{ width: b.size, height: b.size, top: b.top, left: b.left }}
+            animate={{
+              y: [0, -30, 0],
+              x: [0, 20, 0],
+              scale: [1, 1.1, 1],
+            }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: b.delay }}
+          />
+        ))}
+        
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="relative z-10 px-8 py-4 bg-white/60 backdrop-blur-xl rounded-3xl border border-white shadow-2xl shadow-black/5 flex items-center gap-3"
+        >
+          <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+          <span className="text-[15px] font-medium tracking-tight text-[#111]">Loading...</span>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <motion.div 
