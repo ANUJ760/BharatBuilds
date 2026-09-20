@@ -183,3 +183,7 @@ async def health():
         return {"status": "ok", "config": config_present}
     except Exception:
         return {"status": "ok", "config": "not_loaded"}
+
+# ── Serverless Adapter ───────────────────────────────────────────────────
+from mangum import Mangum
+handler = Mangum(app)
