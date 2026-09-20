@@ -159,7 +159,18 @@ export const AppView = () => {
           <div className="flex items-center gap-2 px-3 py-1 bg-white border border-[#e5e7eb] rounded-md shadow-sm max-w-[400px] w-full text-[12px] font-mono text-gray-600">
             <span className="material-symbols-outlined text-[14px] text-gray-400">lock</span>
             <span className="flex-1 truncate">{liveUrl || `https://${id?.slice(0,6) || 'app'}.acfs.live`}</span>
-            <button onClick={handleCopy} className="hover:text-black transition-colors flex items-center">
+            {liveUrl && (
+              <a 
+                href={liveUrl.startsWith('/') ? `http://localhost:8000${liveUrl}` : liveUrl} 
+                target="_blank" 
+                rel="noreferrer" 
+                className="hover:text-black transition-colors flex items-center text-blue-600 ml-1"
+                title="Open in new tab"
+              >
+                <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+              </a>
+            )}
+            <button onClick={handleCopy} className="hover:text-black transition-colors flex items-center ml-1" title="Copy URL">
               <span className="material-symbols-outlined text-[14px]">{copied ? 'check' : 'content_copy'}</span>
             </button>
           </div>
