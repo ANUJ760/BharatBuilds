@@ -2,13 +2,60 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { apiCreateApp } from "../../api/client";
 
-const INDUSTRIES = ["Legal Services", "Science", "Education", "Product Design", "Corporate"];
+const INDUSTRIES = [
+  "Employee attendance tracker",
+  "Customer management tool",
+  "College event app",
+  "Inventory tracker",
+  "Appointment booking",
+  "Internal workflow tool",
+  "Invoice tracker",
+  "Small business dashboard"
+];
 const PROMPTS: Record<string, string> = {
-  "Legal Services": "A contract review tool that highlights risk clauses and suggests amendments",
-  Science: "A lab experiment tracker that logs results and generates analysis reports",
-  Education: "A student progress dashboard with quiz generation and grade tracking",
-  "Product Design": "An investing app that provides insights on stocks with an interface for trading",
-  Corporate: "A team standup aggregator that summarizes blockers and sends Slack digests",
+  "Employee attendance tracker": "A simple employee attendance and leave tracker for my startup",
+  "Customer management tool": "A lightweight CRM to manage leads, contacts, and deal stages",
+  "College event app": "An app to schedule college events, track RSVPs, and send reminders",
+  "Inventory tracker": "A stock management tool that tracks item quantities and alerts when low",
+  "Appointment booking": "A calendar app for clients to book available time slots for services",
+  "Internal workflow tool": "A task board for our team to track projects from idea to completion",
+  "Invoice tracker": "A simple tracker for sent invoices, payment statuses, and client details",
+  "Small business dashboard": "A unified dashboard showing daily sales, expenses, and key metrics",
+};
+
+const PREVIEW_DATA: Record<string, { title: string; stats: [string, string][] }> = {
+  "Employee attendance tracker": {
+    title: "Employee Attendance Tracker",
+    stats: [["Employees", "12"], ["Pending Leaves", "3"], ["Uptime", "100%"]]
+  },
+  "Customer management tool": {
+    title: "Customer Management App",
+    stats: [["Active Deals", "24"], ["Contacts", "142"], ["Uptime", "100%"]]
+  },
+  "College event app": {
+    title: "College Event Management",
+    stats: [["RSVPs", "350"], ["Upcoming Events", "4"], ["Uptime", "100%"]]
+  },
+  "Inventory tracker": {
+    title: "Inventory Management App",
+    stats: [["Total Items", "4,200"], ["Low Stock", "12"], ["Uptime", "100%"]]
+  },
+  "Appointment booking": {
+    title: "Appointment Booking App",
+    stats: [["Bookings Today", "18"], ["Available Slots", "5"], ["Uptime", "100%"]]
+  },
+  "Internal workflow tool": {
+    title: "Internal Workflow Tool",
+    stats: [["Active Tasks", "45"], ["Completed", "128"], ["Uptime", "100%"]]
+  },
+  "Invoice tracker": {
+    title: "Invoice & Payment Tracker",
+    stats: [["Unpaid", "$4,250"], ["Paid (Month)", "$12,400"], ["Uptime", "100%"]]
+  },
+  "Small business dashboard": {
+    title: "Small Business Dashboard",
+    stats: [["Daily Sales", "$1,240"], ["Expenses", "$450"], ["Uptime", "100%"]]
+  }
 };
 
 export default function PromptEngine() {
@@ -19,7 +66,7 @@ export default function PromptEngine() {
 
   const pickIndustry = (ind: string) => {
     setSelectedIndustry(ind);
-    setTarget(PROMPTS[ind] ?? PROMPTS["Product Design"]);
+    setTarget(PROMPTS[ind] ?? PROMPTS["Employee attendance tracker"]);
     setTyped("");
     setTimeout(() => setStage("prompt"), 400);
   };
@@ -78,12 +125,15 @@ export default function PromptEngine() {
               transition={{ duration: 0.45 }}
               className="flex flex-col gap-8"
             >
-              <h2 className="text-[clamp(22px,3.2vw,36px)] font-normal tracking-[-0.02em] text-[#555]">
-                What industry do you want to transform?
+              <h2 className="text-[clamp(26px,4vw,42px)] font-bold tracking-[-0.03em] text-[#111]">
+                What do you want to build?
               </h2>
+              <h3 className="text-[clamp(18px,2.5vw,24px)] font-normal tracking-[-0.01em] text-[#555]">
+                Describe the problem, workflow, or small service you want to turn into software.
+              </h3>
               <div className="w-full pb-4 border-b border-[#d8d8d8]">
-                <span className="text-[clamp(26px,4vw,42px)] font-light text-[#ccc] tracking-[-0.02em]">
-                  Enter your industry
+                <span className="text-[clamp(20px,3vw,32px)] font-light text-[#ccc] tracking-[-0.02em]">
+                  e.g. A simple employee attendance and leave tracker for my startup
                 </span>
               </div>
               <div className="flex flex-wrap gap-3">
@@ -165,11 +215,13 @@ export default function PromptEngine() {
                 <div className="browser__body p-8 items-start">
                   <div className="w-full space-y-4">
                     <div className="flex items-center justify-between pb-3 border-b border-[#eee]">
-                      <span className="text-[14px] font-semibold text-[#222]">{selectedIndustry} App</span>
+                      <span className="text-[14px] font-semibold text-[#222]">
+                        {PREVIEW_DATA[selectedIndustry]?.title || `${selectedIndustry} App`}
+                      </span>
                       <span className="text-[11px] px-2 py-1 rounded-full bg-[#e8ffe8] text-[#2a7a2a]">● Live</span>
                     </div>
                     <div className="grid grid-cols-3 gap-3">
-                      {[["Users", "24"], ["API Calls", "1.2K"], ["Uptime", "100%"]].map(([label, val]) => (
+                      {(PREVIEW_DATA[selectedIndustry]?.stats || [["Users", "24"], ["API Calls", "1.2K"], ["Uptime", "100%"]]).map(([label, val]) => (
                         <div key={label} className="p-3 rounded-xl bg-white/80 border border-[#eee]">
                           <div className="text-[10px] text-[#999] mb-1">{label}</div>
                           <div className="text-[18px] font-semibold text-[#222]">{val}</div>

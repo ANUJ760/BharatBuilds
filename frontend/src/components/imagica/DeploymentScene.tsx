@@ -8,15 +8,14 @@ export default function DeploymentScene() {
       <div className="max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <motion.div initial={{ opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8 }}>
           <h2 className="text-[clamp(30px,4.5vw,52px)] font-bold tracking-[-0.03em] text-[#111] leading-[1.12]">
-            Submit your app to
-            <br /><span className="text-[#111]">the Cloud</span>
+            Deploy your small software
+            <br /><span className="text-[#111]">and start using it</span>
           </h2>
           <p className="text-[clamp(22px,3vw,40px)] font-normal tracking-[-0.02em] text-[#888] leading-[1.2] mt-1">
-            and start serving millions
-            <br />of user requests
+            instantly on a live URL
           </p>
           <p className="text-[15px] text-[#999] mt-6 max-w-md leading-relaxed">
-            Turn your app into a beautiful morphing interface that finds users instead of the other way around.
+            Every app is automatically deployed to a secure environment. Share it with your team immediately.
           </p>
         </motion.div>
 
@@ -45,10 +44,10 @@ export default function DeploymentScene() {
             <div className="px-5 py-4 border-t border-[#eee]">
               <p className="text-[16px] text-[#ccc] font-light mb-4">Tap to type</p>
               {[
-                ["🍔", "Order food delivery"],
-                ["🛒", "Buy something"],
-                ["✈️", "Book a flight ✦"],
-                ["🚗", "Get a ride ✦"],
+                ["👥", "Manage employees"],
+                ["📦", "Track inventory"],
+                ["📊", "View customers"],
+                ["✅", "Approve leaves"],
               ].map(([icon, label]) => (
                 <div key={label} className="flex items-center gap-3 py-2.5 border-b border-[#f0f0f0] last:border-0">
                   <span className="text-[14px]">{icon}</span>

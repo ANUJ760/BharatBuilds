@@ -5,28 +5,34 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const FEATURES = [
   {
-    id: "nocode",
-    title: "No code",
-    desc: "Build functional apps without writing a single line of code",
-    icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h6M9 12h4M9 15h5"/></svg>,
+    id: "clarify",
+    title: "Clarify-Then-Build",
+    desc: "When a request needs clarification, the agent asks up to 3 targeted questions with suggested defaults, then builds without further interruption.",
+    icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>,
   },
   {
-    id: "realtime",
-    title: "Real-time data",
-    desc: "Connect live data sources and APIs with zero configuration",
-    icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>,
+    id: "auth",
+    title: "Authentication & Sharing",
+    desc: "Every deployed app gets authentication and sharing out of the box. Invite collaborators with Viewer or Editor access.",
+    icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>,
   },
   {
-    id: "multimodal",
-    title: "Multimodal",
-    desc: "Process text, images, voice, and structured data in a single flow",
-    icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M17.5 14v7M14 17.5h7"/></svg>,
+    id: "timeline",
+    title: "Decision Timeline",
+    desc: "Plans, tool calls, generated code, retries and deployments are recorded in a visual Decision Timeline.",
+    icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 20v-6M6 20V10M18 20V4"></path></svg>,
   },
   {
-    id: "speed",
-    title: "Speed of execution",
-    desc: "Deploy instantly on serverless infrastructure that scales automatically",
-    icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>,
+    id: "backtrack",
+    title: "Backtrack",
+    desc: "Inspect any previous step and revert the live app to that exact code snapshot.",
+    icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 11l5-5-5-5M21 11H3M21 21v-4a4 4 0 0 0-4-4H3M3 17l5-5-5-5"></path></svg>,
+  },
+  {
+    id: "live-edit",
+    title: "Live Editing",
+    desc: "Describe a change in chat. The agent edits the existing app and redeploys it to the same URL.",
+    icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>,
   },
 ];
 
@@ -43,7 +49,7 @@ export default function FeatureSwitcher() {
           transition={{ duration: 0.8 }}
           className="text-center text-[clamp(32px,5vw,60px)] font-bold tracking-[-0.03em] text-[#111] leading-[1.08] mb-16"
         >
-          The simplest way to build an AI app
+          Build the small software you actually need
         </motion.h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">

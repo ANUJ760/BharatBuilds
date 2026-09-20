@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trash2, Users, MoreVertical, X, Edit2 } from 'lucide-react';
+import { Scene3D } from '../components/Scene3D';
+import { Logo } from '../components/imagica/Logo';
 import {
   apiListApps,
   apiDeleteApp,
@@ -16,7 +18,6 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [apps, setApps] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [ownerId, setOwnerId] = useState('');
 
   // Modals state
   const [activeApp, setActiveApp] = useState<any | null>(null);
@@ -34,10 +35,9 @@ export default function Dashboard() {
   useEffect(() => {
     const user = localStorage.getItem('bb_user') || sessionStorage.getItem('bb_user');
     if (!user) {
-      navigate('/auth');
+      navigate('/login');
       return;
     }
-    setOwnerId(user);
     loadApps(user);
     
     // Close menus on outside click
@@ -123,12 +123,17 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#e8e8e8] text-[#111] font-sans selection:bg-black selection:text-white pt-24 pb-12 px-4 sm:px-10">
-      <nav className="fixed top-0 left-0 w-full z-40 flex items-center justify-between px-10 py-5 bg-[#e8e8e8]/80 backdrop-blur-md">
+    <motion.div 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
+      transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
+      className="min-h-screen bg-[#f8f9fa] text-[#111] font-sans selection:bg-black selection:text-white pt-24 pb-12 px-4 sm:px-10 relative overflow-hidden z-[100]"
+    >
+      <Scene3D />
+      
+      <nav className="fixed top-0 left-0 w-full z-40 flex items-center justify-between px-10 py-5 bg-white/40 backdrop-blur-xl border-b border-white/50">
         <button onClick={() => navigate('/')} className="flex items-center gap-2.5">
-          <div className="relative w-7 h-7 rounded-full border-[2px] border-[#111] flex items-center justify-center">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#111] absolute -left-1 top-1/2 -translate-y-1/2" />
-          </div>
+          <Logo />
           <span className="text-[15px] font-semibold tracking-[-0.02em] text-[#111]">
             Small Software Cloud
           </span>
@@ -147,29 +152,32 @@ export default function Dashboard() {
         </div>
 
         {loading ? (
-          <div className="flex items-center gap-3 text-sm text-[#555]">
+          <div className="flex items-center gap-3 text-sm text-[#555] relative z-10">
             <div className="w-4 h-4 border-2 border-[#555] border-t-transparent rounded-full animate-spin" />
             Loading projects...
           </div>
         ) : apps.length === 0 ? (
-          <div className="p-12 text-center rounded-2xl bg-white/40 border border-black/5">
-            <p className="text-[#555] mb-4">You don't have any projects yet.</p>
+          <div className="p-12 text-center rounded-3xl bg-white/60 backdrop-blur-2xl border border-white/50 shadow-xl relative z-10">
+            <p className="text-gray-600 mb-6 font-medium">You don't have any projects yet.</p>
             <button onClick={() => navigate('/create')} className="px-5 py-2 rounded-full bg-[#111] text-white text-[13px] font-medium hover:bg-[#333] transition-colors">
               Create your first app
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
             {apps.map(app => (
-              <div key={app.app_id} className="relative group p-6 rounded-2xl bg-white/60 backdrop-blur-sm border border-white hover:border-[#ddd] hover:shadow-sm transition-all flex flex-col justify-between min-h-[160px]">
+              <div key={app.app_id} className="group p-6 rounded-3xl bg-white/60 backdrop-blur-2xl border border-white/80 shadow-lg shadow-black/5 hover:shadow-xl hover:shadow-black/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[160px]">
                 <div>
-                  <h3 className="font-semibold text-lg text-[#111] mb-1 truncate">{app.title || "Untitled App"}</h3>
-                  <div className="text-xs text-[#666] font-mono mb-4">{app.app_id.substring(0, 8)} • {app.status}</div>
+                  <h3 className="font-semibold text-[17px] text-[#111] mb-1.5 truncate drop-shadow-sm">{app.title || "Untitled App"}</h3>
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wider bg-white text-gray-600 border border-gray-100 shadow-sm">{app.status}</span>
+                    <span className="text-[10px] text-gray-400 font-mono">{app.app_id.substring(0, 8)}</span>
+                  </div>
                 </div>
                 
                 <div className="flex items-center gap-2 justify-between">
                   <button 
-                    onClick={() => navigate(`/app/${app.app_id}`)}
+                    onClick={() => navigate(`/apps/${app.app_id}`)}
                     className="text-[13px] font-medium text-[#111] hover:underline"
                   >
                     Open Workspace &rarr;
@@ -261,15 +269,18 @@ export default function Dashboard() {
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm">
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="w-full max-w-lg bg-white rounded-2xl shadow-xl flex flex-col max-h-[80vh]">
               <div className="flex items-center justify-between p-6 border-b border-black/5 shrink-0">
-                <h3 className="text-lg font-semibold">Manage Access</h3>
+                <h3 className="text-lg font-semibold">Share your app</h3>
                 <button onClick={() => setAccessModalOpen(false)} className="p-1 hover:bg-black/5 rounded-md"><X className="w-5 h-5" /></button>
               </div>
               
               <div className="p-6 overflow-y-auto">
+                <p className="text-[13px] text-gray-500 mb-4">
+                  Invite people to use your app without requiring them to manage cloud infrastructure.
+                </p>
                 <div className="flex gap-2 mb-6">
                   <input 
                     type="email" 
-                    placeholder="Invite by email..." 
+                    placeholder="Enter an email address to invite a collaborator." 
                     value={inviteEmail}
                     onChange={(e) => setInviteEmail(e.target.value)}
                     className="flex-1 px-4 py-2.5 rounded-xl bg-black/5 border border-transparent focus:border-black/20 focus:outline-none text-[14px]"
@@ -282,7 +293,7 @@ export default function Dashboard() {
                     <option value="viewer">Viewer</option>
                     <option value="editor">Editor</option>
                   </select>
-                  <button onClick={handleInvite} className="px-4 py-2 rounded-xl bg-[#111] text-white text-[13px] font-medium shrink-0">Invite</button>
+                  <button onClick={handleInvite} className="px-4 py-2 rounded-xl bg-[#111] text-white text-[13px] font-medium shrink-0">Send Invite</button>
                 </div>
 
                 <h4 className="text-xs font-semibold text-[#888] uppercase tracking-wider mb-3">Collaborators</h4>
@@ -323,6 +334,6 @@ export default function Dashboard() {
           </div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }
