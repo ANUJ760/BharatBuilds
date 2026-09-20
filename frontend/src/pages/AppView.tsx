@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { apiGetApp } from '../api/client';
+import { apiGetApp, apiDeploy } from '../api/client';
 import { useDeployStatus } from '../hooks/useDeployStatus';
 
 export const AppView = () => {
@@ -10,6 +10,10 @@ export const AppView = () => {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const { status, liveUrl } = useDeployStatus(id);
+
+  // Update state
+  const [updatePrompt, setUpdatePrompt] = useState('');
+  const [updateStatus, setUpdateStatus] = useState<'idle' | 'pending' | 'failed'>('idle');
 
   useEffect(() => {
     if (id) {
@@ -92,20 +96,48 @@ export const AppView = () => {
 
         {/* Chat Input */}
         <div className="p-3 bg-white border-t border-[#e5e7eb]">
-          <div className="flex items-end bg-[#f3f4f6] border border-[#e5e7eb] rounded-xl overflow-hidden focus-within:border-black focus-within:ring-1 focus-within:ring-black transition-all p-1 mb-2">
+          <form 
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (!updatePrompt.trim() || status === 'building' || status === 'pending' || updateStatus === 'pending') return;
+              
+              setUpdateStatus('pending');
+              try {
+                const ownerId = localStorage.getItem('bb_user') || sessionStorage.getItem('bb_user') || 'anonymous';
+                await apiDeploy(id as string, updatePrompt, ownerId, appData?.title || 'Update');
+                setUpdatePrompt('');
+                setUpdateStatus('idle');
+                // Poll will automatically pick up the 'pending'/'building' status
+              } catch (err) {
+                console.error("Update failed:", err);
+                setUpdateStatus('failed');
+              }
+            }}
+            className="flex items-end bg-[#f3f4f6] border border-[#e5e7eb] rounded-xl overflow-hidden focus-within:border-black focus-within:ring-1 focus-within:ring-black transition-all p-1 mb-2"
+          >
             <textarea 
+              value={updatePrompt}
+              onChange={(e) => setUpdatePrompt(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  e.currentTarget.form?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                }
+              }}
               placeholder="e.g. change button color..." 
               className="flex-1 bg-transparent px-2 py-1.5 text-[13px] resize-none max-h-[100px] min-h-[36px] focus:outline-none placeholder:text-gray-500"
-              disabled={status === 'building' || status === 'pending'}
+              disabled={status === 'building' || status === 'pending' || updateStatus === 'pending'}
             />
             <button 
-              disabled={status === 'building' || status === 'pending'}
+              type="submit"
+              disabled={status === 'building' || status === 'pending' || updateStatus === 'pending' || !updatePrompt.trim()}
               className="px-3 py-1.5 bg-black text-white text-[12px] font-medium rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50"
             >
               Update App
             </button>
-          </div>
-          <p className="text-[11px] text-gray-400 px-1">Describe a change and the agent will update the existing app.</p>
+          </form>
+          {updateStatus === 'failed' && <p className="text-[11px] text-red-500 px-1 mt-1">Failed to update application. Try again.</p>}
+          <p className="text-[11px] text-gray-400 px-1 mt-1">Describe a change and the agent will update the existing app.</p>
         </div>
       </div>
 
