@@ -133,10 +133,11 @@ def invoke_model_json(
             if attempt < MAX_RETRIES:
                 delay = BASE_DELAY_S * (2 ** attempt)
                 logger.warning(
-                    "Gemini JSON call failed (attempt %d/%d), retrying in %.1fs",
+                    "Gemini JSON call failed (attempt %d/%d), retrying in %.1fs. Error: %s",
                     attempt + 1,
                     MAX_RETRIES + 1,
                     delay,
+                    exc,
                 )
                 time.sleep(delay)
                 last_error = exc

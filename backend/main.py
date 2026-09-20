@@ -10,6 +10,13 @@ Includes:
 
 from __future__ import annotations
 
+import os
+from dotenv import load_dotenv
+
+env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env')
+load_dotenv(env_path)
+os.environ.pop("AWS_PROFILE", None)
+
 import uuid
 
 import structlog

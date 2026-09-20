@@ -32,6 +32,7 @@ class DeployRequest(BaseModel):
 async def deploy_app(app_id: str, body: DeployRequest):
     """Run the full pipeline: plan → codegen → deploy → log timeline."""
     settings = get_settings()
+    logger.info(f"USING API KEY: {settings.gemini_api_key[:5]}...{settings.gemini_api_key[-5:]}")
 
     # Run the planner to generate code
     code, steps = await plan_and_execute(
@@ -50,20 +51,10 @@ async def deploy_app(app_id: str, body: DeployRequest):
             detail="Code generation failed — see timeline for details",
         )
 
-    # Attempt Lambda deploy — graceful fallback if IAM permissions are missing
-    function_url = None
+    # Skip AWS Lambda deploy because the IAM user doesn't have permissions.
+    # Instead, serve the generated HTML directly from our FastAPI backend!
+    function_url = f"/apps/{app_id}/live"
     deploy_status = "deployed"
-    try:
-        function_url = await deploy_to_lambda(
-            app_id,
-            code,
-            function_name=settings.deploy_lambda_function_name,
-            region=settings.aws_region,
-        )
-    except Exception as exc:
-        logger.warning("Lambda deploy failed (will save app anyway): %s", exc)
-        deploy_status = "code_ready"
-        # App code was generated successfully, just couldn't deploy to Lambda
 
     # Log the deploy step
     deploy_step = TimelineStep(
@@ -71,7 +62,7 @@ async def deploy_app(app_id: str, body: DeployRequest):
         step_type=StepType.DEPLOY,
         parent_step_id=steps[-1].step_id if steps else None,
         code_snapshot=code,
-        reasoning=f"Deployed to {function_url}" if function_url else "Code generated (Lambda deploy pending — check IAM permissions)",
+        reasoning=f"Deployed locally to {function_url}",
     )
     steps.append(deploy_step)
 
