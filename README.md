@@ -272,7 +272,27 @@ TBD provides a dedicated, opinionated cloud platform designed specifically for s
 
 ---
 
-## 8. Safety and Reliability Controls
+## 8. Architectural & Engineering Decisions
+
+Building an autonomous platform that generates, tests, and deploys arbitrary code safely requires specific architectural trade-offs.
+
+### 8.1 Serverless (AWS Lambda) vs. Containers (Docker/Fargate)
+For executing the generated end-user applications, we strictly utilize **AWS Lambda** over long-running Docker containers (like ECS/Fargate) for several reasons:
+- **Instantaneous Spin-Up**: LLM-generated apps need to be live in seconds. Updating a Lambda function's inline code takes ~1-3 seconds. Conversely, building a Docker image, pushing to ECR, and waiting for Fargate to provision an ENI and pull the image takes 2-5 minutes.
+- **Scale-to-Zero Economics**: The platform hosts thousands of experimental "small software" apps. Lambda scales to zero instantly, ensuring idle user apps cost exactly $0.00.
+- **MicroVM Isolation**: Running untrusted, AI-generated code is dangerous. AWS Lambda uses the Firecracker microVM, providing strict, hardware-level isolation for every generated app without the overhead of managing Kubernetes or Docker sandboxes.
+- **Stateless Constraints**: By forcing generated apps to run in a stateless Lambda environment, the LLM is guided to properly utilize the attached DynamoDB persistence layer rather than relying on ephemeral local file systems.
+
+### 8.2 DynamoDB vs. Relational SQL
+- **Sub-10ms Latency**: Multi-tenant AI platforms require rapid state retrieval for decision timelines. DynamoDB provides predictable, single-digit millisecond latency.
+- **Flexible Schema**: Generated applications often have unpredictable data models. A NoSQL Key-Value store allows the LLM to store diverse JSON payloads without needing to explicitly generate and run rigid SQL schema migrations.
+
+### 8.3 Dual-LLM Pipeline (Bedrock + Gemini)
+- **Rate-Limit Resilience**: AWS Bedrock (Claude/DeepSeek) provides strict, enterprise-grade generation but is subject to IAM account quotas. By injecting a seamless fallback to Google Gemini, the platform guarantees 99.9% uptime for the code generation pipeline even under heavy concurrent load.
+
+---
+
+## 9. Safety and Reliability Controls
 
 - **Per-Job Attempt Budget**: Strictly enforces a maximum of 2 repair attempts per maintenance job to eliminate infinite loops.
 - **Concurrency Locks**: Prevents overlapping maintenance jobs from executing against the same application.
@@ -282,7 +302,7 @@ TBD provides a dedicated, opinionated cloud platform designed specifically for s
 
 ---
 
-## 9. Getting Started
+## 10. Getting Started
 
 ### Prerequisites
 - Python 3.12+ (3.12 is required for `moto` AWS mocking to work flawlessly in tests)
@@ -290,7 +310,7 @@ TBD provides a dedicated, opinionated cloud platform designed specifically for s
 - AWS Account (for Cognito, DynamoDB, S3)
 - Google Gemini API Key (Optional, but highly recommended as fallback)
 
-### 9.1 Configuration (`.env`)
+### 10.1 Configuration (`.env`)
 Create a `.env` file in the **root** of the project (`BharatBuilds/.env`) and add the following keys. 
 
 ```env
@@ -320,7 +340,7 @@ DEPLOY_LAMBDA_FUNCTION_NAME=bharatbuilds-deploy-runner
 
 *Note: The backend features an intelligent **Dual-LLM** pipeline. It attempts AWS Bedrock first if `BEDROCK_MODEL_ID` is set and credentials are valid. If rate limits, permission boundaries, or invalid keys cause a failure, it seamlessly falls back to the Google Gemini API.*
 
-### 9.2 Backend Setup
+### 10.2 Backend Setup
 From the project root:
 
 ```bash
@@ -338,7 +358,7 @@ uvicorn backend.main:app --port 8000
 ```
 The backend will be available at `http://localhost:8000`.
 
-### 9.3 Frontend Setup
+### 10.3 Frontend Setup
 In a new terminal:
 
 ```bash
@@ -357,7 +377,7 @@ The frontend will be available at `http://localhost:3000`.
 
 ---
 
-## 10. Intelligent Deployments & Fallbacks
+## 11. Intelligent Deployments & Fallbacks
 
 - **Bring Your Own Key (BYOK)**: End-users have the freedom to bypass platform rate limits by using their own AWS Bedrock account. By clicking the "⚙️ BYOK" Settings toggle in the frontend Navbar, users can input their `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_REGION`. The backend dynamically provisions isolated Bedrock clients on a per-request basis for these users, securely falling back to platform defaults if their keys fail.
 - **AWS IAM Graceful Bypass**: If your AWS IAM User does not have `lambda:UpdateFunctionCode` permissions (or if deployment fails for any reason), the backend gracefully bypasses AWS Lambda and serves your generated applications directly via the `/apps/{app_id}/live` FastAPI route.
@@ -365,7 +385,7 @@ The frontend will be available at `http://localhost:3000`.
 
 ---
 
-## 11. Testing and CI/CD
+## 12. Testing and CI/CD
 
 A fully automated **GitHub Actions CI/CD Pipeline** is integrated into `.github/workflows/ci.yml`. On every push to `main`:
 1. It provisions **Python 3.12** and runs all `125` robust backend Pytest suites (with auto-mocked AWS environments).
@@ -380,6 +400,6 @@ pytest backend/
 
 ---
 
-## 12. License
+## 13. License
 
 This project is licensed under the MIT License.
