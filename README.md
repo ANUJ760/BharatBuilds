@@ -285,86 +285,97 @@ TBD provides a dedicated, opinionated cloud platform designed specifically for s
 ## 9. Getting Started
 
 ### Prerequisites
-- Python 3.12+
+- Python 3.12+ (3.12 is required for `moto` AWS mocking to work flawlessly in tests)
 - Node.js 20+ and npm
-- AWS CLI configured with appropriate credentials
-- AWS CDK CLI installed globally (`npm install -g aws-cdk`)
+- AWS Account (for Cognito, DynamoDB, S3)
+- Google Gemini API Key (Optional, but highly recommended as fallback)
 
-### 9.1 Backend Setup
+### 9.1 Configuration (`.env`)
+Create a `.env` file in the **root** of the project (`BharatBuilds/.env`) and add the following keys. 
 
-```bash
-cd backend
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+```env
+# AWS Configuration
+AWS_REGION=ap-south-1
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
 
-# Run backend test suite (68 tests across models, agent, API, and maintenance)
-pytest
+# Amazon Bedrock (Primary LLM - Optional if using Gemini)
+BEDROCK_MODEL_ID=deepseek.v3-1
 
-# Start local API server
-uvicorn main:app --reload --port 8000
+# Google Gemini API (Fallback LLM)
+GEMINI_API_KEY=your_gemini_api_key
+GEMINI_MODEL_ID=gemini-2.5-flash
+
+# DynamoDB
+DYNAMODB_TABLE_NAME=bharatbuilds-table
+
+# Cognito
+COGNITO_USER_POOL_ID=your_user_pool_id
+COGNITO_APP_CLIENT_ID=your_client_id
+
+# S3 & Deployment
+S3_ASSETS_BUCKET=bharatbuilds-assets
+DEPLOY_LAMBDA_FUNCTION_NAME=bharatbuilds-deploy-runner
 ```
 
-### 9.2 Frontend Setup
+*Note: The backend features an intelligent **Dual-LLM** pipeline. It attempts AWS Bedrock first if `BEDROCK_MODEL_ID` is set and credentials are valid. If rate limits, permission boundaries, or invalid keys cause a failure, it seamlessly falls back to the Google Gemini API.*
+
+### 9.2 Backend Setup
+From the project root:
+
+```bash
+python -m venv backend/.venv
+source backend/.venv/bin/activate
+pip install -r backend/requirements.txt
+
+# Run backend test suite (fully covered with mocked AWS services)
+export PYTHONPATH=.
+pytest backend/
+
+# Start local API server
+export PYTHONPATH=.
+uvicorn backend.main:app --port 8000
+```
+The backend will be available at `http://localhost:8000`.
+
+### 9.3 Frontend Setup
+In a new terminal:
 
 ```bash
 cd frontend
 npm install
+
+# Set Vite environment variables inside frontend/.env
+echo "VITE_API_BASE_URL=http://localhost:8000" > .env
+echo "VITE_COGNITO_USER_POOL_ID=your_user_pool_id" >> .env
+echo "VITE_COGNITO_APP_CLIENT_ID=your_client_id" >> .env
+
+# Start frontend dev server
 npm run dev
 ```
-
-### 9.3 Infrastructure Deployment
-
-```bash
-cd infra
-npm install
-cdk bootstrap
-cdk deploy --all
-```
+The frontend will be available at `http://localhost:3000`.
 
 ---
 
-## 10. Configuration
+## 10. Intelligent Deployments & Fallbacks
 
-Create a `.env` file in the `backend/` directory with the following variables:
-
-```env
-# AWS Configuration
-AWS_REGION=us-east-1
-BEDROCK_MODEL_ID=anthropic.claude-3-5-sonnet-20241022-v2:0
-
-# Authentication (Cognito)
-COGNITO_USER_POOL_ID=us-east-1_example
-COGNITO_APP_CLIENT_ID=exampleclientid1234567890
-
-# Persistence
-DYNAMODB_TABLE_NAME=tbd-primary-store
-S3_ASSETS_BUCKET=tbd-app-assets
-
-# Email Delivery
-SES_SENDER_EMAIL=noreply@example.com
-
-# Deployment Modes
-DEPLOYMENT_MODE=lambda  # options: lambda, fargate
-```
+- **AWS IAM Graceful Bypass**: If your AWS IAM User does not have `lambda:UpdateFunctionCode` permissions (or if deployment fails for any reason), the backend gracefully bypasses AWS Lambda and serves your generated applications directly via the `/apps/{app_id}/live` FastAPI route.
+- **Dual-LLM Routing**: Enjoy the reliability of Bedrock with the flexibility of Gemini. Ensure at least one set of keys is provided.
 
 ---
 
-## 11. Testing and Verification
+## 11. Testing and CI/CD
 
-The test suite covers unit, contract, and API behavior with fully mocked AWS services:
+A fully automated **GitHub Actions CI/CD Pipeline** is integrated into `.github/workflows/ci.yml`. On every push to `main`:
+1. It provisions **Python 3.12** and runs all `125` robust backend Pytest suites (with auto-mocked AWS environments).
+2. It provisions **Node 20**, installs UI dependencies, and executes `npm run build` to type-check `tsc` and Vite-compile the React frontend.
 
+To run tests locally:
 ```bash
-cd backend
-pytest -v
+source backend/.venv/bin/activate
+export PYTHONPATH=.
+pytest backend/
 ```
-
-Test coverage includes:
-- **Clarification logic**: Ambiguity detection, question count limits, default value generation
-- **Code generation and planning**: Plan generation, structured output extraction, syntax checks
-- **Decision timeline and rollback**: Node creation, step linking, deterministic snapshot retrieval
-- **Authentication and roles**: Token validation, viewer vs editor role enforcement
-- **Autonomous maintenance**: Health probe responses, Bedrock diagnosis parsing, candidate verification, safety guardrails, concurrency locks, and maintenance orchestrator workflows
 
 ---
 
