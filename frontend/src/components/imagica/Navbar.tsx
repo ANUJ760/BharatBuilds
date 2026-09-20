@@ -31,7 +31,7 @@ export default function Navbar() {
       <a href="#" className="flex items-center gap-2.5">
         <Logo />
         <span className="text-[15px] font-semibold tracking-[-0.02em] text-[#111]">
-          Small Software Cloud
+          SmallOps
         </span>
       </a>
 

@@ -75,7 +75,7 @@ export default function Login() {
         <button onClick={() => navigate('/')} className="flex items-center gap-2.5">
           <Logo />
           <span className="text-[15px] font-semibold tracking-[-0.02em] text-[#111] drop-shadow-sm bg-white/30 px-2 py-0.5 rounded-md backdrop-blur-md">
-            Small Software Cloud
+            SmallOps
           </span>
         </button>
       </nav>
@@ -88,7 +88,7 @@ export default function Login() {
       >
         <div className="pointer-events-auto p-10 flex flex-col items-center text-center bg-white/60 backdrop-blur-2xl border border-white/50 shadow-2xl rounded-3xl">
           <h2 className="text-[clamp(24px,3vw,32px)] font-medium tracking-tight text-[#111] mb-2 drop-shadow-sm">
-            {step === 'login' ? 'Welcome to Small Software Cloud' : 'Verify your Account'}
+            {step === 'login' ? 'Welcome to SmallOps' : 'Verify your Account'}
           </h2>
           <p className="text-[14px] text-gray-600 mb-2 font-medium">
             {step === 'login' ? 'Sign in to build, deploy and manage your small software.' : 'Check your email for a verification code.'}
