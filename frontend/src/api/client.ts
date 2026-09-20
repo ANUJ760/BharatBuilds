@@ -1,8 +1,8 @@
 // ── Central API client ──────────────────────────────────────────────────────
 // All backend calls go through here so auth headers are always injected.
 // The Vite proxy forwards /apps /deploy /share /health to http://127.0.0.1:8000
-
-const BASE = '';          // Vite proxy handles this
+// In production, we use VITE_API_BASE_URL
+const BASE = import.meta.env.VITE_API_BASE_URL || '';
 const API_URL = BASE;
 
 function getToken(): string | null {
