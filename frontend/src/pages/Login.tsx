@@ -35,6 +35,7 @@ export default function Login() {
     <motion.div 
       initial={{ opacity: 0 }} 
       animate={{ opacity: 1 }} 
+      exit={{ opacity: 0, scale: 0.98, transition: { duration: 0.3 } }}
       transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
       className="min-h-screen bg-[#f8f9fa] text-[#111] font-sans selection:bg-black selection:text-white flex flex-col items-center justify-center relative overflow-hidden z-[100]"
     >
@@ -98,6 +99,23 @@ export default function Login() {
               {loading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : 'Sign In'}
             </button>
           </form>
+          
+          <div className="mt-6 text-center w-full">
+            <p className="text-sm text-gray-600 font-medium">
+              Don't have an account?{' '}
+              <button 
+                type="button" 
+                onClick={() => {
+                  const params = new URLSearchParams(window.location.search);
+                  const returnUrl = params.get('return') || '/';
+                  navigate(`/register?return=${encodeURIComponent(returnUrl)}`);
+                }} 
+                className="text-black font-semibold hover:underline"
+              >
+                Sign up
+              </button>
+            </p>
+          </div>
         </div>
       </motion.div>
     </motion.div>

@@ -83,6 +83,7 @@ export function Home() {
     <motion.div 
       initial={{ opacity: 0 }} 
       animate={{ opacity: 1 }} 
+      exit={{ opacity: 0, filter: 'blur(10px)', transition: { duration: 0.4 } }}
       transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
       className="min-h-screen bg-[#f8f9fa] text-[#111] font-sans selection:bg-black selection:text-white overflow-hidden flex flex-col items-center justify-center relative z-[100]"
     >
@@ -169,7 +170,7 @@ export function Home() {
           <motion.div 
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
-            className="mt-8 space-y-6"
+            className="mt-8 space-y-6 pointer-events-auto"
           >
             <div className="text-center mb-6">
               <h2 className="text-xl font-semibold text-[#111] mb-2">Before we build, let’s clarify a few things.</h2>

@@ -47,6 +47,7 @@ export const AppView = () => {
     <motion.div 
       initial={{ opacity: 0 }} 
       animate={{ opacity: 1 }} 
+      exit={{ opacity: 0, x: 20, transition: { duration: 0.3 } }}
       transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
       className="flex w-full h-screen bg-[#f3f4f6] text-[#111] font-sans selection:bg-black selection:text-white overflow-hidden relative z-[100]"
     >

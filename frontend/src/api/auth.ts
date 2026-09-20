@@ -47,3 +47,18 @@ export function loginWithCognito(email: string, password: string): Promise<strin
     });
   });
 }
+
+export function signUpWithCognito(email: string, password: string): Promise<any> {
+  return new Promise((resolve, reject) => {
+    if (!poolData.UserPoolId || !poolData.ClientId) {
+      return reject(new Error("Cognito credentials missing from .env"));
+    }
+    userPool.signUp(email, password, [], null as any, (err, result) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(result);
+    });
+  });
+}
