@@ -51,10 +51,24 @@ async def deploy_app(app_id: str, body: DeployRequest):
             detail="Code generation failed — see timeline for details",
         )
 
-    # Skip AWS Lambda deploy because the IAM user doesn't have permissions.
-    # Instead, serve the generated HTML directly from our FastAPI backend!
-    function_url = f"/apps/{app_id}/live"
     deploy_status = "deployed"
+    function_url = ""
+    reasoning = ""
+
+    try:
+        # Try Lambda deployment first
+        function_url = await deploy_to_lambda(
+            app_id,
+            code,
+            function_name=settings.deploy_lambda_function_name,
+            region=settings.aws_region,
+        )
+        reasoning = f"Deployed successfully to Lambda: {function_url}"
+    except Exception as exc:
+        logger.warning(f"Lambda deploy failed: {exc}")
+        # Fallback to inline deployment
+        function_url = f"/apps/{app_id}/live"
+        reasoning = f"Deployed inline to {function_url} (AWS Lambda deployment skipped: Missing Lambda permissions or AccessDenied)"
 
     # Log the deploy step
     deploy_step = TimelineStep(
@@ -62,7 +76,7 @@ async def deploy_app(app_id: str, body: DeployRequest):
         step_type=StepType.DEPLOY,
         parent_step_id=steps[-1].step_id if steps else None,
         code_snapshot=code,
-        reasoning=f"Deployed locally to {function_url}",
+        reasoning=reasoning,
     )
     steps.append(deploy_step)
 
