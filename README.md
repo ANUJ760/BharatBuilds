@@ -1,5 +1,4 @@
-# TBD
-
+# smallOps
 > A cloud for small software: turn plain-language prompts into live, authenticated, shareable web applications deployed on AWS infrastructure, with a visual decision timeline, deterministic rollback, and autonomous self-healing maintenance.
 
 Built for **Bharat Builds Tour 2026 (First Commit)** by WeMakeDevs × AWS.
