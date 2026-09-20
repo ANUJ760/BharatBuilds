@@ -10,7 +10,19 @@ export default defineConfig({
       '/apps': {
         target: 'http://127.0.0.1:8000',
         changeOrigin: true,
-      }
-    }
+      },
+      '/deploy': {
+        target: 'http://127.0.0.1:8000',
+        changeOrigin: true,
+      },
+      '/share': {
+        target: 'http://127.0.0.1:8000',
+        changeOrigin: true,
+      },
+      '/health': {
+        target: 'http://127.0.0.1:8000',
+        changeOrigin: true,
+      },
+    },
   },
 });

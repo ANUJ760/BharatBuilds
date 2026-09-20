@@ -26,7 +26,7 @@ class Settings(BaseSettings):
 
     # ── AWS ──────────────────────────────────────────────────────────────
     aws_region: str = Field(default="ap-south-1", description="AWS region")
-    aws_profile: str = Field(default="default", description="AWS CLI profile name")
+    aws_profile: str = Field(default="", description="AWS CLI profile name (leave empty to use access keys)")
 
     # ── Google Gemini ───────────────────────────────────────────────────
     gemini_api_key: str = Field(
