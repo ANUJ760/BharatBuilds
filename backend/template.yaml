@@ -1,15 +1,13 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: SmallOps Platform Backend
+Description: SmallOps Platform Backend (Serverless Containerized)
 
 Resources:
   SmallOpsBackendFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: .
-      Handler: main.handler
-      Runtime: python3.12
-      Timeout: 300 # 5 minutes (LLM calls can take time)
+      PackageType: Image
+      Timeout: 300 # 5 minutes
       MemorySize: 1024
       FunctionUrlConfig:
         AuthType: NONE
@@ -22,8 +20,11 @@ Resources:
             - "*"
       Environment:
         Variables:
-          # You can add your variables here, or pass them during deployment
           LOG_LEVEL: INFO
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: .
+      DockerTag: python3.12-v1
 
 Outputs:
   BackendApiUrl:
