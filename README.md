@@ -313,35 +313,52 @@ SES_SENDER_EMAIL=
 ### Prerequisites
 - Python 3.10+
 - Node.js 18+
-- AWS CLI configured with active credentials (`aws configure`)
+- AWS Account (for Cognito, DynamoDB, S3)
 - Gemini API Key
 
+### Configuration (`.env`)
+Create a `.env` file in the **root** of the project (`BharatBuilds/.env`) and add the following keys. 
+*Note: The system requires `gemini-2.5-flash` or higher to bypass free-tier rate limits.*
+```env
+# AWS
+AWS_REGION=ap-south-1
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+
+# Google Gemini API
+GEMINI_API_KEY=your_gemini_api_key
+GEMINI_MODEL_ID=gemini-2.5-flash
+
+# DynamoDB
+DYNAMODB_TABLE_NAME=bharatbuilds-table
+
+# Cognito
+COGNITO_USER_POOL_ID=your_user_pool_id
+COGNITO_APP_CLIENT_ID=your_client_id
+
+# Lambda deploy target (Optional)
+DEPLOY_LAMBDA_FUNCTION_NAME=bharatbuilds-deploy-runner
+```
+
 ### Backend Setup
-1. Navigate to the `backend` directory:
+1. From the project root, create and activate a virtual environment:
    ```bash
-   cd backend
+   python -m venv backend/.venv
+   source backend/.venv/bin/activate  # On Windows: backend\.venv\Scripts\activate
    ```
-2. Create and activate a virtual environment:
+2. Install dependencies:
    ```bash
-   python -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   pip install -r backend/requirements.txt
    ```
-3. Install dependencies:
+3. Run the backend server from the **project root**:
    ```bash
-   pip install -r requirements.txt
-   ```
-4. Copy the `.env.example` to `.env` in the project root and fill in your AWS details and Gemini API Key:
-   ```bash
-   cp ../.env.example ../.env
-   ```
-5. Run the backend server:
-   ```bash
-   uvicorn main:app --reload
+   export PYTHONPATH=. 
+   uvicorn backend.main:app --port 8000
    ```
    The backend will be available at `http://localhost:8000`.
 
 ### Frontend Setup
-1. Navigate to the `frontend` directory:
+1. Open a new terminal and navigate to the `frontend` directory:
    ```bash
    cd frontend
    ```
@@ -349,23 +366,18 @@ SES_SENDER_EMAIL=
    ```bash
    npm install
    ```
-3. Create a `.env` file in the `frontend` directory with your backend URL and Cognito details:
+3. Create a `.env` file in the `frontend` directory with your Cognito details (Vite needs these exposed):
    ```env
-   VITE_API_BASE_URL=http://localhost:8000
-   VITE_COGNITO_USER_POOL_ID=your_pool_id
+   VITE_COGNITO_USER_POOL_ID=your_user_pool_id
    VITE_COGNITO_APP_CLIENT_ID=your_client_id
-   VITE_COGNITO_REGION=ap-south-1
    ```
 4. Start the frontend development server:
    ```bash
    npm run dev
    ```
-   The frontend will be accessible at the local URL provided by Vite (usually `http://localhost:5173`).
+   The frontend will be accessible at **`http://localhost:3000`**. *(Note: API calls are automatically proxied to port 8000).*
 
-### Testing the Software
-1. **Health Check**: Open `http://localhost:8000/health` in your browser. You should see a JSON response confirming the backend is running and the Gemini API key is configured.
-2. **App Creation**: Open the frontend in your browser. Type a prompt to create an app.
-3. **Clarification**: If the AI needs more details, it will ask clarifying questions. Provide answers.
-4. **Deploy**: Once answers are provided, the deploy pipeline runs. The AI plans, writes code, and deploys to AWS Lambda.
-5. **Timeline**: You can view the live timeline of steps taken by the AI.
-6. **Editing**: In the app view, ask for a feature addition. The AI will generate new code, redeploy, and log the steps to the timeline.
+### Application Features
+- **Authentication**: You must register an account and verify your email via the OTP sent by AWS Cognito before you can access the builder.
+- **Smart Deployment fallback**: If your AWS IAM User does not have `lambda:UpdateFunctionCode` permissions, the backend will gracefully bypass AWS Lambda and directly serve your generated HTML applications inline via the `/apps/{app_id}/live` route! 
+- **Isolated Viewer**: Deployed apps run in an isolated iframe. You can also click the "Open in New Tab" icon to use them fully standalone.
