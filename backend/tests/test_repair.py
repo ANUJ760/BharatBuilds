@@ -5,16 +5,6 @@ from __future__ import annotations
 import sys
 from unittest.mock import MagicMock, patch
 
-# Ensure boto3 mocks exist in environments where AWS SDK is mocked
-if "boto3" not in sys.modules:
-    sys.modules["boto3"] = MagicMock()
-if "botocore" not in sys.modules:
-    sys.modules["botocore"] = MagicMock()
-if "botocore.exceptions" not in sys.modules:
-    mock_exceptions = MagicMock()
-    mock_exceptions.ClientError = type("ClientError", (Exception,), {})
-    sys.modules["botocore.exceptions"] = mock_exceptions
-
 import pytest
 
 from backend.agent.repair import (

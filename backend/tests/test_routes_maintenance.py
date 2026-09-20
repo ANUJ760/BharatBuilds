@@ -5,36 +5,6 @@ from __future__ import annotations
 import sys
 from unittest.mock import AsyncMock, MagicMock, patch
 
-# Ensure mocks for boto3, jose, and structlog if missing in test environment
-mock_boto3 = MagicMock()
-mock_boto3.__path__ = []
-sys.modules["boto3"] = mock_boto3
-sys.modules["boto3.dynamodb"] = MagicMock()
-sys.modules["boto3.dynamodb.conditions"] = MagicMock()
-
-if "botocore" not in sys.modules:
-    sys.modules["botocore"] = MagicMock()
-if "botocore.exceptions" not in sys.modules:
-    mock_exceptions = MagicMock()
-    mock_exceptions.ClientError = type("ClientError", (Exception,), {})
-    sys.modules["botocore.exceptions"] = mock_exceptions
-
-if "jose" not in sys.modules:
-    sys.modules["jose"] = MagicMock()
-    sys.modules["jose.jwt"] = MagicMock()
-
-if "structlog" not in sys.modules:
-    mock_structlog = MagicMock()
-    mock_structlog.contextvars = MagicMock()
-    mock_structlog.stdlib = MagicMock()
-    mock_structlog.processors = MagicMock()
-    mock_structlog.dev = MagicMock()
-    sys.modules["structlog"] = mock_structlog
-    sys.modules["structlog.contextvars"] = mock_structlog.contextvars
-    sys.modules["structlog.stdlib"] = mock_structlog.stdlib
-    sys.modules["structlog.processors"] = mock_structlog.processors
-    sys.modules["structlog.dev"] = mock_structlog.dev
-
 import pytest
 from fastapi import status
 from fastapi.testclient import TestClient

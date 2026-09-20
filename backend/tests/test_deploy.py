@@ -104,3 +104,103 @@ class TestDeployToLambda:
 
         assert "lambda-url" in url
         mock_client.create_function_url_config.assert_called_once()
+
+
+class TestCandidateDeployAndPromotion:
+    """Tests for deploy_candidate_to_lambda, get_prod_version, and promote_candidate_to_prod."""
+
+    @pytest.mark.asyncio
+    @patch("backend.deploy.lambda_deployer._get_client")
+    async def test_deploy_candidate_success(self, mock_get_client):
+        from backend.deploy.lambda_deployer import deploy_candidate_to_lambda
+
+        mock_client = MagicMock()
+        mock_get_client.return_value = mock_client
+
+        mock_client.update_function_code.return_value = {
+            "Version": "3",
+            "FunctionName": TEST_FUNCTION,
+        }
+        mock_client.get_function_url_config.return_value = {
+            "FunctionUrl": f"https://candidate-{TEST_FUNCTION}.lambda-url.{TEST_REGION}.on.aws/",
+        }
+
+        result = await deploy_candidate_to_lambda(
+            "app-1",
+            SAMPLE_CODE,
+            function_name=TEST_FUNCTION,
+            region=TEST_REGION,
+        )
+
+        assert result.candidate_version == "3"
+        assert result.candidate_url == f"https://candidate-{TEST_FUNCTION}.lambda-url.{TEST_REGION}.on.aws/"
+        assert result.function_name == TEST_FUNCTION
+
+        mock_client.update_function_code.assert_called_once_with(
+            FunctionName=TEST_FUNCTION,
+            ZipFile=pytest.approx(mock_client.update_function_code.call_args[1]["ZipFile"]),
+            Publish=True,
+        )
+        mock_client.update_alias.assert_called_once_with(
+            FunctionName=TEST_FUNCTION,
+            Name="candidate",
+            FunctionVersion="3",
+            Description="Candidate deployment for app app-1 (version 3)",
+        )
+        mock_client.get_function_url_config.assert_called_once_with(
+            FunctionName=TEST_FUNCTION,
+            Qualifier="candidate",
+        )
+
+    @patch("backend.deploy.lambda_deployer._get_client")
+    def test_get_prod_version(self, mock_get_client):
+        from backend.deploy.lambda_deployer import get_prod_version
+
+        mock_client = MagicMock()
+        mock_get_client.return_value = mock_client
+
+        mock_client.get_alias.return_value = {
+            "FunctionVersion": "2",
+        }
+        ver = get_prod_version(TEST_FUNCTION, region=TEST_REGION)
+        assert ver == "2"
+        mock_client.get_alias.assert_called_once_with(
+            FunctionName=TEST_FUNCTION,
+            Name="prod",
+        )
+
+    @pytest.mark.asyncio
+    @patch("backend.deploy.lambda_deployer.get_prod_version")
+    @patch("backend.deploy.lambda_deployer._get_client")
+    async def test_promote_candidate_to_prod_success(self, mock_get_client, mock_get_prod_version):
+        from backend.deploy.lambda_deployer import promote_candidate_to_prod
+
+        mock_client = MagicMock()
+        mock_get_client.return_value = mock_client
+        mock_get_prod_version.return_value = "2"
+
+        mock_client.get_function_url_config.return_value = {
+            "FunctionUrl": f"https://prod-{TEST_FUNCTION}.lambda-url.{TEST_REGION}.on.aws/",
+        }
+
+        result = await promote_candidate_to_prod(
+            TEST_FUNCTION,
+            "3",
+            region=TEST_REGION,
+        )
+
+        assert result.promoted_version == "3"
+        assert result.previous_version == "2"
+        assert result.prod_url == f"https://prod-{TEST_FUNCTION}.lambda-url.{TEST_REGION}.on.aws/"
+        assert result.function_name == TEST_FUNCTION
+
+        mock_client.update_alias.assert_called_once_with(
+            FunctionName=TEST_FUNCTION,
+            Name="prod",
+            FunctionVersion="3",
+            Description="Production release version 3",
+        )
+        mock_client.get_function_url_config.assert_called_once_with(
+            FunctionName=TEST_FUNCTION,
+            Qualifier="prod",
+        )

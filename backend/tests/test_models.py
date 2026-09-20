@@ -246,3 +246,35 @@ class TestMaintenanceTimelineStep:
         assert verify_step.status == StepStatus.OK
         assert promote_step.step_type == StepType.MAINTENANCE_PROMOTE
 
+
+class TestDeploymentAndPromotionModels:
+    """CandidateDeploymentResult and PromotionResult tests."""
+
+    def test_candidate_deployment_result(self):
+        from backend.models import CandidateDeploymentResult
+
+        res = CandidateDeploymentResult(
+            function_name="bharatbuilds-fn",
+            candidate_version="3",
+            candidate_url="https://candidate-url.test",
+        )
+        assert res.function_name == "bharatbuilds-fn"
+        assert res.candidate_version == "3"
+        assert res.candidate_url == "https://candidate-url.test"
+        assert res.deployed_at is not None
+
+    def test_promotion_result(self):
+        from backend.models import PromotionResult
+
+        res = PromotionResult(
+            function_name="bharatbuilds-fn",
+            promoted_version="3",
+            previous_version="2",
+            prod_url="https://prod-url.test",
+        )
+        assert res.function_name == "bharatbuilds-fn"
+        assert res.promoted_version == "3"
+        assert res.previous_version == "2"
+        assert res.prod_url == "https://prod-url.test"
+        assert res.promoted_at is not None
+

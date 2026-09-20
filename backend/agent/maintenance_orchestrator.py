@@ -1,7 +1,9 @@
 """Maintenance Orchestrator for BharatBuilds.
 
 Orchestrates the complete autonomous maintenance lifecycle:
-Detection → Diagnosis → Repair → Local Candidate Verification → Decision (Promote/Reject).
+Detection → Diagnosis → Repair → Local Candidate Verification → Candidate Lambda Deployment
+→ Synthetic Health Probe → Production Promotion / Rejection.
+
 Tracks job state, enforces attempt boundaries (max 2), and records all events
 to the DynamoDB Decision Timeline.
 """
@@ -9,21 +11,29 @@ to the DynamoDB Decision Timeline.
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, Callable
 
 from backend.agent.candidate_verifier import verify_candidate_code
+from backend.agent.health_probe import DEFAULT_TIMEOUT_SECONDS, probe_url
 from backend.agent.repair import (
     BedrockCodeRepairProvider,
     CodeRepairProvider,
 )
 from backend.agent.safety_guards import AppConcurrencyLock, sanitize_issue
 from backend.agent.trace_logger import get_timeline, log_step
+from backend.deploy.lambda_deployer import (
+    deploy_candidate_to_lambda,
+    promote_candidate_to_prod,
+)
 from backend.models.app import (
+    CandidateDeploymentResult,
     CandidateVerificationResult,
+    HealthCheckResult,
     MaintenanceIssue,
     MaintenanceJob,
     MaintenanceResult,
     MaintenanceStatus,
+    PromotionResult,
     RepairResult,
     StepStatus,
     StepType,
@@ -36,7 +46,7 @@ MAX_REPAIR_ATTEMPTS = 2
 
 
 class MaintenanceOrchestrator:
-    """Orchestrates diagnosis, repair, and candidate verification for failing apps."""
+    """Orchestrates diagnosis, repair, candidate deployment, health verification, and production promotion."""
 
     def __init__(
         self,
@@ -45,7 +55,12 @@ class MaintenanceOrchestrator:
         model_id: str = "",
         region: str = "ap-south-1",
         table_name: str = "",
+        function_name: str = "",
         max_attempts: int = MAX_REPAIR_ATTEMPTS,
+        probe_timeout_seconds: float = DEFAULT_TIMEOUT_SECONDS,
+        candidate_deployer: Callable[..., Any] | None = None,
+        candidate_promoter: Callable[..., Any] | None = None,
+        health_prober: Callable[..., Any] | None = None,
     ) -> None:
         self.repair_provider = repair_provider or BedrockCodeRepairProvider(
             model_id=model_id,
@@ -54,7 +69,12 @@ class MaintenanceOrchestrator:
         self.model_id = model_id
         self.region = region
         self.table_name = table_name
+        self.function_name = function_name
         self.max_attempts = max_attempts
+        self.probe_timeout_seconds = probe_timeout_seconds
+        self.candidate_deployer = candidate_deployer or deploy_candidate_to_lambda
+        self.candidate_promoter = candidate_promoter or promote_candidate_to_prod
+        self.health_prober = health_prober or probe_url
 
     async def run_maintenance(
         self,
@@ -82,7 +102,7 @@ class MaintenanceOrchestrator:
         -------
         MaintenanceResult
             Structured report with diagnostic analysis, candidate code, verification results,
-            and final job status.
+            deployment & health check outcome, and final job status.
         """
         # 1. Sanitize untrusted input fields
         sanitized_issue = sanitize_issue(issue)
@@ -270,13 +290,13 @@ class MaintenanceOrchestrator:
             if persist_timeline:
                 await log_step(patch_step, table_name=self.table_name, region=self.region)
 
-            # 4. Candidate verification
+            # 4. Candidate verification (Local)
             job.status = MaintenanceStatus.VERIFYING
             verification_result = verify_candidate_code(repair_result.patched_code)
             last_verification_result = verification_result
 
             if verification_result.passed:
-                # Verification passed! Candidate is ready for promotion
+                # Local verification passed
                 verify_step = TimelineStep(
                     app_id=app_id,
                     parent_step_id=parent_step_id,
@@ -289,30 +309,174 @@ class MaintenanceOrchestrator:
                 if persist_timeline:
                     await log_step(verify_step, table_name=self.table_name, region=self.region)
 
+                # 5. Live Candidate Deployment (Isolated from Production)
+                try:
+                    candidate_deployment: CandidateDeploymentResult = await self.candidate_deployer(
+                        app_id,
+                        repair_result.patched_code,
+                        function_name=self.function_name,
+                        region=self.region,
+                    )
+                except Exception as exc:
+                    err_msg = f"Candidate deployment failed: {exc}"
+                    logger.error(err_msg)
+                    job.status = MaintenanceStatus.FAILED
+                    job.summary = err_msg
+                    reject_step = TimelineStep(
+                        app_id=app_id,
+                        parent_step_id=parent_step_id,
+                        step_type=StepType.MAINTENANCE_REJECT,
+                        status=StepStatus.ERROR,
+                        error_message=err_msg,
+                        reasoning=f"Candidate deployment failed: {exc}. Production remains untouched.",
+                    )
+                    timeline_steps.append(reject_step)
+                    if persist_timeline:
+                        await log_step(reject_step, table_name=self.table_name, region=self.region)
+                    return MaintenanceResult(
+                        job=job,
+                        status=MaintenanceStatus.FAILED,
+                        diagnosis=repair_result.diagnosis,
+                        summary=job.summary,
+                        candidate_code=repair_result.patched_code,
+                        repair_result=repair_result,
+                        verification_result=verification_result,
+                        timeline_steps=timeline_steps,
+                    )
+
+                job.candidate_version = candidate_deployment.candidate_version
+                job.candidate_url = candidate_deployment.candidate_url
+
+                # 6. Synthetic Health Probe on Candidate Function URL
+                logger.info(
+                    "Probing candidate Function URL: %s (timeout=%.1fs)",
+                    candidate_deployment.candidate_url,
+                    self.probe_timeout_seconds,
+                )
+                health_check_result: HealthCheckResult = await self.health_prober(
+                    candidate_deployment.candidate_url,
+                    timeout_seconds=self.probe_timeout_seconds,
+                )
+
+                if not health_check_result.is_healthy:
+                    # Health check failed -> REJECT candidate safely, prod untouched
+                    err_detail = health_check_result.error_message or f"HTTP status {health_check_result.status_code}"
+                    reject_reason = (
+                        f"Candidate health check failed for version {candidate_deployment.candidate_version} "
+                        f"at {candidate_deployment.candidate_url} (status={health_check_result.status_code}, "
+                        f"latency={health_check_result.latency_ms}ms, error={health_check_result.error_message}). "
+                        f"Production alias remains untouched on stable version."
+                    )
+                    logger.warning("Candidate health check failed for app %s: %s", app_id, err_detail)
+                    job.status = MaintenanceStatus.REJECTED
+                    job.summary = f"Candidate health check failed on candidate URL {candidate_deployment.candidate_url} (version {candidate_deployment.candidate_version}): {err_detail}"
+
+                    reject_step = TimelineStep(
+                        app_id=app_id,
+                        parent_step_id=parent_step_id,
+                        step_type=StepType.MAINTENANCE_REJECT,
+                        status=StepStatus.OK,
+                        latency_ms=health_check_result.latency_ms,
+                        error_message=health_check_result.error_message,
+                        reasoning=reject_reason,
+                    )
+                    timeline_steps.append(reject_step)
+                    if persist_timeline:
+                        await log_step(reject_step, table_name=self.table_name, region=self.region)
+
+                    return MaintenanceResult(
+                        job=job,
+                        status=MaintenanceStatus.REJECTED,
+                        diagnosis=repair_result.diagnosis,
+                        summary=job.summary,
+                        candidate_code=repair_result.patched_code,
+                        repair_result=repair_result,
+                        verification_result=verification_result,
+                        candidate_deployment=candidate_deployment,
+                        health_check_result=health_check_result,
+                        timeline_steps=timeline_steps,
+                    )
+
+                # 7. Health check passed -> Promote candidate to production prod alias
+                try:
+                    target_func = self.function_name or candidate_deployment.function_name
+                    promotion_result: PromotionResult = await self.candidate_promoter(
+                        function_name=target_func,
+                        candidate_version=candidate_deployment.candidate_version,
+                        region=self.region,
+                    )
+                except Exception as exc:
+                    err_msg = f"Promotion failed while updating prod alias to version {candidate_deployment.candidate_version}: {exc}"
+                    logger.error(err_msg)
+                    job.status = MaintenanceStatus.FAILED
+                    job.summary = err_msg
+                    reject_step = TimelineStep(
+                        app_id=app_id,
+                        parent_step_id=parent_step_id,
+                        step_type=StepType.MAINTENANCE_REJECT,
+                        status=StepStatus.ERROR,
+                        error_message=err_msg,
+                        reasoning=f"Production promotion failed: {exc}. Candidate version {candidate_deployment.candidate_version} preserved for diagnosis.",
+                    )
+                    timeline_steps.append(reject_step)
+                    if persist_timeline:
+                        await log_step(reject_step, table_name=self.table_name, region=self.region)
+                    return MaintenanceResult(
+                        job=job,
+                        status=MaintenanceStatus.FAILED,
+                        diagnosis=repair_result.diagnosis,
+                        summary=job.summary,
+                        candidate_code=repair_result.patched_code,
+                        repair_result=repair_result,
+                        verification_result=verification_result,
+                        candidate_deployment=candidate_deployment,
+                        health_check_result=health_check_result,
+                        timeline_steps=timeline_steps,
+                    )
+
+                # 8. Promotion succeeded
                 job.status = MaintenanceStatus.PROMOTED
-                job.summary = repair_result.summary
+                job.promoted_version = promotion_result.promoted_version
+                job.previous_version = promotion_result.previous_version
+                prev_str = promotion_result.previous_version or "initial"
+                job.summary = f"Candidate version {promotion_result.promoted_version} passed health checks and promoted to production (replacing version {prev_str})."
 
                 promote_step = TimelineStep(
                     app_id=app_id,
                     parent_step_id=parent_step_id,
                     step_type=StepType.MAINTENANCE_PROMOTE,
                     code_snapshot=repair_result.patched_code,
-                    reasoning=f"Candidate verified and ready for live promotion: {repair_result.summary}",
+                    latency_ms=health_check_result.latency_ms,
+                    reasoning=(
+                        f"Candidate version {promotion_result.promoted_version} passed synthetic health check "
+                        f"(status={health_check_result.status_code}, latency={health_check_result.latency_ms}ms) "
+                        f"and promoted to production alias 'prod' (previous version: {promotion_result.previous_version or 'none'}). "
+                        f"Live URL: {promotion_result.prod_url or candidate_deployment.candidate_url}."
+                    ),
                     status=StepStatus.OK,
                 )
                 timeline_steps.append(promote_step)
                 if persist_timeline:
                     await log_step(promote_step, table_name=self.table_name, region=self.region)
 
-                logger.info("Maintenance succeeded on attempt %d for app %s", attempt, app_id)
+                logger.info(
+                    "Maintenance succeeded on attempt %d for app %s: version %s promoted to prod (prev: %s)",
+                    attempt,
+                    app_id,
+                    promotion_result.promoted_version,
+                    promotion_result.previous_version or "none",
+                )
                 return MaintenanceResult(
                     job=job,
                     status=MaintenanceStatus.PROMOTED,
                     diagnosis=repair_result.diagnosis,
-                    summary=repair_result.summary,
+                    summary=job.summary,
                     candidate_code=repair_result.patched_code,
                     repair_result=repair_result,
                     verification_result=verification_result,
+                    candidate_deployment=candidate_deployment,
+                    health_check_result=health_check_result,
+                    promotion_result=promotion_result,
                     timeline_steps=timeline_steps,
                 )
 
@@ -345,7 +509,7 @@ class MaintenanceOrchestrator:
                     detection_source="verification_retry",
                 )
 
-        # 5. All attempts exhausted and failed -> REJECT candidate safely
+        # 9. All attempts exhausted and failed -> REJECT candidate safely
         job.status = MaintenanceStatus.REJECTED
         job.summary = f"Candidate rejected after {self.max_attempts} attempts: {last_verification_result.error_message if last_verification_result else 'Verification failed'}"
 
@@ -371,3 +535,4 @@ class MaintenanceOrchestrator:
             verification_result=last_verification_result,
             timeline_steps=timeline_steps,
         )
+

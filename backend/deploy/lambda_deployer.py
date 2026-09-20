@@ -150,3 +150,224 @@ async def deploy_to_lambda(
 
     logger.info("App %s deployed at: %s", app_id, function_url)
     return function_url
+
+
+async def deploy_candidate_to_lambda(
+    app_id: str,
+    code: str,
+    *,
+    function_name: str = "",
+    region: str = "ap-south-1",
+) -> CandidateDeploymentResult:
+    """Deploy candidate app code to an immutable Lambda version and candidate alias.
+
+    Publishes a new immutable version and points the 'candidate' alias to it.
+    Does NOT modify the 'prod' alias or production traffic.
+
+    Parameters
+    ----------
+    app_id:
+        The app's unique identifier.
+    code:
+        The repaired Python candidate code.
+    function_name:
+        Lambda function name.
+    region:
+        AWS region.
+
+    Returns
+    -------
+    CandidateDeploymentResult
+        Deployment details including function name, candidate version, and candidate Function URL.
+    """
+    from backend.models.app import CandidateDeploymentResult
+
+    client = _get_client(region=region)
+    zip_bytes = _package_code(code)
+
+    logger.info(
+        "Deploying candidate code for app %s to Lambda %s (zip size=%d bytes)",
+        app_id,
+        function_name,
+        len(zip_bytes),
+    )
+
+    update_resp = client.update_function_code(
+        FunctionName=function_name,
+        ZipFile=zip_bytes,
+        Publish=True,
+    )
+    candidate_version = str(update_resp["Version"])
+
+    # Update or create 'candidate' alias pointing to the new version
+    try:
+        client.update_alias(
+            FunctionName=function_name,
+            Name="candidate",
+            FunctionVersion=candidate_version,
+            Description=f"Candidate deployment for app {app_id} (version {candidate_version})",
+        )
+    except (client.exceptions.ResourceNotFoundException, Exception):
+        try:
+            client.create_alias(
+                FunctionName=function_name,
+                Name="candidate",
+                FunctionVersion=candidate_version,
+                Description=f"Candidate deployment for app {app_id} (version {candidate_version})",
+            )
+        except Exception:
+            client.update_alias(
+                FunctionName=function_name,
+                Name="candidate",
+                FunctionVersion=candidate_version,
+            )
+
+    # Get or create Function URL for candidate alias
+    try:
+        url_config = client.get_function_url_config(
+            FunctionName=function_name,
+            Qualifier="candidate",
+        )
+        candidate_url = url_config["FunctionUrl"]
+    except (client.exceptions.ResourceNotFoundException, Exception):
+        try:
+            url_response = client.create_function_url_config(
+                FunctionName=function_name,
+                Qualifier="candidate",
+                AuthType="NONE",
+            )
+            candidate_url = url_response["FunctionUrl"]
+        except Exception:
+            url_config = client.get_function_url_config(
+                FunctionName=function_name,
+                Qualifier="candidate",
+            )
+            candidate_url = url_config["FunctionUrl"]
+
+    logger.info(
+        "Candidate app %s deployed to Lambda %s version %s (candidate URL: %s)",
+        app_id,
+        function_name,
+        candidate_version,
+        candidate_url,
+    )
+
+    return CandidateDeploymentResult(
+        function_name=function_name,
+        candidate_version=candidate_version,
+        candidate_url=candidate_url,
+    )
+
+
+def get_prod_version(
+    function_name: str,
+    *,
+    region: str = "ap-south-1",
+) -> str | None:
+    """Retrieve the Lambda version currently pointed to by the 'prod' alias."""
+    client = _get_client(region=region)
+    try:
+        alias_info = client.get_alias(
+            FunctionName=function_name,
+            Name="prod",
+        )
+        return str(alias_info.get("FunctionVersion"))
+    except Exception:
+        return None
+
+
+async def promote_candidate_to_prod(
+    function_name: str,
+    candidate_version: str,
+    *,
+    region: str = "ap-south-1",
+) -> PromotionResult:
+    """Atomically promote a verified candidate Lambda version to the 'prod' alias.
+
+    Moves the 'prod' alias pointer to the exact candidate FunctionVersion without
+    repackaging or redeploying code.
+
+    Parameters
+    ----------
+    function_name:
+        Lambda function name.
+    candidate_version:
+        The exact published version string to promote.
+    region:
+        AWS region.
+
+    Returns
+    -------
+    PromotionResult
+        Outcome with promoted version, previous version, and production Function URL.
+    """
+    from backend.models.app import PromotionResult
+
+    client = _get_client(region=region)
+    previous_version = get_prod_version(function_name, region=region)
+
+    logger.info(
+        "Promoting Lambda %s prod alias: version %s -> %s",
+        function_name,
+        previous_version or "none",
+        candidate_version,
+    )
+
+    # Atomic pointer update for 'prod' alias
+    try:
+        client.update_alias(
+            FunctionName=function_name,
+            Name="prod",
+            FunctionVersion=candidate_version,
+            Description=f"Production release version {candidate_version}",
+        )
+    except (client.exceptions.ResourceNotFoundException, Exception):
+        try:
+            client.create_alias(
+                FunctionName=function_name,
+                Name="prod",
+                FunctionVersion=candidate_version,
+                Description=f"Production release version {candidate_version}",
+            )
+        except Exception:
+            client.update_alias(
+                FunctionName=function_name,
+                Name="prod",
+                FunctionVersion=candidate_version,
+            )
+
+    # Get or create Function URL for prod alias
+    try:
+        url_config = client.get_function_url_config(
+            FunctionName=function_name,
+            Qualifier="prod",
+        )
+        prod_url = url_config["FunctionUrl"]
+    except (client.exceptions.ResourceNotFoundException, Exception):
+        try:
+            url_response = client.create_function_url_config(
+                FunctionName=function_name,
+                Qualifier="prod",
+                AuthType="NONE",
+            )
+            prod_url = url_response["FunctionUrl"]
+        except Exception:
+            url_config = client.get_function_url_config(
+                FunctionName=function_name,
+                Qualifier="prod",
+            )
+            prod_url = url_config["FunctionUrl"]
+
+    logger.info(
+        "Production alias 'prod' on Lambda %s promoted to version %s (URL: %s)",
+        function_name,
+        candidate_version,
+        prod_url,
+    )
+
+    return PromotionResult(
+        function_name=function_name,
+        promoted_version=candidate_version,
+        previous_version=previous_version,
+        prod_url=prod_url,
+    )

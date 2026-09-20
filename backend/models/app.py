@@ -171,6 +171,10 @@ class MaintenanceJob(BaseModel):
     candidate_step_id: Optional[str] = None
     attempt_count: int = Field(default=1, ge=1)
     summary: Optional[str] = None
+    candidate_version: Optional[str] = None
+    candidate_url: Optional[str] = None
+    promoted_version: Optional[str] = None
+    previous_version: Optional[str] = None
     created_at: datetime = Field(default_factory=_utcnow)
     updated_at: datetime = Field(default_factory=_utcnow)
 
@@ -209,6 +213,25 @@ class CandidateVerificationResult(BaseModel):
     verified_at: datetime = Field(default_factory=_utcnow)
 
 
+class CandidateDeploymentResult(BaseModel):
+    """Outcome of deploying candidate code to Lambda candidate alias."""
+
+    function_name: str
+    candidate_version: str
+    candidate_url: str
+    deployed_at: datetime = Field(default_factory=_utcnow)
+
+
+class PromotionResult(BaseModel):
+    """Outcome of promoting candidate version to production prod alias."""
+
+    function_name: str
+    promoted_version: str
+    previous_version: Optional[str] = None
+    prod_url: Optional[str] = None
+    promoted_at: datetime = Field(default_factory=_utcnow)
+
+
 class MaintenanceResult(BaseModel):
     """Structured outcome returned by MaintenanceOrchestrator."""
 
@@ -219,6 +242,9 @@ class MaintenanceResult(BaseModel):
     candidate_code: Optional[str] = None
     repair_result: Optional[RepairResult] = None
     verification_result: Optional[CandidateVerificationResult] = None
+    candidate_deployment: Optional[CandidateDeploymentResult] = None
+    health_check_result: Optional[HealthCheckResult] = None
+    promotion_result: Optional[PromotionResult] = None
     timeline_steps: list[TimelineStep] = Field(default_factory=list)
 
 

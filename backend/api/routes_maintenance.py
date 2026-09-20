@@ -58,6 +58,7 @@ async def trigger_maintenance(
         model_id=settings.bedrock_model_id,
         region=settings.aws_region,
         table_name=settings.dynamodb_table_name,
+        function_name=settings.deploy_lambda_function_name,
     )
 
     result = await orchestrator.run_maintenance(

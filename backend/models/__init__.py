@@ -3,6 +3,7 @@
 from backend.models.app import (
     App,
     AppStatus,
+    CandidateDeploymentResult,
     CandidateVerificationResult,
     ClarifyQuestion,
     ClarifyResponse,
@@ -12,6 +13,7 @@ from backend.models.app import (
     MaintenanceJob,
     MaintenanceResult,
     MaintenanceStatus,
+    PromotionResult,
     RepairResult,
     Role,
     StepStatus,
@@ -22,6 +24,7 @@ from backend.models.app import (
 __all__ = [
     "App",
     "AppStatus",
+    "CandidateDeploymentResult",
     "CandidateVerificationResult",
     "ClarifyQuestion",
     "ClarifyResponse",
@@ -31,6 +34,7 @@ __all__ = [
     "MaintenanceJob",
     "MaintenanceResult",
     "MaintenanceStatus",
+    "PromotionResult",
     "RepairResult",
     "Role",
     "StepStatus",
