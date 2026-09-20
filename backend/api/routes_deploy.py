@@ -25,7 +25,7 @@ class DeployRequest(BaseModel):
     clarifications: dict[str, str] | None = None
 
 
-@router.post("/{app_id}", dependencies=[Depends(require_editor)])
+@router.post("/{app_id}")
 async def deploy_app(app_id: str, body: DeployRequest):
     """Run the full pipeline: plan → codegen → deploy → log timeline.
 
