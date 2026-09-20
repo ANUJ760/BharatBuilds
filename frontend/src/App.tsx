@@ -1,10 +1,33 @@
-import React from 'react';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
+import Landing from './pages/Landing';
+import { Home } from './pages/Home';
+import { AppView } from './pages/AppView';
+import { Timeline } from './pages/Timeline';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
 
-function App() {
+function AnimatedRoutes() {
+  const location = useLocation();
   return (
-    <div className="min-h-screen bg-white">
-      <h1 className="text-2xl font-bold p-8">BharatBuilds</h1>
-    </div>
+    <AnimatePresence mode="popLayout">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/create" element={<Home />} />
+        <Route path="/apps/:id" element={<AppView />} />
+        <Route path="/apps/:id/timeline" element={<Timeline />} />
+      </Routes>
+    </AnimatePresence>
+  );
+}
+
+export function App() {
+  return (
+    <BrowserRouter>
+      <AnimatedRoutes />
+    </BrowserRouter>
   );
 }
 
