@@ -30,8 +30,17 @@ class Settings(BaseSettings):
 
     # ── Amazon Bedrock ───────────────────────────────────────────────────
     bedrock_model_id: str = Field(
-        default="deepseek.v3-1",
-        description="Bedrock model identifier for the agent",
+        default="",
+        description="Bedrock model identifier for the agent (optional, will use Gemini if missing/fails)",
+    )
+
+    # ── Google Gemini ───────────────────────────────────────────────────
+    gemini_api_key: str = Field(
+        default="", description="Google Gemini API Key (fallback)"
+    )
+    gemini_model_id: str = Field(
+        default="gemini-2.5-flash",
+        description="Gemini model identifier for the agent",
     )
 
     # ── DynamoDB ─────────────────────────────────────────────────────────

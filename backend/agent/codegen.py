@@ -9,22 +9,21 @@ from __future__ import annotations
 
 import logging
 
-from backend.agent.bedrock_client import invoke_model
+from backend.agent.llm_client import invoke_model
 
 logger = logging.getLogger(__name__)
 
 CODEGEN_SYSTEM_PROMPT = """\
 You are a code generator for a small-software platform. Given a user's
 app description (and any clarification answers), generate a complete,
-working, single-file Python web application.
+working, single-file HTML web application.
 
 Requirements:
-1. Use Python with a simple HTTP server (Flask-style or stdlib).
-2. The app must be self-contained in a single file called main.py.
-3. Include inline HTML templates — no external files needed.
-4. The app should be immediately runnable with `python main.py`.
-5. Listen on port 8080 by default (via PORT env var).
-6. Return ONLY the Python source code — no markdown fences, no explanation.
+1. The app must be self-contained in a single HTML file.
+2. Include all CSS (inside <style>) and JavaScript (inside <script>) inline.
+3. Use modern, clean UI (Tailwind via CDN is permitted if helpful, or vanilla CSS).
+4. The app must be fully functional in the browser with no backend required (use localStorage for data if needed).
+5. Return ONLY the HTML source code — no markdown fences, no explanation.
 """
 
 

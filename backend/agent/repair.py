@@ -12,7 +12,7 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Any
 
-from backend.agent.bedrock_client import invoke_model_json
+from backend.agent.llm_client import invoke_model_json
 from backend.agent.codegen import _strip_code_fences
 from backend.agent.safety_guards import sanitize_issue
 from backend.models.app import MaintenanceIssue, RepairResult

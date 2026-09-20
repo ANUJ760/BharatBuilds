@@ -16,7 +16,7 @@ import logging
 import time
 from typing import Any
 
-from backend.agent.bedrock_client import invoke_model, invoke_model_json
+from backend.agent.llm_client import invoke_model, invoke_model_json
 from backend.agent.codegen import generate_code
 from backend.models.app import StepStatus, StepType, TimelineStep
 
@@ -40,12 +40,12 @@ Return ONLY the JSON object — no prose, no markdown.
 """
 
 REVIEW_SYSTEM_PROMPT = """\
-You are a code reviewer. Given the generated source code for a small web app,
+You are a code reviewer. Given the generated source code for a single-file HTML web app,
 check for:
-1. Syntax errors
-2. Missing imports
+1. Syntax errors in HTML/CSS/JS
+2. Missing script tags or CSS links
 3. Runtime errors (undefined variables, wrong function signatures)
-4. Security issues (SQL injection, XSS, hardcoded secrets)
+4. UI/UX issues (missing styles, broken layouts)
 
 If the code is correct, return: {"is_valid": true, "issues": []}
 If there are issues, return: {"is_valid": false, "issues": ["description of each issue"]}

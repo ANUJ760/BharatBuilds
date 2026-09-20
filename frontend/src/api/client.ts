@@ -1,21 +1,16 @@
 // ── Central API client ──────────────────────────────────────────────────────
 // All backend calls go through here so auth headers are always injected.
-// The Vite proxy forwards /apps /deploy /share to http://127.0.0.1:8000
+// The Vite proxy forwards /apps /deploy /share /health to http://127.0.0.1:8000
 
 const BASE = '';          // Vite proxy handles this
 const API_URL = BASE;
 
-const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-if (isLocalhost) {
-  // Force login on every hard refresh during dev by clearing storage on initial load
-  localStorage.removeItem('bb_token');
-  localStorage.removeItem('bb_user');
-  sessionStorage.removeItem('bb_token');
-  sessionStorage.removeItem('bb_user');
-}
-
 function getToken(): string | null {
   return localStorage.getItem('bb_token') || sessionStorage.getItem('bb_token');
+}
+
+function getUserId(): string {
+  return localStorage.getItem('bb_user') || sessionStorage.getItem('bb_user') || 'anonymous';
 }
 
 async function request<T>(
@@ -43,7 +38,9 @@ async function request<T>(
       const err = await res.json();
       msg = err.message || err.detail || msg;
     } catch {}
-    throw new Error(msg);
+    const error: any = new Error(msg);
+    error.status = res.status;
+    throw error;
   }
   return res.json();
 }

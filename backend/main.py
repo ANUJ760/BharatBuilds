@@ -10,6 +10,13 @@ Includes:
 
 from __future__ import annotations
 
+import os
+from dotenv import load_dotenv
+
+env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env')
+load_dotenv(env_path)
+os.environ.pop("AWS_PROFILE", None)
+
 import uuid
 
 import structlog
@@ -162,7 +169,8 @@ async def health():
         settings: Settings = get_settings()
         config_present = {
             "aws_region": bool(settings.aws_region),
-            "bedrock_model_id": bool(settings.bedrock_model_id),
+            "gemini_api_key": bool(settings.gemini_api_key),
+            "gemini_model_id": bool(settings.gemini_model_id),
             "dynamodb_table_name": bool(settings.dynamodb_table_name),
             "s3_assets_bucket": bool(settings.s3_assets_bucket),
             "cognito_user_pool_id": bool(settings.cognito_user_pool_id),

@@ -130,3 +130,19 @@ async def get_app(app_id: str):
     if item is None:
         raise HTTPException(status_code=404, detail="App not found")
     return item
+
+from fastapi.responses import HTMLResponse
+
+@router.get("/{app_id}/live")
+async def live_app(app_id: str):
+    """Serve the generated HTML app directly."""
+    from backend.agent.trace_logger import get_timeline
+    from backend.models.app import StepType
+    
+    steps = await get_timeline(app_id)
+    # Find the latest codegen step
+    for step in reversed(steps):
+        if step.step_type == StepType.CODEGEN and step.code_snapshot:
+            return HTMLResponse(content=step.code_snapshot, status_code=200)
+            
+    return HTMLResponse(content="<h1>App not ready or no code generated yet.</h1>", status_code=404)
