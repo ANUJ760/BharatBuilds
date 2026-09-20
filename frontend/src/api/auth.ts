@@ -62,3 +62,19 @@ export function signUpWithCognito(email: string, password: string): Promise<any>
     });
   });
 }
+
+export function confirmRegistration(email: string, code: string): Promise<any> {
+  return new Promise((resolve, reject) => {
+    const cognitoUser = new CognitoUser({
+      Username: email,
+      Pool: userPool
+    });
+    cognitoUser.confirmRegistration(code, true, (err, result) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(result);
+    });
+  });
+}
