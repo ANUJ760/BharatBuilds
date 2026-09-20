@@ -359,6 +359,7 @@ The frontend will be available at `http://localhost:3000`.
 
 ## 10. Intelligent Deployments & Fallbacks
 
+- **Bring Your Own Key (BYOK)**: End-users have the freedom to bypass platform rate limits by using their own AWS Bedrock account. By clicking the "⚙️ BYOK" Settings toggle in the frontend Navbar, users can input their `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_REGION`. The backend dynamically provisions isolated Bedrock clients on a per-request basis for these users, securely falling back to platform defaults if their keys fail.
 - **AWS IAM Graceful Bypass**: If your AWS IAM User does not have `lambda:UpdateFunctionCode` permissions (or if deployment fails for any reason), the backend gracefully bypasses AWS Lambda and serves your generated applications directly via the `/apps/{app_id}/live` FastAPI route.
 - **Dual-LLM Routing**: Enjoy the reliability of Bedrock with the flexibility of Gemini. Ensure at least one set of keys is provided.
 
