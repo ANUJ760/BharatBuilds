@@ -63,6 +63,7 @@ async def plan_and_execute(
     model_id: str = "",
     region: str = "ap-south-1",
     app_id: str = "",
+    credentials: dict | None = None,
 ) -> tuple[str, list[TimelineStep]]:
     """Run the full ReAct pipeline: plan → codegen → review → (retry).
 
@@ -78,6 +79,8 @@ async def plan_and_execute(
         AWS region.
     app_id:
         ID of the app being built (for timeline step linkage).
+    credentials:
+        Optional user BYOK AWS credentials.
 
     Returns
     -------
@@ -87,7 +90,14 @@ async def plan_and_execute(
     steps: list[TimelineStep] = []
 
     # ── Step 1: Plan ─────────────────────────────────────────────────
-    plan_step, plan = await _plan(prompt, clarifications, model_id=model_id, region=region, app_id=app_id)
+    plan_step, plan = await _plan(
+        prompt,
+        clarifications,
+        model_id=model_id,
+        region=region,
+        app_id=app_id,
+        credentials=credentials,
+    )
     steps.append(plan_step)
 
     if plan_step.status == StepStatus.ERROR:
@@ -106,6 +116,7 @@ async def plan_and_execute(
             region=region,
             app_id=app_id,
             parent_step_id=parent_step_id,
+            credentials=credentials,
         )
         steps.append(codegen_step)
 
@@ -119,6 +130,7 @@ async def plan_and_execute(
             region=region,
             app_id=app_id,
             parent_step_id=codegen_step.step_id,
+            credentials=credentials,
         )
         steps.append(review_step)
 
@@ -158,6 +170,7 @@ async def _plan(
     model_id: str,
     region: str,
     app_id: str,
+    credentials: dict | None = None,
 ) -> tuple[TimelineStep, dict[str, Any]]:
     """Run the planning step."""
     start = time.monotonic()
@@ -172,6 +185,7 @@ async def _plan(
             system=PLAN_SYSTEM_PROMPT,
             model_id=model_id,
             region=region,
+            credentials=credentials,
         )
         latency = int((time.monotonic() - start) * 1000)
 
@@ -207,6 +221,7 @@ async def _codegen(
     region: str,
     app_id: str,
     parent_step_id: str,
+    credentials: dict | None = None,
 ) -> tuple[TimelineStep, str]:
     """Run the code generation step."""
     start = time.monotonic()
@@ -216,6 +231,7 @@ async def _codegen(
             clarifications,
             model_id=model_id,
             region=region,
+            credentials=credentials,
         )
         latency = int((time.monotonic() - start) * 1000)
 
@@ -250,6 +266,7 @@ async def _review(
     region: str,
     app_id: str,
     parent_step_id: str,
+    credentials: dict | None = None,
 ) -> tuple[TimelineStep, bool, str]:
     """Review generated code for correctness."""
     start = time.monotonic()
@@ -259,6 +276,7 @@ async def _review(
             system=REVIEW_SYSTEM_PROMPT,
             model_id=model_id,
             region=region,
+            credentials=credentials,
         )
         latency = int((time.monotonic() - start) * 1000)
         is_valid = review.get("is_valid", False)

@@ -33,6 +33,7 @@ async def generate_code(
     *,
     model_id: str = "",
     region: str = "ap-south-1",
+    credentials: dict | None = None,
 ) -> str:
     """Generate app source code from a resolved prompt.
 
@@ -46,11 +47,13 @@ async def generate_code(
         Bedrock model identifier.
     region:
         AWS region.
+    credentials:
+        Optional user BYOK AWS credentials.
 
     Returns
     -------
     str
-        The generated Python source code.
+        Complete HTML source code.
     """
     full_prompt = prompt
     if clarifications:
@@ -58,7 +61,7 @@ async def generate_code(
             f"- {k}: {v}" for k, v in clarifications.items()
         )
         full_prompt = (
-            f"{prompt}\n\nClarification answers:\n{clarify_text}"
+            f"{prompt}\n\nClarifications:\n{clarify_text}"
         )
 
     logger.info("Generating code for prompt (len=%d)", len(full_prompt))
@@ -68,6 +71,7 @@ async def generate_code(
         system=CODEGEN_SYSTEM_PROMPT,
         model_id=model_id,
         region=region,
+        credentials=credentials,
         max_tokens=8192,
         temperature=0.2,
     )

@@ -57,6 +57,7 @@ async def check_ambiguity(
     *,
     model_id: str = "",
     region: str = "ap-south-1",
+    credentials: dict | None = None,
 ) -> ClarifyResponse:
     """Analyse the user prompt for underspecified aspects.
 
@@ -68,6 +69,8 @@ async def check_ambiguity(
         Bedrock model identifier.
     region:
         AWS region.
+    credentials:
+        Optional user BYOK AWS credentials.
 
     Returns
     -------
@@ -81,6 +84,7 @@ async def check_ambiguity(
         system=CLARIFY_SYSTEM_PROMPT,
         model_id=model_id,
         region=region,
+        credentials=credentials,
     )
 
     # Validate through Pydantic
