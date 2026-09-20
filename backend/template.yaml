@@ -1,0 +1,31 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: SmallOps Platform Backend
+
+Resources:
+  SmallOpsBackendFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: main.handler
+      Runtime: python3.12
+      Timeout: 300 # 5 minutes (LLM calls can take time)
+      MemorySize: 1024
+      FunctionUrlConfig:
+        AuthType: NONE
+        Cors:
+          AllowOrigins:
+            - "*"
+          AllowMethods:
+            - "*"
+          AllowHeaders:
+            - "*"
+      Environment:
+        Variables:
+          # You can add your variables here, or pass them during deployment
+          LOG_LEVEL: INFO
+
+Outputs:
+  BackendApiUrl:
+    Description: "Your Live FastAPI Lambda Function URL"
+    Value: !GetAtt SmallOpsBackendFunctionUrl.FunctionUrl
