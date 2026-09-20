@@ -11,13 +11,6 @@ Resources:
       MemorySize: 1024
       FunctionUrlConfig:
         AuthType: NONE
-        Cors:
-          AllowOrigins:
-            - "*"
-          AllowMethods:
-            - "*"
-          AllowHeaders:
-            - "*"
       Environment:
         Variables:
           LOG_LEVEL: INFO
