@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-import { CognitoUserPool, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
+import { CognitoUserPool, CognitoUser, AuthenticationDetails, CognitoUserAttribute } from 'amazon-cognito-identity-js';
 
 const poolData = {
   UserPoolId: import.meta.env.VITE_COGNITO_USER_POOL_ID || '',
@@ -53,7 +53,13 @@ export function signUpWithCognito(email: string, password: string): Promise<any>
     if (!poolData.UserPoolId || !poolData.ClientId) {
       return reject(new Error("Cognito credentials missing from .env"));
     }
-    userPool.signUp(email, password, [], null as any, (err, result) => {
+    const userAttributes = [
+      new CognitoUserAttribute({
+        Name: 'email',
+        Value: email,
+      }),
+    ];
+    userPool.signUp(email, password, userAttributes, null as any, (err, result) => {
       if (err) {
         reject(err);
         return;
@@ -78,3 +84,20 @@ export function confirmRegistration(email: string, code: string): Promise<any> {
     });
   });
 }
+
+export function resendConfirmationCode(email: string): Promise<any> {
+  return new Promise((resolve, reject) => {
+    const cognitoUser = new CognitoUser({
+      Username: email,
+      Pool: userPool
+    });
+    cognitoUser.resendConfirmationCode((err, result) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(result);
+    });
+  });
+}
+

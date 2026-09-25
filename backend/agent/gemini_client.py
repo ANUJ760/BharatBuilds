@@ -32,6 +32,8 @@ def _get_model(
     settings = get_settings()
     genai.configure(api_key=settings.gemini_api_key)
     
+    effective_model = model_id if (model_id and "gemini" in model_id.lower()) else (getattr(settings, "gemini_model_id", None) or "gemini-2.5-flash")
+    
     generation_config = genai.types.GenerationConfig(
         temperature=temperature,
         max_output_tokens=max_tokens,
@@ -39,7 +41,7 @@ def _get_model(
     )
     
     return genai.GenerativeModel(
-        model_name=model_id,
+        model_name=effective_model,
         system_instruction=system if system else None,
         generation_config=generation_config,
     )
