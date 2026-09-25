@@ -30,8 +30,10 @@ def invoke_model(*args, **kwargs) -> str:
     # Fallback to Gemini
     kwargs.pop("region", None)
     kwargs.pop("credentials", None)
-    if "model_id" not in kwargs or not kwargs["model_id"]:
-        kwargs["model_id"] = getattr(settings, "gemini_model_id", "gemini-2.5-flash")
+    gemini_model = getattr(settings, "gemini_model_id", "gemini-2.5-flash")
+    current_model = kwargs.get("model_id", "")
+    if not current_model or "gemini" not in current_model.lower():
+        kwargs["model_id"] = gemini_model
     return gemini_client.invoke_model(*args, **kwargs)
 
 
@@ -53,6 +55,8 @@ def invoke_model_json(*args, **kwargs) -> dict[str, Any]:
     # Fallback to Gemini
     kwargs.pop("region", None)
     kwargs.pop("credentials", None)
-    if "model_id" not in kwargs or not kwargs["model_id"]:
-        kwargs["model_id"] = getattr(settings, "gemini_model_id", "gemini-2.5-flash")
+    gemini_model = getattr(settings, "gemini_model_id", "gemini-2.5-flash")
+    current_model = kwargs.get("model_id", "")
+    if not current_model or "gemini" not in current_model.lower():
+        kwargs["model_id"] = gemini_model
     return gemini_client.invoke_model_json(*args, **kwargs)

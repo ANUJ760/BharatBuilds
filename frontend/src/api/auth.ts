@@ -84,3 +84,20 @@ export function confirmRegistration(email: string, code: string): Promise<any> {
     });
   });
 }
+
+export function resendConfirmationCode(email: string): Promise<any> {
+  return new Promise((resolve, reject) => {
+    const cognitoUser = new CognitoUser({
+      Username: email,
+      Pool: userPool
+    });
+    cognitoUser.resendConfirmationCode((err, result) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(result);
+    });
+  });
+}
+

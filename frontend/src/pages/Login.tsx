@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Scene3D } from '../components/Scene3D';
 import { Logo } from '../components/imagica/Logo';
-import { loginWithCognito, confirmRegistration } from '../api/auth';
+import { loginWithCognito, confirmRegistration, resendConfirmationCode } from '../api/auth';
 
 export default function Login() {
   const [step, setStep] = useState<'login' | 'verify'>('login');
@@ -11,6 +11,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -59,6 +60,21 @@ export default function Login() {
       setError(err.message || 'Verification failed');
     }
   };
+
+  const handleResendCode = async () => {
+    if (!email) return;
+    setResending(true);
+    setError(null);
+    try {
+      await resendConfirmationCode(email);
+      setSuccess("A new verification code has been sent to your email.");
+    } catch (err: any) {
+      setError(err.message || "Failed to resend code");
+    } finally {
+      setResending(false);
+    }
+  };
+
 
   return (
     <motion.div 
@@ -155,6 +171,28 @@ export default function Login() {
               >
                 {loading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : 'Verify & Log In'}
               </button>
+
+              <div className="flex items-center justify-between mt-2 text-xs">
+                <button
+                  type="button"
+                  onClick={handleResendCode}
+                  disabled={resending}
+                  className="text-gray-600 hover:text-black font-medium transition-colors"
+                >
+                  {resending ? 'Sending code...' : 'Resend code'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStep('login');
+                    setError(null);
+                    setSuccess(null);
+                  }}
+                  className="text-gray-600 hover:text-black font-medium transition-colors"
+                >
+                  ← Back to Sign In
+                </button>
+              </div>
             </form>
           )}
           
